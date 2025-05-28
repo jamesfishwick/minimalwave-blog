@@ -1,0 +1,50 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+  {{ tag.name }} | Today I Learned | {{ site_name }}
+{% endblock %}
+
+{% block meta_description %}
+  TILs tagged with {{ tag.name }}
+{% endblock %}
+
+{% block content %}
+
+  <section class="til-tag">
+  <h1 class="synth-wave-header">TILs tagged with: {{ tag.name }}</h1>
+
+  <ul class="til-list">
+
+  {% for til in tils %}
+
+    <li>
+    <h3><a href="{{ til.get_absolute_url }}">{{ til.title }}</a></h3>
+    <div class="post-meta">{{ til.created|date:"F j, Y" }}</div>
+    <div class="til-tags">
+
+    {% for tag in til.tags.all %}
+
+      <a href="
+      {% url 'til:tag' tag.slug %}
+      " class="tag">{{ tag.name }}</a>
+
+    {% endfor %}
+
+    </div>
+    </li>
+
+    {% empty %}
+
+    <li>No TILs with this tag yet.</li>
+
+  {% endfor %}
+
+  </ul>
+
+  <p><a href="
+  {% url 'til:index' %}
+  ">&larr; Back to all TILs</a></p>
+  </section>
+
+{% endblock %}

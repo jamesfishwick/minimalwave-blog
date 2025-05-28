@@ -1,0 +1,199 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>
+{% block title %}
+  {{ site_name }}
+{% endblock %}
+</title>
+<meta
+name="description"
+content="
+{% block meta_description %}
+  A personal blog with minimal wave aesthetics
+{% endblock %}
+"
+/>
+
+<!-- Social media card metadata -->
+<meta
+property="og:title"
+content="
+{% block og_title %}
+  {{ site_name }}
+{% endblock %}
+"
+/>
+<meta
+property="og:description"
+content="
+{% block og_description %}
+  A personal blog with minimal wave aesthetics
+{% endblock %}
+"
+/>
+<meta
+property="og:type"
+content="
+{% block og_type %}
+  website
+{% endblock %}
+"
+/>
+<meta
+property="og:url"
+content="
+{% block og_url %}
+  {{ request.build_absolute_uri }}
+{% endblock %}
+"
+/>
+
+{% block og_image %}
+
+  <meta
+  property="og:image"
+  content="{{ request.scheme }}://{{ request.get_host }}
+  {% static 'images/default-card.jpg' %}
+  "
+  />
+
+{% endblock %}
+
+<!-- Twitter card metadata -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta
+name="twitter:title"
+content="
+{% block twitter_title %}
+  {{ site_name }}
+{% endblock %}
+"
+/>
+<meta
+name="twitter:description"
+content="
+{% block twitter_description %}
+  A personal blog with minimal wave aesthetics
+{% endblock %}
+"
+/>
+
+{% block twitter_image %}
+
+  <meta
+  name="twitter:image"
+  content="{{ request.scheme }}://{{ request.get_host }}
+  {% static 'images/default-card.jpg' %}
+  "
+  />
+
+{% endblock %}
+
+<!-- Atom feed -->
+<link
+rel="alternate"
+type="application/atom+xml"
+title="Blog Feed"
+href="
+{% url 'blog:feed' %}
+"
+/>
+<link
+rel="alternate"
+type="application/atom+xml"
+title="TIL Feed"
+href="
+{% url 'til:feed' %}
+"
+/>
+
+<!-- CSS -->
+<link rel="stylesheet" href="
+{% static 'css/style.css' %}
+" />
+<link rel="stylesheet" href="
+{% static 'css/additional.css' %}
+" />
+
+
+{% block extra_head %}
+
+{% endblock %}
+
+</head>
+<body class="dark-mode">
+    <div class="crt-overlay" aria-hidden="true"></div>
+<header class="site-header">
+<div class="container">
+<div class="site-branding">
+<h1 class="site-title">
+<a href="
+{% url 'blog:index' %}
+">{{ site_name }}</a>
+</h1>
+</div>
+<nav class="site-navigation">
+<ul>
+<li><a href="
+{% url 'blog:index' %}
+">Home</a></li>
+<li><a href="
+{% url 'blog:archive' %}
+">Archive</a></li>
+<li><a href="
+{% url 'til:index' %}
+">TIL</a></li>
+<li>
+<form
+action="
+{% url 'blog:search' %}
+"
+method="get"
+class="search-form"
+>
+<input
+type="text"
+name="q"
+placeholder="Search..."
+aria-label="Search"
+/>
+<button type="submit">Search</button>
+</form>
+</li>
+</ul>
+</nav>
+</div>
+</header>
+
+<main class="site-content">
+<div class="container">
+{% block content %}
+
+{% endblock %}
+</div>
+</main>
+
+<footer class="site-footer">
+<div class="container">
+<p>
+&copy;
+{% now "Y" %}
+{{ site_name }}.
+Built with Django.
+</p>
+</div>
+</footer>
+
+
+{% block scripts %}
+
+{% endblock %}
+
+</body>
+</html>

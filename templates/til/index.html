@@ -1,0 +1,70 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+  Today I Learned | {{ site_name }}
+{% endblock %}
+
+{% block meta_description %}
+  Short-form content organized by topic
+{% endblock %}
+
+{% block content %}
+
+  <section class="til-index">
+  <h1 class="synth-wave-header">Today I Learned</h1>
+
+  <div class="til-tags grid-pattern">
+  <h2>Browse by topic</h2>
+  <div class="tag-cloud">
+
+  {% for tag in tags %}
+
+    <a href="
+    {% url 'til:tag' tag.slug %}
+    " class="tag">{{ tag.name }} {{ tag.til_set.count }}</a>
+
+  {% endfor %}
+
+  </div>
+  </div>
+
+  <form action="
+  {% url 'til:search' %}
+  " method="get" class="search-form" style="margin: var(--spacing-lg) 0;">
+  <input type="text" name="q" placeholder="Search TILs..." aria-label="Search TILs">
+  <button type="submit">Search</button>
+  </form>
+
+  <h2>Recent TILs</h2>
+
+  <ul class="til-list">
+
+  {% for til in tils %}
+
+    <li>
+    <h3><a href="{{ til.get_absolute_url }}">{{ til.title }}</a></h3>
+    <div class="post-meta">{{ til.created|date:"F j, Y" }}</div>
+    <div class="til-tags">
+
+    {% for tag in til.tags.all %}
+
+      <a href="
+      {% url 'til:tag' tag.slug %}
+      " class="tag">{{ tag.name }}</a>
+
+    {% endfor %}
+
+    </div>
+    </li>
+
+    {% empty %}
+
+    <li>No TILs yet.</li>
+
+  {% endfor %}
+
+  </ul>
+  </section>
+
+{% endblock %}

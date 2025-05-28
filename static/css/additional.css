@@ -1,0 +1,106 @@
+/* Additional styles for new functionality */
+
+/* Reading time */
+.reading-time {
+  display: inline-block;
+  margin-left: var(--spacing-sm);
+  color: var(--accent-color);
+  font-size: 0.9rem;
+  font-family: var(--font-mono);
+}
+
+/* Pagination */
+.pagination {
+  margin: var(--spacing-lg) 0;
+  text-align: center;
+}
+
+.pagination .step-links {
+  display: inline-block;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--bg-secondary);
+  border-radius: 5px;
+}
+
+.pagination .current {
+  margin: 0 var(--spacing-md);
+  color: var(--text-secondary);
+}
+
+/* Related posts */
+.related-posts {
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-color);
+}
+
+.related-posts h3 {
+  margin-bottom: var(--spacing-md);
+}
+
+.related-posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.related-post-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  padding: var(--spacing-md);
+}
+
+.related-post-card h4 {
+  margin-bottom: var(--spacing-xs);
+}
+
+/* Enhanced minimal wave elements */
+.grid-pattern {
+  position: relative;
+  overflow: hidden;
+}
+
+.grid-pattern::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    linear-gradient(to right, var(--accent-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--accent-color) 1px, transparent 1px);
+  background-size: 20px 20px;
+  opacity: 0.1;
+  z-index: -1;
+}
+
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-md);
+}
+
+/* Dark mode enhancements */
+.dark-mode .neon-text {
+  text-shadow: 0 0 5px var(--accent-color), 0 0 10px var(--accent-color);
+}
+
+.dark-mode .synth-wave-header {
+  background: linear-gradient(45deg, var(--accent-color), var(--accent-secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: bold;
+}
+
+.dark-mode .blogmark-url {
+  color: var(--accent-secondary);
+}
+
+.dark-mode .post-card:hover {
+  box-shadow: 0 0 10px var(--accent-color);
+  transition: box-shadow 0.3s ease;
+}

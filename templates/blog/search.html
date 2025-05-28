@@ -1,0 +1,122 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+  Search Results | {{ site_name }}
+{% endblock %}
+
+{% block meta_description %}
+  Search results for "{{ q }}"
+{% endblock %}
+
+{% block content %}
+
+  <section class="search-results">
+  <h1 class="synth-wave-header">Search Results</h1>
+
+  <form action="
+  {% url 'blog:search' %}
+  " method="get" class="search-form" style="margin-bottom: var(--spacing-lg);">
+  <input type="text" name="q" value="{{ q }}" placeholder="Search..." aria-label="Search">
+  <button type="submit">Search</button>
+  </form>
+
+
+  {% if q %}
+
+    <p>Results for "{{ q }}":</p>
+
+
+    {% if entries %}
+
+      <h2>Blog Posts</h2>
+
+      {% for entry in entries %}
+
+        <article class="post-card">
+        <h3><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h3>
+        <div class="post-meta">{{ entry.created|date:"F j, Y" }}</div>
+        <div class="post-summary">
+        {{ entry.summary_rendered }}
+        </div>
+
+        {% if entry.tags.exists %}
+
+          <div class="post-tags">
+
+          {% for tag in entry.tags.all %}
+
+            <a href="
+            {% url 'blog:tag' tag.slug %}
+            " class="tag">{{ tag.name }}</a>
+
+          {% endfor %}
+
+          </div>
+
+        {% endif %}
+
+        </article>
+
+      {% endfor %}
+
+
+    {% endif %}
+
+
+
+    {% if blogmarks %}
+
+      <h2>Links</h2>
+
+      {% for blogmark in blogmarks %}
+
+        <article class="post-card">
+        <h3><a href="{{ blogmark.get_absolute_url }}">{{ blogmark.title }}</a></h3>
+        <div class="post-meta">{{ blogmark.created|date:"F j, Y" }}</div>
+        <a href="{{ blogmark.url }}" class="blogmark-url">{{ blogmark.url }}</a>
+        <div class="blogmark-commentary">
+        {{ blogmark.commentary_rendered }}
+        </div>
+
+        {% if blogmark.tags.exists %}
+
+          <div class="post-tags">
+
+          {% for tag in blogmark.tags.all %}
+
+            <a href="
+            {% url 'blog:tag' tag.slug %}
+            " class="tag">{{ tag.name }}</a>
+
+          {% endfor %}
+
+          </div>
+
+        {% endif %}
+
+        </article>
+
+      {% endfor %}
+
+
+    {% endif %}
+
+
+
+    {% if not entries and not blogmarks %}
+
+      <p>No results found for "{{ q }}".</p>
+
+    {% endif %}
+
+
+    {% else %}
+
+    <p>Enter a search term above to find content.</p>
+
+  {% endif %}
+
+  </section>
+
+{% endblock %}

@@ -1,0 +1,59 @@
+name: Build and Deploy to Azure
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          poetry --version
+
+      - name: Install dependencies
+        run: |
+          poetry install --no-interaction --no-ansi
+
+      - name: Run tests
+        run: |
+          poetry run python manage.py test
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Build and Push Docker Image
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Build and Push Docker Image
+        run: |
+          # Set environment to production for the build
+          docker build -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/minimalwave-blog:${{ github.sha }} \
+                      --build-arg DJANGO_SETTINGS_MODULE=minimalwave-blog.settings.production .
+          docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/minimalwave-blog:${{ github.sha }}
+
+      - name: Deploy to Azure App Service
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: "minimalwave-blog"
+          images: "${{ secrets.REGISTRY_LOGIN_SERVER }}/minimalwave-blog:${{ github.sha }}"
+
+      - name: Azure Logout
+        run: az logout

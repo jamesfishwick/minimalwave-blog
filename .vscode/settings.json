@@ -1,0 +1,20 @@
+{
+  "files.associations": {
+    "**/*.html": "html",
+    "**/templates/**/*.html": "django-html",
+    "**/templates/**/*": "django-txt"
+  },
+  "emmet.includeLanguages": {
+    "django-html": "html"
+  },
+  "[django-html]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "batisteo.vscode-django"
+  },
+  "html.format.wrapLineLength": 100,
+  "html.format.preserveNewLines": true,
+  "html.format.indentHandlebars": true,
+  "html.format.indentInnerHtml": true,
+  "html.format.maxPreserveNewLines": 2,
+  "django.i18n.active": true
+}

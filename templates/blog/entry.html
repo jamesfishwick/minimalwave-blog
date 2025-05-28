@@ -1,0 +1,110 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ entry.title }} | {{ site_name }}{% endblock %}
+{% block meta_description %}{{ entry.summary_text }}{% endblock %}
+{% block og_title %}{{ entry.title }}{% endblock %}
+{% block og_description %}{{ entry.summary_text }}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block og_url %}{{ request.build_absolute_uri }}{% endblock %}
+
+{% block og_image %}
+{% if entry.card_image %}
+<meta property="og:image" content="{{ entry.card_image }}" />
+{% else %}
+{{ block.super }}
+{% endif %}
+
+{% endblock %}
+
+{% block twitter_title %}
+  {{ entry.title }}
+{% endblock %}
+
+{% block twitter_description %}
+  {{ entry.summary_text }}
+{% endblock %}
+
+{% block twitter_image %}
+  {% if entry.card_image %}
+    <meta name="twitter:image" content="{{ entry.card_image }}" />
+  {% else %}
+    {{ block.super }}
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+{% if preview %}
+<div class="preview-banner" style="background: #ff5722; color: white; padding: 10px; margin-bottom: 20px; border-radius: 4px;">
+  <strong>PREVIEW MODE</strong> - This content is not publicly visible.
+  <a href="{% url 'admin:blog_entry_change' entry.id %}" style="color: white; text-decoration: underline;">Edit in Admin</a>
+</div>
+{% endif %}
+
+<article class="post-content">
+  <header>
+    <h1 class="synth-wave-header">{{ entry.title }}</h1>
+    <div class="post-meta">
+      {{ entry.created|date:"F j, Y" }}
+      {% if entry.authors.exists %}
+        by
+        {% for authorship in entry.authorship_set.all %}
+          {{ authorship.user.get_full_name|default:authorship.user.username }}{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+      {% endif %}
+
+      {% if reading_time %}
+        <span class="reading-time">{{ reading_time }} min read</span>
+      {% endif %}
+
+  </div>
+  </header>
+
+  <div class="post-summary grid-pattern">{{ entry.summary_rendered }}</div>
+
+  <div class="post-body">{{ entry.body_rendered }}</div>
+
+
+  {% if entry.tags.exists %}
+
+    <div class="post-tags">
+    <h3>Tags:</h3>
+
+    {% for tag in entry.tags.all %}
+
+      <a href="
+      {% url 'blog:tag' tag.slug %}
+      " class="tag">{{ tag.name }}</a>
+
+    {% endfor %}
+
+    </div>
+
+  {% endif %}
+
+  {% if related_entries %}
+
+    <div class="related-posts">
+    <h3 class="neon-text">Related Posts</h3>
+    <div class="related-posts-grid">
+
+    {% for related in related_entries %}
+
+      <div class="related-post-card">
+      <h4>
+      <a href="{{ related.get_absolute_url }}">{{ related.title }}</a>
+      </h4>
+      <div class="post-meta">{{ related.created|date:"F j, Y" }}</div>
+      </div>
+
+    {% endfor %}
+
+    </div>
+    </div>
+
+  {% endif %}
+
+  </article>
+
+{% endblock %}

@@ -1,0 +1,52 @@
+[tool.poetry]
+name = "minimalwave-blog"
+version = "0.1.0"
+description = "A minimal wave aesthetics blog built with Django"
+authors = ["James Fishwick"]
+readme = "README.md"
+packages = []
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Django = "5.2"
+markdown = "3.8"
+django-taggit = "6.1.0"
+django-markdownx = "4.0.9"
+django-allauth = "65.7.0"
+pillow = "11.2.1"
+gunicorn = "21.2.0"
+whitenoise = "6.6.0"
+psycopg2-binary = "2.9.9"
+python-dotenv = "1.0.1"
+dj-database-url = "2.1.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.3.1"
+black = "^24.0.0"
+isort = "^5.12.0"
+flake8 = "^7.0.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ["py310"]
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3

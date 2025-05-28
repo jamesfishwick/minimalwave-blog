@@ -1,0 +1,75 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+  Search TILs | {{ site_name }}
+{% endblock %}
+
+{% block meta_description %}
+  Search results for TILs matching "{{ q }}"
+{% endblock %}
+
+{% block content %}
+
+  <section class="til-search">
+  <h1 class="synth-wave-header">Search TILs</h1>
+
+  <form action="
+  {% url 'til:search' %}
+  " method="get" class="search-form" style="margin-bottom: var(--spacing-lg);">
+  <input type="text" name="q" value="{{ q }}" placeholder="Search TILs..." aria-label="Search TILs">
+  <button type="submit">Search</button>
+  </form>
+
+
+  {% if q %}
+
+    <p>Results for "{{ q }}":</p>
+
+
+    {% if tils %}
+
+      <ul class="til-list">
+
+      {% for til in tils %}
+
+        <li>
+        <h3><a href="{{ til.get_absolute_url }}">{{ til.title }}</a></h3>
+        <div class="post-meta">{{ til.created|date:"F j, Y" }}</div>
+        <div class="til-tags">
+
+        {% for tag in til.tags.all %}
+
+          <a href="
+          {% url 'til:tag' tag.slug %}
+          " class="tag">{{ tag.name }}</a>
+
+        {% endfor %}
+
+        </div>
+        </li>
+
+      {% endfor %}
+
+      </ul>
+
+      {% else %}
+
+      <p>No TILs found for "{{ q }}".</p>
+
+    {% endif %}
+
+
+    {% else %}
+
+    <p>Enter a search term above to find TILs.</p>
+
+  {% endif %}
+
+
+  <p><a href="
+  {% url 'til:index' %}
+  ">&larr; Back to all TILs</a></p>
+  </section>
+
+{% endblock %}

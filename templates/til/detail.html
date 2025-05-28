@@ -1,0 +1,76 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+  {{ til.title }} | Today I Learned | {{ site_name }}
+{% endblock %}
+
+{% block meta_description %}
+  {{ til.body_text|truncatewords:50 }}
+{% endblock %}
+
+{% block og_title %}
+  {{ til.title }}
+{% endblock %}
+
+{% block og_description %}
+  {{ til.body_text|truncatewords:50 }}
+{% endblock %}
+
+{% block og_type %}
+  article
+{% endblock %}
+
+{% block og_url %}
+  {{ request.build_absolute_uri }}
+{% endblock %}
+
+{% block content %}
+
+  <article class="til-detail">
+  <header>
+  <h1 class="synth-wave-header">{{ til.title }}</h1>
+  <div class="post-meta">
+  {{ til.created|date:"F j, Y" }}
+
+  {% if til.author %}
+
+    by {{ til.author.get_full_name|default:til.author.username }}
+
+  {% endif %}
+
+
+  {% if reading_time %}
+
+    <span class="reading-time">{{ reading_time }} min read</span>
+
+  {% endif %}
+
+  </div>
+  </header>
+
+  <div class="til-content">
+  {{ til.body_rendered }}
+  </div>
+
+
+  {% if til.tags.exists %}
+
+    <div class="til-tags">
+    <h3>Tags:</h3>
+
+    {% for tag in til.tags.all %}
+
+      <a href="
+      {% url 'til:tag' tag.slug %}
+      " class="tag">{{ tag.name }}</a>
+
+    {% endfor %}
+
+    </div>
+
+  {% endif %}
+
+  </article>
+
+{% endblock %}

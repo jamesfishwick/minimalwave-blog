@@ -1,0 +1,97 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ site_name }}{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/additional.css' %}" />
+{% endblock %}
+
+{% block content %}
+<section class="blog-index">
+  <h2 class="synth-wave-header">Latest Posts</h2>
+
+  {% for entry in entries %}
+  <article class="post-card">
+    <h3><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h3>
+    <div class="post-meta">
+      {{ entry.created|date:"F j, Y" }}
+      {% if entry.authors.exists %}
+        by
+        {% for authorship in entry.authorship_set.all %}
+          {{ authorship.user.get_full_name|default:authorship.user.username }}{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+      {% endif %}
+
+      {% if entry.reading_time %}
+        <span class="reading-time">{{ entry.reading_time }} min read</span>
+      {% endif %}
+    </div>
+    <div class="post-summary">{{ entry.summary_rendered }}</div>
+
+    {% if entry.tags.exists %}
+    <div class="post-tags">
+      {% for tag in entry.tags.all %}
+        <a href="{% url 'blog:tag' tag.slug %}" class="tag">{{ tag.name }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </article>
+  {% empty %}
+  <p>No blog posts yet.</p>
+  {% endfor %}
+
+  {% if has_more %}
+  <p>
+    <a href="{% url 'blog:archive' %}">View more posts in the archive &rarr;</a>
+  </p>    {% endif %}
+</section>
+
+<section class="blogmarks">
+  <h2 class="synth-wave-header">Recent Links</h2>
+
+  {% for blogmark in blogmarks %}
+  <article class="post-card">
+    <h3><a href="{{ blogmark.get_absolute_url }}">{{ blogmark.title }}</a></h3>
+    <div class="post-meta">{{ blogmark.created|date:"F j, Y" }}</div>
+    <a href="{{ blogmark.url }}" class="blogmark-url neon-text">{{ blogmark.url }}</a>
+    <div class="blogmark-commentary">{{ blogmark.commentary_rendered }}</div>
+
+    {% if blogmark.via %}
+    <div class="blogmark-via">
+      Via: <a href="{{ blogmark.via }}">{{ blogmark.via_title|default:blogmark.via }}</a>
+    </div>
+    {% endif %}
+
+    {% if blogmark.tags.exists %}
+    <div class="post-tags">
+      {% for tag in blogmark.tags.all %}
+        <a href="{% url 'blog:tag' tag.slug %}" class="tag">{{ tag.name }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </article>
+  {% empty %}
+  <p>No links yet.</p>
+  {% endfor %}
+{% if page_obj %}
+<div class="pagination">
+  <span class="step-links">
+    {% if page_obj.has_previous %}
+      <a href="?page=1">&laquo; first</a>
+      <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+    {% endif %}
+
+    <span class="current">
+      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </span>
+
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}">next</a>
+      <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+    {% endif %}
+  </span>
+</div>
+{% endif %}
+{% endblock %}
