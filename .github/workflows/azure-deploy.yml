@@ -45,7 +45,7 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           # Set environment to production for the build
-          docker build -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/minimalwave-blog:${{ github.sha }} \
+          docker buildx build --platform linux/amd64 -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/minimalwave-blog:${{ github.sha }} \
                       --build-arg DJANGO_SETTINGS_MODULE=minimalwave-blog.settings.production .
           docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/minimalwave-blog:${{ github.sha }}
 
