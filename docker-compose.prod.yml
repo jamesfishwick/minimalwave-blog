@@ -5,7 +5,7 @@ services:
     build:
       context: .
       args:
-        - DJANGO_SETTINGS_MODULE=minimalwave-blog.settings.production
+        - DJANGO_SETTINGS_MODULE=minimalwave_blog.settings.production
     image: minimalwave-blog:production
     container_name: minimalwave-blog-production
     ports:
@@ -16,7 +16,7 @@ services:
       - ./static:/app/static
       - ./supervisord.conf:/etc/supervisor/conf.d/supervisord.conf
     environment:
-      - DJANGO_SETTINGS_MODULE=minimalwave-blog.settings.production
+      - DJANGO_SETTINGS_MODULE=minimalwave_blog.settings.production
       # Load these values from .env file in production
       - SECRET_KEY=${SECRET_KEY}
       - DATABASE_URL=${DATABASE_URL}

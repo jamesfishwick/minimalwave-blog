@@ -1,7 +1,7 @@
 # Dockerfile for Minimal Wave Blog
 
 # Use an official Python runtime as a parent image
-FROM python:3.10-slim
+FROM --platform=linux/amd64 python:3.10-slim
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -36,22 +36,21 @@ RUN poetry install --no-interaction --no-ansi --no-root
 # Copy the project code into the container
 COPY . /app/
 
+# Make sure the entrypoint script uses LF line endings
+RUN apt-get update && apt-get install -y dos2unix && \
+    dos2unix /app/docker-entrypoint.sh && \
+    chmod +x /app/docker-entrypoint.sh && \
+    rm -rf /var/lib/apt/lists/*
+
 # Expose the port the app runs on
 EXPOSE 8000
 
-# Don't run collectstatic here - it will be run in the entrypoint script
-# This ensures the correct settings are loaded when collecting static files
-
 # Set environment variable to determine which settings to use
-# This can be overridden during build with --build-arg
-ARG DJANGO_SETTINGS_MODULE=minimalwave-blog.settings.development
+ARG DJANGO_SETTINGS_MODULE=minimalwave_blog.settings.development
 ENV DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
 
-# Define the entrypoint script
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
-
-ENTRYPOINT ["/docker-entrypoint.sh"]
+# Use shell form for entrypoint to ensure proper shell interpretation
+ENTRYPOINT ["/bin/bash", "/app/docker-entrypoint.sh"]
 
 # Define the command to run the application
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

@@ -4,124 +4,76 @@ This checklist helps ensure a smooth deployment of the Minimal Wave Blog to Azur
 
 ## 1. Pre-Deployment Tasks
 
-- [ ] Run tests locally: `make test`
-- [ ] Check all changes are committed: `git status`
-- [ ] Push changes to GitHub: `git push origin main`
-- [ ] Check Docker builds correctly: `docker-compose -f docker-compose.prod.yml build`
+- [x] Run tests locally: `make test`
+- [x] Check all changes are committed: `git status`
+- [x] Push changes to GitHub: `git push origin main`
+- [x] Check Docker builds correctly: `docker-compose -f docker-compose.prod.yml build`
 
 ## 2. Azure Resources Setup
 
-- [ ] Create Resource Group
+- [x] Create Resource Group
   ```bash
   az group create --name minimalwave-blog-rg --location eastus
   ```
 
-- [ ] Create PostgreSQL Database
-  ```bash
-  az postgres flexible-server create \
-    --resource-group minimalwave-blog-rg \
-    --name minimalwave-db \
-    --admin-user minimalwave \
-    --admin-password <your-secure-password> \
-    --sku-name Standard_B1ms
-  
-  az postgres flexible-server db create \
-    --resource-group minimalwave-blog-rg \
-    --server-name minimalwave-db \
-    --database-name minimalwave
-  ```
+- [x] Create PostgreSQL Database
+  Status: Created minimalwave-blog-db-2025 (Standard_D2s_v3)
 
-- [ ] Create Container Registry
-  ```bash
-  az acr create \
-    --resource-group minimalwave-blog-rg \
-    --name minimalwaveregistry \
-    --sku Basic
-  ```
+- [x] Create Container Registry
+  Status: Created minimalwaveregistry.azurecr.io (Basic SKU)
 
-- [ ] Create App Service Plan
-  ```bash
-  az appservice plan create \
-    --resource-group minimalwave-blog-rg \
-    --name minimalwave-plan \
-    --is-linux \
-    --sku B1
-  ```
+- [x] Create App Service Plan
+  Status: Created minimalwave-plan (B1, Linux)
 
-- [ ] Create Web App
-  ```bash
-  az webapp create \
-    --resource-group minimalwave-blog-rg \
-    --plan minimalwave-plan \
-    --name minimalwave-blog \
-    --deployment-container-image-name minimalwaveregistry.azurecr.io/minimalwave-blog:latest
-  ```
+- [x] Create Web App
+  Status: Created minimalwave-blog (running container from ACR)
+
+- [ ] Create Redis Cache
+  Status: Created minimalwave-cache (Basic C0)
 
 ## 3. GitHub Secrets Setup
 
-Add these secrets to your GitHub repository:
-
-- [ ] `AZURE_CREDENTIALS`: JSON from `az ad sp create-for-rbac`
-- [ ] `REGISTRY_LOGIN_SERVER`: ACR login server (e.g., `minimalwaveregistry.azurecr.io`)
-- [ ] `REGISTRY_USERNAME`: ACR username
-- [ ] `REGISTRY_PASSWORD`: ACR password
-- [ ] `SECRET_KEY`: Django secret key
-- [ ] `DATABASE_URL`: PostgreSQL connection string
+- [x] `AZURE_CREDENTIALS`: JSON from `az ad sp create-for-rbac`
+- [x] `REGISTRY_LOGIN_SERVER`: ACR login server (minimalwaveregistry.azurecr.io)
+- [x] `REGISTRY_USERNAME`: ACR username
+- [x] `REGISTRY_PASSWORD`: ACR password
+- [x] `SECRET_KEY`: Django secret key
+- [x] `DATABASE_URL`: PostgreSQL connection string
+- [ ] `REDIS_URL`: Redis connection string
+- [ ] `REDIS_PASSWORD`: Redis access key
 
 ## 4. Environment Variables Setup
 
-- [ ] Set Web App environment variables:
-  ```bash
-  az webapp config appsettings set \
-    --resource-group minimalwave-blog-rg \
-    --name minimalwave-blog \
-    --settings \
-      DJANGO_SETTINGS_MODULE=minimalwave-blog.settings.production \
-      SECRET_KEY="<your-secret-key>" \
-      ALLOWED_HOST="minimalwave-blog.azurewebsites.net" \
-      DATABASE_URL="postgres://minimalwave:<password>@minimalwave-db.postgres.database.azure.com:5432/minimalwave"
-  ```
+- [x] Set Web App environment variables:
+  - DJANGO_SETTINGS_MODULE=minimalwave_blog.settings.production
+  - SECRET_KEY
+  - ALLOWED_HOST
+  - DATABASE_URL
+  - [ ] REDIS_URL
+  - [ ] REDIS_PASSWORD
 
 ## 5. Database Firewall Configuration
 
-- [ ] Allow Azure services:
-  ```bash
-  az postgres flexible-server firewall-rule create \
-    --resource-group minimalwave-blog-rg \
-    --name minimalwave-db \
-    --rule-name AllowAzureServices \
-    --start-ip-address 0.0.0.0 \
-    --end-ip-address 0.0.0.0
-  ```
+- [x] Allow Azure services:
+  Status: Public network access enabled with firewall rules
 
 ## 6. GitHub Actions Workflow
 
-- [ ] Verify GitHub Actions workflow file (`.github/workflows/azure-deploy.yml`)
-- [ ] Trigger deployment manually or by pushing to main branch
-- [ ] Monitor deployment in GitHub Actions tab
+- [x] Verify GitHub Actions workflow file (`.github/workflows/azure-deploy.yml`)
+- [x] Trigger deployment manually or by pushing to main branch
+- [x] Monitor deployment in GitHub Actions tab
 
 ## 7. Post-Deployment Tasks
 
-- [ ] Verify the site is running: `https://minimalwave-blog.azurewebsites.net/`
-- [ ] Create superuser (if not created automatically)
-  ```bash
-  az webapp ssh --resource-group minimalwave-blog-rg --name minimalwave-blog
-  # Inside SSH session:
-  python manage.py createsuperuser
-  ```
-- [ ] Add initial content
-- [ ] Test scheduled publishing in production
-- [ ] Set up monitoring alerts
+- [x] Verify the site is running: `https://minimalwave-blog.azurewebsites.net/`
+- [x] Create superuser
+- [x] Add initial content
+- [x] Test scheduled publishing in production
+- [x] Set up monitoring alerts
 
 ## 8. Optional: Custom Domain Setup
 
 - [ ] Purchase domain (if not already owned)
-- [ ] Add custom domain to App Service:
-  ```bash
-  az webapp config hostname add \
-    --resource-group minimalwave-blog-rg \
-    --webapp-name minimalwave-blog \
-    --hostname www.yourdomain.com
-  ```
+- [ ] Add custom domain to App Service
 - [ ] Configure DNS settings with domain provider
-- [ ] Set up SSL certificate
+- [x] Set up SSL certificate (documented in docs/ssl-setup.md)

@@ -67,7 +67,7 @@ az webapp config appsettings set \
   --resource-group minimalwave-blog-rg \
   --name minimalwave-blog \
   --settings \
-    DJANGO_SETTINGS_MODULE=minimalwave-blog.settings.production \
+    DJANGO_SETTINGS_MODULE=minimalwave_blog.settings.production \
     SECRET_KEY="<your-secret-key>" \
     ALLOWED_HOST="minimalwave-blog.azurewebsites.net" \
     DATABASE_URL="postgres://minimalwave:<your-secure-password>@minimalwave-db.postgres.database.azure.com:5432/minimalwave"
