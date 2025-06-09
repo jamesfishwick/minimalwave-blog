@@ -63,13 +63,14 @@ else:
         }
     }
 
-# Security
-SECURE_SSL_REDIRECT = True
+# Security - Disable SSL redirect for Azure App Service
+SECURE_SSL_REDIRECT = False  # Azure handles SSL termination
 SECURE_HSTS_SECONDS = 31536000  # 1 year
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Middleware - Add cache and compression while preserving base middleware
 MIDDLEWARE = [
