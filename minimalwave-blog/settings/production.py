@@ -1,6 +1,6 @@
 # Production settings
 
-from minimalwave_blog.settings.base import *
+from .base import *
 
 DEBUG = False
 
@@ -71,13 +71,18 @@ SECURE_HSTS_PRELOAD = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
-# Middleware - Add cache and compression
+# Middleware - Add cache and compression while preserving base middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.gzip.GZipMiddleware',
     'django.middleware.cache.UpdateCacheMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
-    'minimalwave_blog.middleware.CacheControlMiddleware',
-] + MIDDLEWARE
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'minimalwave-blog.middleware.CacheControlMiddleware',
+]

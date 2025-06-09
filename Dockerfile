@@ -46,11 +46,11 @@ RUN apt-get update && apt-get install -y dos2unix && \
 EXPOSE 8000
 
 # Set environment variable to determine which settings to use
-ARG DJANGO_SETTINGS_MODULE=minimalwave_blog.settings.development
+ARG DJANGO_SETTINGS_MODULE=minimalwave-blog.settings.development
 ENV DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
 
 # Use shell form for entrypoint to ensure proper shell interpretation
 ENTRYPOINT ["/bin/bash", "/app/docker-entrypoint.sh"]
 
 # Replace the CMD to use Gunicorn for production
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "minimalwave_blog.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "minimalwave-blog.wsgi:application"]
