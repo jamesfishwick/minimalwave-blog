@@ -1,6 +1,6 @@
 # Production settings
 
-from .base import *
+from minimalwave_blog.settings.base import *
 
 DEBUG = False
 

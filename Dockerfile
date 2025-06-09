@@ -52,5 +52,5 @@ ENV DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
 # Use shell form for entrypoint to ensure proper shell interpretation
 ENTRYPOINT ["/bin/bash", "/app/docker-entrypoint.sh"]
 
-# Define the command to run the application
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Replace the CMD to use Gunicorn for production
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "minimalwave_blog.wsgi:application"]
