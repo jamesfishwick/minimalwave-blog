@@ -7,8 +7,26 @@ from .models import Entry, Tag, Blogmark, SiteSettings
 from .utils import paginate_queryset
 from .related import get_related_entries
 from django.contrib.auth.decorators import login_required
+import re
+import math
 
 ENTRIES_ON_HOMEPAGE = 5
+
+def reading_time(text):
+    """
+    Estimate reading time for a given text.
+    Average reading speed is about 200-250 words per minute.
+    """
+    # Strip HTML tags if present
+    text = re.sub(r'<[^>]+>', '', text)
+
+    # Count words
+    words = len(text.split())
+
+    # Calculate reading time in minutes (using 200 words per minute)
+    minutes = math.ceil(words / 200)
+
+    return minutes
 
 def index(request):
     # Using the new status field to filter published content
@@ -313,21 +331,3 @@ def get_month_name(month_number):
     }
     return months.get(month_number, 'January')
 
-def reading_time(text):
-    """
-    Estimate reading time for a given text.
-    Average reading speed is about 200-250 words per minute.
-    """
-    import re
-    import math
-
-    # Strip HTML tags if present
-    text = re.sub(r'<[^>]+>', '', text)
-
-    # Count words
-    words = len(text.split())
-
-    # Calculate reading time in minutes (using 200 words per minute)
-    minutes = math.ceil(words / 200)
-
-    return minutes
