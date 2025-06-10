@@ -130,7 +130,7 @@ Available via `make <command>`: run, migrate, shell, test, dev, prod, format, st
 
 ## Best Practices
 Run the code in Docker, not locally. Use the provided Makefile for convenience in managing common tasks.
-Ensure to keep the documentation updated with any changes in commands or architecture. Keep the .env updated. Keep the Azure resources file up to date with the latest resource names and configurations. Ask for help if you are unsure about any changes or commands. Ask for help if you encounter the same error multiple times. Use the issue tracker to report bugs or request features. Follow the coding standards and commit guidelines outlined in this document.
+Ensure to keep the documentation updated with any changes in commands or architecture. Keep the .env updated. Keep the Azure resources file up to date with the latest resource names and configurations.Use Project Development History. Ask for help if you are unsure about any changes or commands. Ask for help if you encounter the same error multiple times. Use the issue tracker to report bugs or request features. Follow the coding standards and commit guidelines outlined in this document.
 
 # important-instruction-reminders
 Do what has been asked; nothing more, nothing less.
