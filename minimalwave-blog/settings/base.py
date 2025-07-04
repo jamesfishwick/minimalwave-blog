@@ -91,3 +91,42 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+# LinkedIn API settings
+LINKEDIN_CLIENT_ID = os.getenv('LINKEDIN_CLIENT_ID')
+LINKEDIN_CLIENT_SECRET = os.getenv('LINKEDIN_CLIENT_SECRET')
+LINKEDIN_REDIRECT_URI = os.getenv('LINKEDIN_REDIRECT_URI')
+
+# Plausible Analytics settings
+PLAUSIBLE_DOMAIN = os.getenv('PLAUSIBLE_DOMAIN', 'localhost:8000')
+PLAUSIBLE_SCRIPT_URL = os.getenv('PLAUSIBLE_SCRIPT_URL', 'https://plausible.io/js/script.js')
+PLAUSIBLE_ENABLED = os.getenv('PLAUSIBLE_ENABLED', 'False').lower() == 'true'
+
+# Logging configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'linkedin.log'),
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'blog.linkedin_service': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'blog.signals': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}

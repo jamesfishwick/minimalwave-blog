@@ -164,6 +164,13 @@ Available via `make <command>`: run, migrate, shell, test, dev, prod, format, st
 Run the code in Docker, not locally. Use the provided Makefile for convenience in managing common tasks.
 Ensure to keep the documentation updated with any changes in commands or architecture. Keep the .env updated. Keep the Azure resources file up to date with the latest resource names and configurations.Use Project Development History. Ask for help if you are unsure about any changes or commands. Ask for help if you encounter the same error multiple times. Use the issue tracker to report bugs or request features. Follow the coding standards and commit guidelines outlined in this document.
 
+### Database Migration Best Practices
+
+- **ALWAYS check current state before running migrations**: Use `python manage.py showmigrations` to see what migrations exist and their status
+- **ONLY run migrations when needed**: Check if there are pending migrations before running `makemigrations` and `migrate`
+- **Don't blindly follow setup instructions**: Assess the current state of the project before executing database operations
+- **Verify migration necessity**: If git status shows migration files already exist, migrations have likely already been created
+
 # important-instruction-reminders
 
 Do what has been asked; nothing more, nothing less.

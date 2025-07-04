@@ -125,6 +125,10 @@ href="
 
 {% endblock %}
 
+{% if plausible_enabled %}
+<script defer data-domain="{{ plausible_domain }}" src="{{ plausible_script_url }}"></script>
+{% endif %}
+
 </head>
 <body class="dark-mode">
     <div class="crt-overlay" aria-hidden="true"></div>
