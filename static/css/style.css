@@ -360,6 +360,116 @@ h1, h2, h3, .site-title {
   }
 }
 
+/* Table styles */
+table {
+  width: 100%;
+  margin: var(--spacing-lg) 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  font-family: var(--font-sans);
+  box-shadow: 0 2px 4px rgba(166, 76, 166, 0.1);
+}
+
+/* Table header */
+thead {
+  background-color: var(--bg-secondary);
+  position: relative;
+}
+
+thead::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background-image: 
+    linear-gradient(to right, var(--accent-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--accent-color) 1px, transparent 1px);
+  background-size: 20px 20px;
+  opacity: 0.03;
+  pointer-events: none;
+}
+
+th {
+  padding: var(--spacing-md);
+  text-align: left;
+  font-weight: 600;
+  color: var(--accent-color);
+  border-bottom: 2px solid var(--accent-color);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+}
+
+/* Table cells */
+td {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-color);
+}
+
+/* Remove bottom border from last row */
+tr:last-child td {
+  border-bottom: none;
+}
+
+/* Alternating row colors for better readability */
+tbody tr:nth-child(even) {
+  background-color: rgba(30, 30, 30, 0.5);
+}
+
+/* Hover effect */
+tbody tr:hover {
+  background-color: rgba(166, 76, 166, 0.1);
+  transition: background-color 0.2s ease;
+}
+
+/* Special styling for the first column */
+td:first-child {
+  font-weight: 500;
+  color: var(--accent-secondary);
+}
+
+/* Style for code content in tables */
+td code {
+  font-size: 0.875rem;
+}
+
+/* Responsive table wrapper */
+.table-wrapper {
+  overflow-x: auto;
+  margin: var(--spacing-lg) 0;
+  background: 
+    linear-gradient(to right, var(--card-bg) 30%, transparent),
+    linear-gradient(to left, var(--card-bg) 30%, transparent),
+    linear-gradient(to right, var(--border-color), var(--border-color)),
+    linear-gradient(to left, var(--border-color), var(--border-color));
+  background-position: 0 0, 100% 0, 0 0, 100% 0;
+  background-size: 20px 100%, 20px 100%, 1px 100%, 1px 100%;
+  background-repeat: no-repeat;
+  background-attachment: local, local, scroll, scroll;
+}
+
+/* Ensure table maintains minimum width */
+table {
+  min-width: 600px;
+}
+
+/* Responsive adjustments for tables */
+@media (max-width: 768px) {
+  th, td {
+    padding: var(--spacing-sm);
+    font-size: 0.875rem;
+  }
+  
+  table {
+    min-width: 500px;
+  }
+}
+
 /* Minimal wave specific elements */
 .neon-text {
   text-shadow: 1px 1px var(--border-color);
