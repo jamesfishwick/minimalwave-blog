@@ -7,8 +7,8 @@ class CacheControlMiddleware:
     def __call__(self, request):
         response = self.get_response(request)
 
-        # Don't cache admin pages
-        if not request.path.startswith('/admin/'):
+        # Don't cache admin pages or static files
+        if not request.path.startswith('/admin/') and not request.path.startswith('/static/'):
             if request.method == 'GET':
                 # Cache public pages for 10 minutes
                 patch_response_headers(response, cache_timeout=600)

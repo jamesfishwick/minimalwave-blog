@@ -48,7 +48,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
-    'minimalwave-blog.middleware.ReadingTimeMiddleware',
+#    'minimalwave-blog.middleware.ReadingTimeMiddleware',
 ]
 
 ROOT_URLCONF = 'minimalwave-blog.urls'
