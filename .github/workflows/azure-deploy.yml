@@ -24,6 +24,8 @@ jobs:
 
       - name: Install dependencies
         run: |
+          # Check if lock file is up to date, regenerate if needed
+          poetry check || poetry lock
           poetry install --no-interaction --no-ansi --no-root
 
       - name: Run tests
