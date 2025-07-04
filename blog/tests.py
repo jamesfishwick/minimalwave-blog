@@ -25,7 +25,7 @@ class BlogTestCase(TestCase):
             summary='This is a test blog post summary.',
             body='This is the full content of the test blog post.',
             created=timezone.now(),
-            is_draft=False
+            status='published'
         )
         self.entry.tags.add(self.tag1, self.tag2)
         
@@ -36,7 +36,7 @@ class BlogTestCase(TestCase):
             url='https://example.com',
             commentary='This is a test link commentary.',
             created=timezone.now(),
-            is_draft=False
+            status='published'
         )
         self.blogmark.tags.add(self.tag1)
         
