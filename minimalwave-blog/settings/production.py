@@ -96,3 +96,27 @@ MIDDLEWARE = [
     'django.middleware.gzip.GZipMiddleware',
     'minimalwave-blog.middleware.CacheControlMiddleware',
 ]
+
+# Override logging for production - use console only
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'linkedin': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
