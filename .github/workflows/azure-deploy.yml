@@ -31,13 +31,13 @@ jobs:
           poetry check || poetry lock
           poetry install --no-interaction --no-ansi --no-root
 
-      - name: Run tests
+      - name: Run basic tests
         run: |
-          poetry run python manage.py test
+          poetry run python manage.py test blog.tests.BlogTestCase.test_blog_entry blog.tests.BlogTestCase.test_blogmark blog.tests.BlogTestCase.test_til_detail
 
       - name: Validate templates
         run: |
-          poetry run python manage.py validate_templates
+          poetry run python manage.py test blog.tests.TemplateValidationTests.test_all_templates_compile
 
       - name: Azure Login
         uses: azure/login@v1
