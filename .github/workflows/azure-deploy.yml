@@ -33,8 +33,11 @@ jobs:
 
       - name: Run tests
         run: |
-          echo "Tests temporarily disabled due to missing migrations - will fix in production"
-          # poetry run python manage.py test
+          poetry run python manage.py test
+
+      - name: Validate templates
+        run: |
+          poetry run python manage.py validate_templates
 
       - name: Azure Login
         uses: azure/login@v1
@@ -60,6 +63,25 @@ jobs:
         with:
           app-name: "minimalwave-blog"
           images: "${{ secrets.REGISTRY_LOGIN_SERVER }}/minimalwave-blog:${{ github.sha }}"
+          
+      - name: Restart App Service
+        run: |
+          az webapp restart --name minimalwave-blog --resource-group minimalwave-blog-rg
+          
+      - name: Wait for deployment
+        run: sleep 30
+        
+      - name: Smoke test deployment
+        run: |
+          echo "Testing homepage..."
+          curl -f -s -o /dev/null https://jamesfishwick.com/ || (echo "Homepage failed" && exit 1)
+          echo "✓ Homepage OK"
+          
+          echo "Testing blog post..."
+          curl -f -s -o /dev/null https://jamesfishwick.com/2025/jul/2/model-autophagy-disorder-ai-will-eat-itself/ || (echo "Blog post failed" && exit 1)
+          echo "✓ Blog post OK"
+          
+          echo "All smoke tests passed!"
 
       - name: Azure Logout
         run: az logout

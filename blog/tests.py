@@ -4,6 +4,11 @@ from django.contrib.auth.models import User
 from blog.models import Entry, Tag, Blogmark
 from til.models import TIL
 from django.utils import timezone
+from django.template import engines
+from django.template.loader import get_template
+from django.apps import apps
+import os
+import glob
 
 class BlogTestCase(TestCase):
     def setUp(self):
@@ -26,7 +31,6 @@ class BlogTestCase(TestCase):
             body='This is the full content of the test blog post.',
             created=timezone.now(),
             status='published',
-            is_draft=False,  # Explicitly set for backward compatibility
             publish_date=None  # Explicitly set to None so it shows immediately
         )
         self.entry.tags.add(self.tag1, self.tag2)
@@ -39,7 +43,6 @@ class BlogTestCase(TestCase):
             commentary='This is a test link commentary.',
             created=timezone.now(),
             status='published',
-            is_draft=False,  # Explicitly set for backward compatibility
             publish_date=None  # Explicitly set to None so it shows immediately
         )
         self.blogmark.tags.add(self.tag1)
@@ -50,7 +53,7 @@ class BlogTestCase(TestCase):
             slug='test-til',
             body='This is a test TIL content.',
             created=timezone.now(),
-            is_draft=False,
+            status='published',
             author=self.user
         )
         self.til.tags.add(self.tag2)
@@ -135,3 +138,86 @@ class BlogTestCase(TestCase):
         response = self.client.get(reverse('til:search'), {'q': 'test'})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Test TIL')
+
+
+class TemplateValidationTests(TestCase):
+    """Test that all templates can be compiled without syntax errors."""
+    
+    def test_all_templates_compile(self):
+        """Test that all templates in the project compile without errors."""
+        template_dirs = []
+        
+        # Get template directories from settings
+        engine = engines['django']
+        template_dirs.extend(engine.engine.dirs)
+        
+        # Get app template directories
+        for app_config in apps.get_app_configs():
+            app_template_dir = os.path.join(app_config.path, 'templates')
+            if os.path.exists(app_template_dir):
+                template_dirs.append(app_template_dir)
+        
+        errors = []
+        
+        for template_dir in template_dirs:
+            for template_file in glob.glob(os.path.join(template_dir, '**/*.html'), recursive=True):
+                # Get template name relative to template dir
+                template_name = os.path.relpath(template_file, template_dir)
+                
+                try:
+                    # Try to compile the template
+                    get_template(template_name)
+                except Exception as e:
+                    errors.append(f'{template_name}: {str(e)}')
+        
+        if errors:
+            self.fail(f'Template compilation errors found:\n' + '\n'.join(errors))
+    
+    def test_extends_tag_placement(self):
+        """Test that extends tags are properly placed as first tags."""
+        template_dirs = []
+        
+        # Get template directories from settings
+        engine = engines['django']
+        template_dirs.extend(engine.engine.dirs)
+        
+        # Get app template directories
+        for app_config in apps.get_app_configs():
+            app_template_dir = os.path.join(app_config.path, 'templates')
+            if os.path.exists(app_template_dir):
+                template_dirs.append(app_template_dir)
+        
+        errors = []
+        
+        for template_dir in template_dirs:
+            for template_file in glob.glob(os.path.join(template_dir, '**/*.html'), recursive=True):
+                template_name = os.path.relpath(template_file, template_dir)
+                
+                try:
+                    with open(template_file, 'r') as f:
+                        content = f.read()
+                    
+                    # Check if file contains extends tag
+                    if '{% extends' in content:
+                        lines = content.split('\n')
+                        extends_line = None
+                        first_non_empty_line = None
+                        
+                        for i, line in enumerate(lines):
+                            stripped = line.strip()
+                            if stripped and not stripped.startswith('<!--'):
+                                if first_non_empty_line is None:
+                                    first_non_empty_line = i
+                                if '{% extends' in line:
+                                    extends_line = i
+                                    break
+                        
+                        if extends_line is not None and first_non_empty_line is not None:
+                            if extends_line != first_non_empty_line:
+                                errors.append(f'{template_name}: extends tag is not the first non-comment tag')
+                
+                except Exception as e:
+                    errors.append(f'{template_name}: Error reading file: {str(e)}')
+        
+        if errors:
+            self.fail(f'Template extends tag placement errors found:\n' + '\n'.join(errors))
