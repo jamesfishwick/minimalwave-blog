@@ -134,7 +134,6 @@ Available via `make <command>`: run, migrate, shell, test, dev, prod, format, st
 
 - Django test framework via `python manage.py test`
 - Pytest support configured
-- Custom test runner script at `scripts/run_tests.py`
 - Utility scripts organized in `scripts/` directory
 - Scheduled publishing test utilities
 - Make sure to test all new features thoroughly before merging into the main branch.

@@ -24,13 +24,6 @@ Sets up a cron job to run the `publish_scheduled` management command every hour.
 make crontab
 ```
 
-### `run_tests.py`
-Alternative test runner script that can run tests directly without using `manage.py test`.
-
-**Usage:**
-```bash
-python scripts/run_tests.py
-```
 
 ## Notes
 
