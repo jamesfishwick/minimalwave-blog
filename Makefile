@@ -55,7 +55,7 @@ clean: ## Remove compiled Python files and caches
 	find . -type d -name ".pytest_cache" -exec rm -rf {} +
 
 crontab: ## Set up scheduled publishing cron job
-	./setup_scheduled_publishing.sh
+	./scripts/setup_scheduled_publishing.sh
 
 superuser: ## Create a superuser
 	python manage.py createsuperuser
@@ -64,4 +64,4 @@ publish: ## Publish scheduled content
 	python manage.py publish_scheduled
 
 test-schedule: ## Create test scheduled content (for testing scheduled publishing)
-	./test_scheduling.sh
+	./scripts/test_scheduling.sh
