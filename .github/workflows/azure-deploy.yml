@@ -61,11 +61,5 @@ jobs:
           app-name: "minimalwave-blog"
           images: "${{ secrets.REGISTRY_LOGIN_SERVER }}/minimalwave-blog:${{ github.sha }}"
 
-      - name: Configure App Service Startup
-        run: |
-          echo "Setting startup command to include migrations..."
-          az webapp config set --name minimalwave-blog --resource-group minimalwave-blog-rg \
-            --startup-file "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn minimalwave-blog.wsgi:application --bind 0.0.0.0:8000"
-
       - name: Azure Logout
         run: az logout
