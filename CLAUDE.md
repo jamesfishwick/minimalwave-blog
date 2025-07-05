@@ -171,6 +171,21 @@ Ensure to keep the documentation updated with any changes in commands or archite
 - **Don't blindly follow setup instructions**: Assess the current state of the project before executing database operations
 - **Verify migration necessity**: If git status shows migration files already exist, migrations have likely already been created
 
+# Important Troubleshooting Guidelines
+
+## Claude Sandbox Directory
+When troubleshooting issues or downloading files for analysis:
+- **ALWAYS** use `.claude-sandbox/` directory for temporary files
+- This directory is gitignored and safe for debugging artifacts
+- Example: When downloading logs, save to `.claude-sandbox/logs.zip`
+- Clean up after troubleshooting by deleting downloaded files
+
+## Clean Development Practices
+- Never leave zip files, log dumps, or temporary files in the project root
+- Use the sandbox directory for any downloaded troubleshooting files
+- If you create temporary files outside the sandbox, delete them after use
+- Keep the repository clean and professional
+
 # important-instruction-reminders
 
 Do what has been asked; nothing more, nothing less.

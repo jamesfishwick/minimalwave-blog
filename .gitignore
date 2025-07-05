@@ -61,3 +61,32 @@ logs/
 # Temporary files
 *.tmp
 *.temp
+*.zip
+*.tar
+*.tar.gz
+*.bak
+*.backup
+*.old
+*~
+
+# Claude's sandbox directory for troubleshooting
+.claude-sandbox/
+
+# Downloaded files and debugging artifacts
+downloads/
+debug/
+troubleshooting/
+
+# Test outputs
+test-output/
+test-results/
+htmlcov/
+.coverage
+.pytest_cache/
+
+# Poetry
+poetry.toml
+
+# Data directory (except for specific files we want to keep)
+data/*
+!data/.gitkeep
