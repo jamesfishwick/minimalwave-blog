@@ -61,17 +61,11 @@ jobs:
           app-name: "minimalwave-blog"
           images: "${{ secrets.REGISTRY_LOGIN_SERVER }}/minimalwave-blog:${{ github.sha }}"
 
-      - name: Run Database Migrations
+      - name: Configure App Service Startup
         run: |
-          echo "Running database migrations using container..."
-          # Create a one-time container to run migrations
-          docker run --rm \
-            -e DATABASE_URL="${{ secrets.DATABASE_URL }}" \
-            -e DJANGO_SETTINGS_MODULE=minimalwave-blog.settings.production \
-            -e SECRET_KEY="${{ secrets.SECRET_KEY }}" \
-            ${{ secrets.REGISTRY_LOGIN_SERVER }}/minimalwave-blog:${{ github.sha }} \
-            python manage.py migrate
-          echo "Migrations completed, app will restart automatically"
+          echo "Setting startup command to include migrations..."
+          az webapp config set --name minimalwave-blog --resource-group minimalwave-blog-rg \
+            --startup-file "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn minimalwave-blog.wsgi:application --bind 0.0.0.0:8000"
 
       - name: Azure Logout
         run: az logout
