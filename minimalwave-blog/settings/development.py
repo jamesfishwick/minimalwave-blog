@@ -1,6 +1,7 @@
 """
 Development settings for local development
 """
+from .base import *
 from pathlib import Path
 import os
 
