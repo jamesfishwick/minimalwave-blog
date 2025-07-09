@@ -234,7 +234,7 @@ class LinkedInCredentials(models.Model):
     state = models.CharField(max_length=128, blank=True, null=True, help_text="OAuth state for CSRF protection")
     
     # Metadata
-    authorized_user = models.CharField(max_length=255, help_text="LinkedIn user who authorized the app")
+    authorized_user = models.CharField(max_length=255, help_text="LinkedIn user who authorized the app", default="pending")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
