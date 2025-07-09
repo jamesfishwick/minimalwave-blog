@@ -45,4 +45,18 @@ class Migration(migrations.Migration):
                 max_length=20
             ),
         ),
+        migrations.AlterField(
+            model_name='linkedinpost',
+            name='linkedin_post_id',
+            field=models.CharField(
+                help_text='LinkedIn post URN',
+                max_length=255,
+                unique=True
+            ),
+        ),
+        migrations.AlterField(
+            model_name='linkedinpost',
+            name='posted_at',
+            field=models.DateTimeField(auto_now_add=True),
+        ),
     ]
