@@ -56,21 +56,22 @@ def entry_published(sender, instance, created, **kwargs):
             is_newly_published = True
     
     if is_newly_published:
-        logger.info(f"Entry '{instance.title}' was published, triggering LinkedIn posting")
+        logger.info(f"Entry '{instance.title}' was published, LinkedIn posting temporarily disabled")
         
-        # Import here to avoid circular imports
-        from .linkedin_service import LinkedInService
-        
-        # Check if LinkedIn posting is enabled for this entry
-        if getattr(instance, 'linkedin_enabled', True):
-            try:
-                linkedin_service = LinkedInService()
-                linkedin_service.post_entry_to_linkedin(instance)
-                logger.info(f"LinkedIn posting initiated for entry: {instance.title}")
-            except Exception as e:
-                logger.error(f"Failed to post entry '{instance.title}' to LinkedIn: {str(e)}")
-        else:
-            logger.info(f"LinkedIn posting disabled for entry: {instance.title}")
+        # TODO: Re-enable LinkedIn posting after migration issue is resolved
+        # # Import here to avoid circular imports
+        # from .linkedin_service import LinkedInService
+        # 
+        # # Check if LinkedIn posting is enabled for this entry
+        # if getattr(instance, 'linkedin_enabled', True):
+        #     try:
+        #         linkedin_service = LinkedInService()
+        #         linkedin_service.post_entry_to_linkedin(instance)
+        #         logger.info(f"LinkedIn posting initiated for entry: {instance.title}")
+        #     except Exception as e:
+        #         logger.error(f"Failed to post entry '{instance.title}' to LinkedIn: {str(e)}")
+        # else:
+        #     logger.info(f"LinkedIn posting disabled for entry: {instance.title}")
 
 
 @receiver(pre_save, sender=Blogmark)
@@ -122,20 +123,21 @@ def blogmark_published(sender, instance, created, **kwargs):
             is_newly_published = True
     
     if is_newly_published:
-        logger.info(f"Blogmark '{instance.title}' was published, checking LinkedIn posting")
+        logger.info(f"Blogmark '{instance.title}' was published, LinkedIn posting temporarily disabled")
         
-        # Import here to avoid circular imports
-        from .linkedin_service import LinkedInService
-        
-        # Check LinkedIn settings for blogmarks (default disabled)
-        try:
-            from .models import LinkedInSettings
-            settings = LinkedInSettings.get_settings()
-            if settings.auto_post_blogmarks:
-                linkedin_service = LinkedInService()
-                linkedin_service.post_blogmark_to_linkedin(instance)
-                logger.info(f"LinkedIn posting initiated for blogmark: {instance.title}")
-            else:
-                logger.info(f"LinkedIn posting disabled for blogmarks")
-        except Exception as e:
-            logger.error(f"Failed to post blogmark '{instance.title}' to LinkedIn: {str(e)}")
+        # TODO: Re-enable LinkedIn posting after migration issue is resolved
+        # # Import here to avoid circular imports
+        # from .linkedin_service import LinkedInService
+        # 
+        # # Check LinkedIn settings for blogmarks (default disabled)
+        # try:
+        #     from .models import LinkedInSettings
+        #     settings = LinkedInSettings.get_settings()
+        #     if settings.auto_post_blogmarks:
+        #         linkedin_service = LinkedInService()
+        #         linkedin_service.post_blogmark_to_linkedin(instance)
+        #         logger.info(f"LinkedIn posting initiated for blogmark: {instance.title}")
+        #     else:
+        #         logger.info(f"LinkedIn posting disabled for blogmarks")
+        # except Exception as e:
+        #     logger.error(f"Failed to post blogmark '{instance.title}' to LinkedIn: {str(e)}")
