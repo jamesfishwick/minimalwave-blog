@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
-from .models import Tag, Entry, Authorship, Blogmark, SiteSettings, LinkedInCredentials, LinkedInPost, LinkedInSettings
+from .models import Tag, Entry, Authorship, Blogmark, SiteSettings  # LinkedInCredentials, LinkedInPost, LinkedInSettings
 
 class AuthorshipInline(admin.TabularInline):
     model = Authorship
@@ -45,10 +45,10 @@ class EntryAdmin(admin.ModelAdmin):
         ('Publishing', {
             'fields': ('status', 'publish_date', 'is_draft', 'tags', 'card_image', 'preview_link')
         }),
-        ('LinkedIn Integration', {
-            'fields': ('linkedin_enabled', 'linkedin_custom_text', 'linkedin_posted'),
-            'classes': ('collapse',)
-        }),
+        # ('LinkedIn Integration', {
+        #     'fields': ('linkedin_enabled', 'linkedin_custom_text', 'linkedin_posted'),
+        #     'classes': ('collapse',)
+        # }),
     )
 
     def get_publish_date(self, obj):
@@ -102,7 +102,7 @@ class BlogmarkAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(LinkedInCredentials)
+# @admin.register(LinkedInCredentials)
 class LinkedInCredentialsAdmin(admin.ModelAdmin):
     """Admin interface for LinkedIn credentials"""
     list_display = ('authorized_user', 'token_expires_at', 'is_token_valid', 'linkedin_actions')
@@ -143,7 +143,7 @@ class LinkedInCredentialsAdmin(admin.ModelAdmin):
     linkedin_actions.short_description = "LinkedIn Actions"
 
 
-@admin.register(LinkedInPost)
+# @admin.register(LinkedInPost)
 class LinkedInPostAdmin(admin.ModelAdmin):
     """Admin interface for LinkedIn posts"""
     list_display = ('entry', 'status', 'posted_at', 'linkedin_link')
@@ -172,7 +172,7 @@ class LinkedInPostAdmin(admin.ModelAdmin):
     linkedin_link.short_description = "LinkedIn Link"
 
 
-@admin.register(LinkedInSettings)
+# @admin.register(LinkedInSettings)
 class LinkedInSettingsAdmin(admin.ModelAdmin):
     """Admin interface for LinkedIn settings"""
     fieldsets = (

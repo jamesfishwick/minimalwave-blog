@@ -115,8 +115,8 @@ class Entry(BaseEntry):
     
     # LinkedIn integration fields
     linkedin_enabled = models.BooleanField(
-        default=True,
-        help_text="Automatically post to LinkedIn when published"
+        default=False,
+        help_text="Automatically post to LinkedIn when published (currently disabled)"
     )
     linkedin_custom_text = models.TextField(
         blank=True,
