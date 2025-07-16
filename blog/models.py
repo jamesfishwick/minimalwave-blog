@@ -142,15 +142,27 @@ class Entry(BaseEntry):
 
     @property
     def summary_rendered(self):
-        return mark_safe(markdown.markdown(self.summary, output_format="html5"))
+        return mark_safe(markdown.markdown(
+            self.summary, 
+            extensions=['extra', 'codehilite'],
+            output_format="html5"
+        ))
 
     @property
     def summary_text(self):
-        return strip_tags(markdown.markdown(self.summary, output_format="html5"))
+        return strip_tags(markdown.markdown(
+            self.summary, 
+            extensions=['extra', 'codehilite'],
+            output_format="html5"
+        ))
 
     @property
     def body_rendered(self):
-        return mark_safe(markdown.markdown(self.body, output_format="html5"))
+        return mark_safe(markdown.markdown(
+            self.body, 
+            extensions=['extra', 'codehilite'],
+            output_format="html5"
+        ))
 
     def get_absolute_url(self):
         return reverse('blog:entry', kwargs={
@@ -199,7 +211,11 @@ class Blogmark(BaseEntry):
 
     @property
     def commentary_rendered(self):
-        return mark_safe(markdown.markdown(self.commentary, output_format="html5"))
+        return mark_safe(markdown.markdown(
+            self.commentary, 
+            extensions=['extra', 'codehilite'],
+            output_format="html5"
+        ))
 
     def get_absolute_url(self):
         return reverse('blog:blogmark', kwargs={

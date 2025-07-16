@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
-from .models import Tag, Entry, Authorship, Blogmark, SiteSettings  # LinkedInCredentials, LinkedInPost, LinkedInSettings
+from .models import Tag, Entry, Authorship, Blogmark, SiteSettings, LinkedInCredentials, LinkedInPost, LinkedInSettings
 
 class AuthorshipInline(admin.TabularInline):
     model = Authorship
@@ -187,3 +187,20 @@ class LinkedInSettingsAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         """Prevent creating multiple instances"""
         return LinkedInSettings.objects.count() == 0
+
+
+# Hidden LinkedIn admin classes to prevent access
+@admin.register(LinkedInCredentials)
+class HiddenLinkedInCredentialsAdmin(admin.ModelAdmin):
+    def has_module_permission(self, request):
+        return False
+
+@admin.register(LinkedInPost)
+class HiddenLinkedInPostAdmin(admin.ModelAdmin):
+    def has_module_permission(self, request):
+        return False
+
+@admin.register(LinkedInSettings)
+class HiddenLinkedInSettingsAdmin(admin.ModelAdmin):
+    def has_module_permission(self, request):
+        return False

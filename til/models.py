@@ -29,11 +29,19 @@ class TIL(models.Model):
 
     @property
     def body_rendered(self):
-        return mark_safe(markdown.markdown(self.body, output_format="html5"))
+        return mark_safe(markdown.markdown(
+            self.body, 
+            extensions=['extra', 'codehilite'],
+            output_format="html5"
+        ))
 
     @property
     def body_text(self):
-        return strip_tags(markdown.markdown(self.body, output_format="html5"))
+        return strip_tags(markdown.markdown(
+            self.body, 
+            extensions=['extra', 'codehilite'],
+            output_format="html5"
+        ))
 
     def get_absolute_url(self):
         return reverse('til:detail', kwargs={
