@@ -1,4 +1,4 @@
-.PHONY: help run migrate shell test dev prod format static clean crontab superuser
+.PHONY: help run migrate shell test test-in-docker dev prod format static clean crontab superuser pre-commit-install
 
 # Set default target
 .DEFAULT_GOAL := help
@@ -28,6 +28,9 @@ shell: ## Start the Django shell
 
 test: ## Run tests
 	python manage.py test
+
+test-in-docker: ## Run tests in Docker (for pre-commit hooks)
+	@docker-compose exec -T web python manage.py test blog.tests.BlogTestCase.test_blog_entry blog.tests.BlogTestCase.test_blogmark blog.tests.BlogTestCase.test_til_detail
 
 dev: ## Start development environment with Docker Compose
 	docker-compose up -d
@@ -65,3 +68,8 @@ publish: ## Publish scheduled content
 
 test-schedule: ## Create test scheduled content (for testing scheduled publishing)
 	./scripts/test_scheduling.sh
+
+pre-commit-install: ## Install pre-commit hooks
+	pre-commit install
+	@echo "$(GREEN)Pre-commit hooks installed successfully!$(NC)"
+	@echo "$(YELLOW)Tests will now run before each commit to ensure code quality$(NC)"
