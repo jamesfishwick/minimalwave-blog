@@ -249,6 +249,27 @@ h1, h2, h3, .site-title {
   text-decoration: none;
   opacity: 0.75;
 }
+
+/* TIL Badge */
+.til-badge {
+  display: inline-block;
+  background: linear-gradient(45deg, var(--accent-color), var(--accent-secondary));
+  color: white;
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: 4px;
+  margin-right: var(--spacing-sm);
+  border: 1px solid rgba(166, 76, 166, 0.3);
+  box-shadow: 0 2px 4px rgba(166, 76, 166, 0.2);
+}
+
+.til-badge::before {
+  content: "🧠 ";
+  margin-right: 2px;
+}
 /* Blog post content */
 .post-content {
   margin-bottom: var(--spacing-xl);

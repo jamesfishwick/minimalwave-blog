@@ -43,6 +43,7 @@
   {% for til in tils %}
 
     <li>
+    <span class="til-badge" style="font-size: 0.6rem; margin-bottom: var(--spacing-xs);">TIL</span>
     <h3><a href="{{ til.get_absolute_url }}">{{ til.title }}</a></h3>
     <div class="post-meta">{{ til.created|date:"F j, Y" }}</div>
     <div class="til-tags">
