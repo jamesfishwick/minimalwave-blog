@@ -53,7 +53,7 @@ class BlogTestCase(TestCase):
             slug='test-til',
             body='This is a test TIL content.',
             created=timezone.now(),
-            status='published',
+            is_draft=False,  # Published TIL
             author=self.user
         )
         self.til.tags.add(self.tag2)

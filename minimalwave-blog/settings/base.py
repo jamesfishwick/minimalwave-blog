@@ -106,6 +106,10 @@ PLAUSIBLE_DOMAIN = os.getenv('PLAUSIBLE_DOMAIN', 'localhost:8000')
 PLAUSIBLE_SCRIPT_URL = os.getenv('PLAUSIBLE_SCRIPT_URL', 'https://plausible.io/js/script.js')
 PLAUSIBLE_ENABLED = os.getenv('PLAUSIBLE_ENABLED', 'False').lower() == 'true'
 
+# Ensure logs directory exists
+log_dir = os.path.join(BASE_DIR, 'logs')
+os.makedirs(log_dir, exist_ok=True)
+
 # Logging configuration
 LOGGING = {
     'version': 1,
@@ -114,7 +118,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs', 'linkedin.log'),
+            'filename': os.path.join(log_dir, 'linkedin.log'),
         },
         'console': {
             'level': 'DEBUG',
