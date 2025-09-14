@@ -26,7 +26,10 @@ migrate: ## Apply database migrations
 shell: ## Start the Django shell
 	python manage.py shell
 
-test: ## Run tests
+test: ## Run tests in Docker
+	docker-compose exec web python manage.py test
+
+test-local: ## Run tests locally (requires local Python environment)
 	python manage.py test
 
 test-in-docker: ## Run tests in Docker (for pre-commit hooks)

@@ -14,6 +14,6 @@ class TILAdmin(admin.ModelAdmin):
             'fields': ('title', 'slug', 'body', 'created', 'author')
         }),
         ('Publishing', {
-            'fields': ('is_draft', 'tags')
+            'fields': ('is_draft', 'tags', 'card_image')
         }),
     )

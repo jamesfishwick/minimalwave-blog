@@ -12,6 +12,9 @@ class TIL(models.Model):
     created = models.DateTimeField(default=timezone.now)
     slug = models.SlugField(unique_for_date='created')
     body = models.TextField()
+    card_image = models.URLField(
+        blank=True, null=True, help_text="URL to image for social media cards"
+    )
     tags = models.ManyToManyField(Tag, blank=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     is_draft = models.BooleanField(
