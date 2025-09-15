@@ -242,9 +242,9 @@ class LinkedInCredentials(models.Model):
     client_secret = models.CharField(max_length=255, help_text="LinkedIn App Client Secret")
     
     # OAuth tokens
-    access_token = models.TextField(help_text="LinkedIn OAuth access token")
+    access_token = models.TextField(blank=True, default='', help_text="LinkedIn OAuth access token")
     refresh_token = models.TextField(blank=True, null=True, help_text="LinkedIn OAuth refresh token")
-    token_expires_at = models.DateTimeField(help_text="When the access token expires")
+    token_expires_at = models.DateTimeField(null=True, blank=True, help_text="When the access token expires")
     
     # OAuth flow state
     state = models.CharField(max_length=128, blank=True, null=True, help_text="OAuth state for CSRF protection")
@@ -284,7 +284,7 @@ class LinkedInPost(models.Model):
     post_url = models.URLField(blank=True, null=True, help_text="URL to the LinkedIn post")
     
     # Post content
-    post_text = models.TextField(help_text="Text content posted to LinkedIn")
+    post_text = models.TextField(blank=True, default='', help_text="Text content posted to LinkedIn")
     
     # Metadata
     posted_at = models.DateTimeField(auto_now_add=True)
