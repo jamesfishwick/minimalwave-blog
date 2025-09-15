@@ -45,6 +45,28 @@ repos:
   # Django-specific checks
   - repo: local
     hooks:
+      - id: check-migrations
+        name: Check for pending Django migrations
+        entry: scripts/check-migrations.sh
+        language: script
+        files: '(models\.py|migrations/.*\.py)$'
+        pass_filenames: false
+        
+      - id: validate-migrations
+        name: Validate migration dependencies
+        entry: scripts/validate-migrations.sh
+        language: script
+        files: 'migrations/.*\.py$'
+        pass_filenames: false
+        
+      - id: test-migrations-clean
+        name: Test migrations in clean environment
+        entry: scripts/test-migrations-clean.sh
+        language: script
+        files: '(models\.py|migrations/.*\.py)$'
+        pass_filenames: false
+        stages: [pre-push]  # Only run on push, not every commit
+
       - id: django-tests
         name: Run Django Tests
         entry: make
