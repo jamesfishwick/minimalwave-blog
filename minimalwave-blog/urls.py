@@ -4,8 +4,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
+    path('admin/linkedin/', include('blog.linkedin_urls')),  # LinkedIn URLs must come before admin
     path('admin/', admin.site.urls),
-    path('admin/linkedin/', include('blog.linkedin_urls')),
     path('til/', include('til.urls')),
     path('', include('blog.urls')),  # Move blog URLs to end to avoid conflicts
 ]
