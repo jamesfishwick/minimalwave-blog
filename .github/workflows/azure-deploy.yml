@@ -31,6 +31,17 @@ jobs:
           poetry check || poetry lock
           poetry install --no-interaction --no-ansi --no-root
 
+      - name: Validate migrations
+        run: |
+          poetry run python manage.py makemigrations --check --dry-run
+          poetry run python manage.py check
+
+      - name: Test migrations in clean environment
+        run: |
+          # Test that migrations can be applied from scratch (like production)
+          poetry run python manage.py migrate --run-syncdb
+          poetry run python manage.py check
+
       - name: Run basic tests
         run: |
           poetry run python manage.py test blog.tests.BlogTestCase.test_blog_entry blog.tests.BlogTestCase.test_blogmark blog.tests.BlogTestCase.test_til_detail
