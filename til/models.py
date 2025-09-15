@@ -21,6 +21,21 @@ class TIL(models.Model):
         default=False,
         help_text="Draft TILs do not show in index pages but can be visited directly if you know the URL",
     )
+    
+    # LinkedIn integration fields
+    linkedin_enabled = models.BooleanField(
+        default=False,
+        help_text="Automatically post to LinkedIn when published"
+    )
+    linkedin_custom_text = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Custom text for LinkedIn post (leave blank to use body)"
+    )
+    linkedin_posted = models.BooleanField(
+        default=False,
+        help_text="Whether this TIL has been posted to LinkedIn"
+    )
 
     class Meta:
         ordering = ['-created']
@@ -53,3 +68,10 @@ class TIL(models.Model):
             'day': self.created.day,
             'slug': self.slug
         })
+    
+    @property
+    def linkedin_post_text(self):
+        """Get the text that should be posted to LinkedIn"""
+        if self.linkedin_custom_text:
+            return self.linkedin_custom_text
+        return self.body_text  # Use the existing body_text property
