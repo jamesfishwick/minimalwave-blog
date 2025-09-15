@@ -35,11 +35,12 @@ test-local: ## Run tests locally (requires local Python environment)
 test-in-docker: ## Run tests in Docker (for pre-commit hooks)
 	@docker-compose exec -T web python manage.py test blog.tests.BlogTestCase.test_blog_entry blog.tests.BlogTestCase.test_blogmark blog.tests.BlogTestCase.test_til_detail
 
-dev: ## Start development environment with Docker Compose
-	docker-compose up -d
+dev: ## Start development environment with Docker Compose (with source code mounting)
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 	@echo "$(GREEN)Development environment is running at http://localhost:8000$(NC)"
+	@echo "$(GREEN)Source code is mounted for live changes and migration sync$(NC)"
 	@echo "$(YELLOW)Press Ctrl+C to stop following logs (containers will keep running)$(NC)"
-	docker-compose logs -f
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml logs -f
 
 prod: ## Start production environment with Docker Compose
 	docker-compose -f docker-compose.prod.yml up -d
@@ -79,8 +80,10 @@ pre-commit-install: ## Install pre-commit hooks
 
 # Safe Migration Workflow
 makemigrations: ## Create new migrations (with validation)
+	@echo "$(YELLOW)Checking development environment...$(NC)"
+	./scripts/enforce-dev-environment.sh
 	@echo "$(YELLOW)Creating migrations...$(NC)"
-	python manage.py makemigrations
+	docker-compose exec web python manage.py makemigrations
 	@echo "$(BLUE)Validating new migrations...$(NC)"
 	./scripts/validate-migrations.sh
 	@echo "$(GREEN)Migrations created and validated successfully!$(NC)"

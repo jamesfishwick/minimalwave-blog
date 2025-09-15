@@ -66,6 +66,13 @@ repos:
         files: '(models\.py|migrations/.*\.py)$'
         pass_filenames: false
         stages: [pre-push]  # Only run on push, not every commit
+        
+      - id: validate-migration-dependencies
+        name: Validate migration dependency graph
+        entry: scripts/validate-migration-dependencies.sh
+        language: script
+        files: 'migrations/.*\.py$'
+        pass_filenames: false
 
       - id: django-tests
         name: Run Django Tests
