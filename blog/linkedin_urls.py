@@ -11,4 +11,5 @@ urlpatterns = [
     path('post-entry/', linkedin_views.linkedin_post_entry, name='post_entry'),
     path('settings/', linkedin_views.linkedin_settings_view, name='settings'),
     path('disconnect/', linkedin_views.linkedin_disconnect, name='disconnect'),
+    path('site-debug/', linkedin_views.site_debug, name='site_debug'),
 ]

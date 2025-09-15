@@ -252,3 +252,47 @@ def linkedin_disconnect(request):
         logger.error(f"LinkedIn disconnect error: {str(e)}")
         messages.error(request, f"Error disconnecting LinkedIn: {str(e)}")
         return redirect('/admin/')
+
+
+@staff_member_required
+def site_debug(request):
+    """
+    Debug Django Site configuration and optionally fix it.
+    """
+    try:
+        from django.contrib.sites.models import Site
+        
+        # Get current site info
+        current_site = Site.objects.get_current()
+        all_sites = list(Site.objects.all().values('id', 'domain', 'name'))
+        
+        # Check if fix is requested
+        if request.method == 'POST' and 'fix_domain' in request.POST:
+            if current_site.domain != 'jamesfishwick.com':
+                old_domain = current_site.domain
+                current_site.domain = 'jamesfishwick.com'
+                current_site.name = 'James Fishwick Blog'
+                current_site.save()
+                messages.success(request, f"✅ Site domain updated: {old_domain} → {current_site.domain}")
+            else:
+                messages.info(request, "✅ Site domain is already correct")
+            
+            return redirect(request.path)
+        
+        return JsonResponse({
+            'current_site': {
+                'id': current_site.id,
+                'domain': current_site.domain,
+                'name': current_site.name
+            },
+            'all_sites': all_sites,
+            'fix_needed': current_site.domain != 'jamesfishwick.com',
+            'linkedin_redirect_uri': f"https://{current_site.domain}/admin/linkedin/auth/callback/",
+            'instructions': {
+                'fix_domain': 'POST to this URL with fix_domain=true to fix the domain',
+                'current_oauth_url': f"Uses https://{current_site.domain}/admin/linkedin/auth/callback/ as redirect"
+            }
+        }, indent=2)
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
