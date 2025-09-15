@@ -6,10 +6,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("til", "0002_add_card_image_fake"),
+        ("til", "0001_initial"),
     ]
 
     operations = [
+        migrations.AddField(
+            model_name="til",
+            name="card_image",
+            field=models.URLField(
+                blank=True, 
+                null=True, 
+                help_text="URL to image for social media cards"
+            ),
+        ),
         migrations.AddField(
             model_name="til",
             name="linkedin_custom_text",
