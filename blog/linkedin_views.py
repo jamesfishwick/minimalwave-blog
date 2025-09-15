@@ -292,7 +292,7 @@ def site_debug(request):
                 'fix_domain': 'POST to this URL with fix_domain=true to fix the domain',
                 'current_oauth_url': f"Uses https://{current_site.domain}/admin/linkedin/auth/callback/ as redirect"
             }
-        }, indent=2)
+        }, json_dumps_params={'indent': 2})
         
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
