@@ -166,10 +166,47 @@ Ensure to keep the documentation updated with any changes in commands or archite
 
 ### Database Migration Best Practices
 
+#### Manual Safety Checks
 - **ALWAYS check current state before running migrations**: Use `python manage.py showmigrations` to see what migrations exist and their status
 - **ONLY run migrations when needed**: Check if there are pending migrations before running `makemigrations` and `migrate`
 - **Don't blindly follow setup instructions**: Assess the current state of the project before executing database operations
 - **Verify migration necessity**: If git status shows migration files already exist, migrations have likely already been created
+
+#### Automated Safety Workflow (Recommended)
+The project now includes automated migration safety measures to prevent CI/CD failures:
+
+**Pre-commit Hooks**: Automatically validate migrations before every commit
+```bash
+# Set up the complete safety workflow
+make setup-pre-commit
+```
+
+**Safe Migration Commands**: Use these instead of raw Django commands
+```bash
+# Create migrations with automatic validation
+make makemigrations
+
+# Apply migrations with clean environment testing
+make migrate-safe
+
+# Validate existing migrations
+make validate-migrations
+
+# Test migrations in CI-like environment
+make test-migrations-clean
+```
+
+**What the Safety System Prevents**:
+- Empty/fake migrations that don't create actual database columns
+- Migration dependency conflicts
+- Migrations that work locally but fail in CI/CD
+- Inconsistent database state between environments
+
+**How It Works**:
+1. Pre-commit hooks run migration validation before each commit
+2. Scripts check for empty operations, dependency conflicts, and clean environment compatibility
+3. Clean environment testing simulates CI/CD conditions locally
+4. Validation prevents problematic migrations from reaching production
 
 # Important Troubleshooting Guidelines
 
