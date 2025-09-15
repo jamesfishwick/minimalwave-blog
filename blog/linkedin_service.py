@@ -530,3 +530,60 @@ class LinkedInService:
                 summary['error_types']['other'] = summary['error_types'].get('other', 0) + 1
         
         return summary
+
+    def post_til_to_linkedin(self, til):
+        """
+        Post a TIL entry to LinkedIn.
+        
+        Args:
+            til: TIL model instance
+            
+        Returns:
+            dict: LinkedIn post response
+        """
+        if not self.is_authenticated():
+            raise LinkedInAPIException("LinkedIn not authenticated")
+        
+        # Get post text
+        post_text = self._get_til_post_text(til)
+        
+        # Create the post
+        post_data = {
+            "author": "urn:li:person:" + self._get_user_id(),
+            "lifecycleState": "PUBLISHED",
+            "specificContent": {
+                "com.linkedin.ugc.ShareContent": {
+                    "shareCommentary": {
+                        "text": post_text
+                    },
+                    "shareMediaCategory": "NONE"
+                }
+            },
+            "visibility": {
+                "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"
+            }
+        }
+        
+        # Make the API request with retry logic
+        return self._post_with_retry(post_data, til, content_type="TIL")
+
+    def _get_til_post_text(self, til):
+        """Get the text to post for a TIL entry"""
+        settings = self._get_settings()
+        
+        # Use custom text if provided, otherwise use body text
+        if hasattr(til, 'linkedin_custom_text') and til.linkedin_custom_text:
+            post_text = til.linkedin_custom_text
+        else:
+            # Prefix with "TIL: " to indicate it's a Today I Learned post
+            post_text = f"TIL: {til.body_text}"
+        
+        # Add URL if enabled
+        if settings and settings.include_url:
+            from django.contrib.sites.models import Site
+            site = Site.objects.get_current()
+            til_url = f"https://{site.domain}{til.get_absolute_url()}"
+            url_text = settings.url_template.format(url=til_url)
+            post_text = f"{post_text}\n\n{url_text}"
+        
+        return post_text
