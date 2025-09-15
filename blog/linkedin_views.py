@@ -42,7 +42,9 @@ def linkedin_auth_start(request):
         
         # Generate redirect URI
         site = Site.objects.get_current()
-        redirect_uri = f"https://{site.domain}/admin/linkedin/callback/"
+        # Use http for localhost, https for production
+        protocol = 'http' if 'localhost' in site.domain else 'https'
+        redirect_uri = f"{protocol}://{site.domain}/admin/linkedin/auth/callback/"
         
         # Start OAuth flow
         linkedin_service = LinkedInService()
@@ -78,7 +80,9 @@ def linkedin_auth_callback(request):
         
         # Generate redirect URI (same as start)
         site = Site.objects.get_current()
-        redirect_uri = f"https://{site.domain}/admin/linkedin/callback/"
+        # Use http for localhost, https for production
+        protocol = 'http' if 'localhost' in site.domain else 'https'
+        redirect_uri = f"{protocol}://{site.domain}/admin/linkedin/auth/callback/"
         
         # Exchange code for token
         linkedin_service = LinkedInService()
@@ -202,20 +206,24 @@ def linkedin_settings_view(request):
         linkedin_service = LinkedInService()
         settings_obj = LinkedInSettings.get_settings()
         
-        context = {
-            'linkedin_settings': settings_obj,
+        data = {
+            'linkedin_settings': {
+                'include_url': settings_obj.include_url,
+                'url_template': settings_obj.url_template,
+                'auto_post_blogmarks': settings_obj.auto_post_blogmarks,
+            },
             'is_authenticated': linkedin_service.is_authenticated(),
-            'credentials': linkedin_service.credentials,
+            'credentials_exist': linkedin_service.credentials is not None,
+            'authorized_user': linkedin_service.credentials.authorized_user if linkedin_service.credentials else None,
             'client_id_configured': bool(settings.LINKEDIN_CLIENT_ID),
             'client_secret_configured': bool(settings.LINKEDIN_CLIENT_SECRET),
         }
         
-        return render(request, 'admin/linkedin_settings.html', context)
+        return JsonResponse(data)
         
     except Exception as e:
         logger.error(f"LinkedIn settings view error: {str(e)}")
-        messages.error(request, f"Error loading LinkedIn settings: {str(e)}")
-        return redirect('/admin/')
+        return JsonResponse({'error': str(e)}, status=500)
 
 
 @staff_member_required
