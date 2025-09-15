@@ -56,24 +56,21 @@ def entry_published(sender, instance, created, **kwargs):
             is_newly_published = True
     
     if is_newly_published:
-        logger.info(f"Entry '{instance.title}' was published, LinkedIn posting disabled")
+        logger.info(f"Entry '{instance.title}' was published")
         
-        # LinkedIn integration disabled due to configuration issues
-        # Re-enable after LinkedIn is properly configured
-        # 
-        # # Import here to avoid circular imports
-        # from .linkedin_service import LinkedInService
-        # 
-        # # Check if LinkedIn posting is enabled for this entry
-        # if getattr(instance, 'linkedin_enabled', True):
-        #     try:
-        #         linkedin_service = LinkedInService()
-        #         linkedin_service.post_entry_to_linkedin(instance)
-        #         logger.info(f"LinkedIn posting initiated for entry: {instance.title}")
-        #     except Exception as e:
-        #         logger.error(f"Failed to post entry '{instance.title}' to LinkedIn: {str(e)}")
-        # else:
-        #     logger.info(f"LinkedIn posting disabled for entry: {instance.title}")
+        # Import here to avoid circular imports
+        from .linkedin_service import LinkedInService
+        
+        # Check if LinkedIn posting is enabled for this entry
+        if getattr(instance, 'linkedin_enabled', False):
+            try:
+                linkedin_service = LinkedInService()
+                linkedin_service.post_entry_to_linkedin(instance)
+                logger.info(f"LinkedIn posting initiated for entry: {instance.title}")
+            except Exception as e:
+                logger.error(f"Failed to post entry '{instance.title}' to LinkedIn: {str(e)}")
+        else:
+            logger.info(f"LinkedIn posting disabled for entry: {instance.title}")
 
 
 @receiver(pre_save, sender=Blogmark)
@@ -125,23 +122,80 @@ def blogmark_published(sender, instance, created, **kwargs):
             is_newly_published = True
     
     if is_newly_published:
-        logger.info(f"Blogmark '{instance.title}' was published, LinkedIn posting disabled")
+        logger.info(f"Blogmark '{instance.title}' was published")
         
-        # LinkedIn integration disabled due to configuration issues
-        # Re-enable after LinkedIn is properly configured
-        # 
-        # # Import here to avoid circular imports
-        # from .linkedin_service import LinkedInService
-        # 
-        # # Check LinkedIn settings for blogmarks (default disabled)
-        # try:
-        #     from .models import LinkedInSettings
-        #     settings = LinkedInSettings.get_settings()
-        #     if settings.auto_post_blogmarks:
-        #         linkedin_service = LinkedInService()
-        #         linkedin_service.post_blogmark_to_linkedin(instance)
-        #         logger.info(f"LinkedIn posting initiated for blogmark: {instance.title}")
-        #     else:
-        #         logger.info(f"LinkedIn posting disabled for blogmarks")
-        # except Exception as e:
-        #     logger.error(f"Failed to post blogmark '{instance.title}' to LinkedIn: {str(e)}")
+        # Import here to avoid circular imports
+        from .linkedin_service import LinkedInService
+        
+        # Check LinkedIn settings for blogmarks (default disabled)
+        try:
+            from .models import LinkedInSettings
+            settings = LinkedInSettings.get_settings()
+            if settings.auto_post_blogmarks:
+                linkedin_service = LinkedInService()
+                linkedin_service.post_blogmark_to_linkedin(instance)
+                logger.info(f"LinkedIn posting initiated for blogmark: {instance.title}")
+            else:
+                logger.info(f"LinkedIn posting disabled for blogmarks")
+        except Exception as e:
+            logger.error(f"Failed to post blogmark '{instance.title}' to LinkedIn: {str(e)}")
+
+
+# TIL LinkedIn Integration Signals
+@receiver(pre_save, sender='til.TIL')
+def til_pre_save(sender, instance, **kwargs):
+    """
+    Track status changes before save to detect when TILs are published.
+    Note: TIL doesn't have status field, so we track is_draft changes.
+    """
+    if instance.pk:
+        try:
+            TIL = sender
+            old_instance = TIL.objects.get(pk=instance.pk)
+            instance._old_is_draft = old_instance.is_draft
+        except TIL.DoesNotExist:
+            instance._old_is_draft = None
+    else:
+        instance._old_is_draft = None
+
+
+@receiver(post_save, sender='til.TIL')
+def til_published(sender, instance, created, **kwargs):
+    """
+    Detect when a TIL is published and trigger LinkedIn posting.
+    
+    This signal fires when:
+    1. TIL is created as published (is_draft=False)
+    2. TIL is_draft changes from True to False
+    """
+    if instance.is_draft:
+        return
+    
+    # Check if this is a new publication
+    is_newly_published = False
+    
+    if created:
+        # New TIL created as published
+        is_newly_published = True
+    else:
+        # Check if is_draft changed from True to False
+        old_is_draft = getattr(instance, '_old_is_draft', None)
+        if old_is_draft and not instance.is_draft:
+            is_newly_published = True
+    
+    if is_newly_published:
+        logger.info(f"TIL '{instance.title}' was published")
+        
+        # Import here to avoid circular imports
+        from .linkedin_service import LinkedInService
+        
+        # Check if LinkedIn posting is enabled for this TIL
+        if getattr(instance, 'linkedin_enabled', False):
+            try:
+                linkedin_service = LinkedInService()
+                linkedin_service.post_til_to_linkedin(instance)
+                logger.info(f"LinkedIn posting initiated for TIL: {instance.title}")
+            except Exception as e:
+                logger.error(f"Failed to post TIL '{instance.title}' to LinkedIn: {str(e)}")
+        else:
+            logger.info(f"LinkedIn posting disabled for TIL: {instance.title}")
