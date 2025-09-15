@@ -11,8 +11,12 @@ services:
       - minimalwave-blog-data:/app/data
       - ./media:/app/media
       - ./static:/app/static
+    env_file:
+      - .env
     environment:
       - DJANGO_SETTINGS_MODULE=minimalwave-blog.settings.development
+      # Override LinkedIn redirect URI for local development
+      - LINKEDIN_REDIRECT_URI=http://localhost:8000/admin/linkedin/auth/callback/
       # For creating a superuser on first run, uncomment and set these:
       # - DJANGO_SUPERUSER_USERNAME=admin
       # - DJANGO_SUPERUSER_PASSWORD=adminpassword
