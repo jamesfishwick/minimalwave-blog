@@ -1,4 +1,4 @@
-.PHONY: help run migrate shell test test-in-docker dev prod format static clean crontab superuser pre-commit-install
+.PHONY: help run migrate shell test test-in-docker dev prod format static clean crontab superuser pre-commit-install makemigrations migrate-safe validate-migrations test-migrations-clean setup-pre-commit
 
 # Set default target
 .DEFAULT_GOAL := help
@@ -76,3 +76,40 @@ pre-commit-install: ## Install pre-commit hooks
 	pre-commit install
 	@echo "$(GREEN)Pre-commit hooks installed successfully!$(NC)"
 	@echo "$(YELLOW)Tests will now run before each commit to ensure code quality$(NC)"
+
+# Safe Migration Workflow
+makemigrations: ## Create new migrations (with validation)
+	@echo "$(YELLOW)Creating migrations...$(NC)"
+	python manage.py makemigrations
+	@echo "$(BLUE)Validating new migrations...$(NC)"
+	./scripts/validate-migrations.sh
+	@echo "$(GREEN)Migrations created and validated successfully!$(NC)"
+
+migrate-safe: ## Apply migrations with validation and clean environment testing
+	@echo "$(YELLOW)Running migration safety checks...$(NC)"
+	./scripts/validate-migrations.sh
+	@echo "$(BLUE)Testing migrations in clean environment...$(NC)"
+	./scripts/test-migrations-clean.sh
+	@echo "$(GREEN)Migrations applied successfully!$(NC)"
+
+validate-migrations: ## Validate existing migrations for issues
+	@echo "$(BLUE)Validating Django migration dependencies...$(NC)"
+	./scripts/validate-migrations.sh
+
+test-migrations-clean: ## Test migrations in a clean environment (like CI/CD)
+	@echo "$(YELLOW)Testing migrations in clean environment...$(NC)"
+	./scripts/test-migrations-clean.sh
+
+setup-pre-commit: ## Set up complete pre-commit environment for migration safety
+	@echo "$(BLUE)Setting up pre-commit hooks for migration safety...$(NC)"
+	pre-commit install
+	@echo "$(GREEN)Pre-commit hooks installed!$(NC)"
+	@echo "$(YELLOW)Making validation scripts executable...$(NC)"
+	chmod +x scripts/check-migrations.sh scripts/validate-migrations.sh scripts/test-migrations-clean.sh
+	@echo "$(GREEN)Migration safety workflow is now active!$(NC)"
+	@echo ""
+	@echo "$(BLUE)Safe workflow commands:$(NC)"
+	@echo "  $(YELLOW)make makemigrations$(NC)     - Create migrations with validation"
+	@echo "  $(YELLOW)make migrate-safe$(NC)       - Apply migrations safely"
+	@echo "  $(YELLOW)make validate-migrations$(NC) - Check existing migrations"
+	@echo "  $(YELLOW)make test-migrations-clean$(NC) - Test in clean environment"
