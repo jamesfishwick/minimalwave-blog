@@ -90,3 +90,4 @@ poetry.toml
 # Data directory (except for specific files we want to keep)
 data/*
 !data/.gitkeep
+deploy/docker/Pictures/
