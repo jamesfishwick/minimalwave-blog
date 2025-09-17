@@ -74,7 +74,7 @@ jobs:
         run: |
           # Set environment to production for the build
           docker buildx build --platform linux/amd64 -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/minimalwave-blog:${{ github.sha }} \
-                      --build-arg DJANGO_SETTINGS_MODULE=minimalwave-blog.settings.production .
+                      --build-arg DJANGO_SETTINGS_MODULE=minimalwave-blog.settings.production -f deploy/docker/Dockerfile .
           docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/minimalwave-blog:${{ github.sha }}
 
       - name: Deploy to Azure App Service
