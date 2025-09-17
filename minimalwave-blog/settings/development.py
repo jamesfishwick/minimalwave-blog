@@ -36,8 +36,10 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
 
     # Local apps
+    'core',  # Core models (taxonomy, etc.)
     'blog',
     'til',
+    'linkedin',
 ]
 
 MIDDLEWARE = [

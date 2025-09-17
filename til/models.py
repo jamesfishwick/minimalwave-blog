@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.utils.html import strip_tags, mark_safe
 import markdown
 from django.urls import reverse
-from blog.models import Tag
+# Tag import removed - using core.EnhancedTag
 
 class TIL(models.Model):
     """Today I Learned model for short-form content organized by topic"""
@@ -15,7 +15,7 @@ class TIL(models.Model):
     card_image = models.URLField(
         blank=True, null=True, help_text="URL to image for social media cards"
     )
-    tags = models.ManyToManyField(Tag, blank=True)
+    tags = models.ManyToManyField('core.EnhancedTag', blank=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     is_draft = models.BooleanField(
         default=False,

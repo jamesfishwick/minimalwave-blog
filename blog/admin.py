@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
-from .models import Tag, Entry, Authorship, Blogmark, SiteSettings, LinkedInCredentials, LinkedInPost, LinkedInSettings
+from .models import Entry, Authorship, Blogmark, SiteSettings
+# Tags are now in the core app
 
 class AuthorshipInline(admin.TabularInline):
     model = Authorship
@@ -23,11 +24,7 @@ class SiteSettingsAdmin(admin.ModelAdmin):
         """Prevent creating multiple instances"""
         return SiteSettings.objects.count() == 0
 
-@admin.register(Tag)
-class TagAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug')
-    prepopulated_fields = {'slug': ('name',)}
-    search_fields = ('name',)
+# TagAdmin moved to core app
 
 @admin.register(Entry)
 class EntryAdmin(admin.ModelAdmin):
@@ -102,105 +99,4 @@ class BlogmarkAdmin(admin.ModelAdmin):
     )
 
 
-# @admin.register(LinkedInCredentials)
-class LinkedInCredentialsAdmin(admin.ModelAdmin):
-    """Admin interface for LinkedIn credentials"""
-    list_display = ('authorized_user', 'token_expires_at', 'is_token_valid', 'linkedin_actions')
-    readonly_fields = ('access_token', 'refresh_token', 'authorized_user', 'created_at', 'updated_at', 'linkedin_actions')
-    
-    fieldsets = (
-        ('App Configuration', {
-            'fields': ('client_id', 'client_secret'),
-        }),
-        ('Authentication Status', {
-            'fields': ('authorized_user', 'token_expires_at', 'is_token_valid'),
-        }),
-        ('Actions', {
-            'fields': ('linkedin_actions',),
-        }),
-        ('Advanced', {
-            'fields': ('access_token', 'refresh_token', 'state', 'created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
-    
-    def has_add_permission(self, request):
-        """Prevent creating multiple instances"""
-        return LinkedInCredentials.objects.count() == 0
-    
-    def linkedin_actions(self, obj):
-        """Provide action buttons for LinkedIn integration"""
-        if obj.is_token_valid:
-            return format_html(
-                '<a href="/admin/linkedin/status/" class="button">Check Status</a> '
-                '<a href="/admin/linkedin/test/" class="button">Test Post</a> '
-                '<a href="/admin/linkedin/disconnect/" class="button" onclick="return confirm(\'Are you sure?\')">Disconnect</a>'
-            )
-        else:
-            return format_html(
-                '<a href="/admin/linkedin/auth/start/" class="button default">Connect LinkedIn</a>'
-            )
-    linkedin_actions.short_description = "LinkedIn Actions"
-
-
-# @admin.register(LinkedInPost)
-class LinkedInPostAdmin(admin.ModelAdmin):
-    """Admin interface for LinkedIn posts"""
-    list_display = ('entry', 'status', 'posted_at', 'linkedin_link')
-    list_filter = ('status', 'posted_at')
-    search_fields = ('entry__title', 'post_text')
-    readonly_fields = ('linkedin_post_id', 'post_url', 'post_text', 'posted_at', 'linkedin_link')
-    
-    fieldsets = (
-        (None, {
-            'fields': ('entry', 'status', 'posted_at')
-        }),
-        ('LinkedIn Details', {
-            'fields': ('linkedin_post_id', 'post_url', 'linkedin_link', 'post_text')
-        }),
-        ('Error Information', {
-            'fields': ('error_message',),
-            'classes': ('collapse',)
-        }),
-    )
-    
-    def linkedin_link(self, obj):
-        """Provide link to LinkedIn post"""
-        if obj.post_url:
-            return format_html('<a href="{}" target="_blank">View on LinkedIn</a>', obj.post_url)
-        return "No URL available"
-    linkedin_link.short_description = "LinkedIn Link"
-
-
-# @admin.register(LinkedInSettings)
-class LinkedInSettingsAdmin(admin.ModelAdmin):
-    """Admin interface for LinkedIn settings"""
-    fieldsets = (
-        ('Global Settings', {
-            'fields': ('enabled', 'include_url', 'url_template'),
-        }),
-        ('Auto-posting Settings', {
-            'fields': ('auto_post_entries', 'auto_post_blogmarks'),
-        }),
-    )
-    
-    def has_add_permission(self, request):
-        """Prevent creating multiple instances"""
-        return LinkedInSettings.objects.count() == 0
-
-
-# Hidden LinkedIn admin classes to prevent access
-@admin.register(LinkedInCredentials)
-class HiddenLinkedInCredentialsAdmin(admin.ModelAdmin):
-    def has_module_permission(self, request):
-        return False
-
-@admin.register(LinkedInPost)
-class HiddenLinkedInPostAdmin(admin.ModelAdmin):
-    def has_module_permission(self, request):
-        return False
-
-@admin.register(LinkedInSettings)
-class HiddenLinkedInSettingsAdmin(admin.ModelAdmin):
-    def has_module_permission(self, request):
-        return False
+# LinkedIn admin classes moved to linkedin app

@@ -3,12 +3,12 @@ from django.contrib.syndication.views import Feed
 from django.utils.feedgenerator import Atom1Feed
 from django.db import models
 from .models import TIL
-from blog.models import Tag
+from core.models import EnhancedTag
 from blog.views import get_month_number, get_month_name
 
 def index(request):
     tils = TIL.objects.filter(is_draft=False).order_by("-created")
-    tags = Tag.objects.all()
+    tags = EnhancedTag.objects.filter(is_active=True)
     return render(
         request,
         "til/index.html",
@@ -30,7 +30,7 @@ def detail(request, year, month, day, slug):
     )
 
 def tag(request, slug):
-    tag = get_object_or_404(Tag, slug=slug)
+    tag = get_object_or_404(EnhancedTag, slug=slug)
     tils = TIL.objects.filter(tags=tag, is_draft=False).order_by("-created")
     return render(
         request,

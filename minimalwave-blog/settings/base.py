@@ -20,8 +20,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.humanize',
+    'core',  # Core models (taxonomy, etc.)
     'blog',
     'til',
+    'linkedin',
 ]
 
 MIDDLEWARE = [
@@ -127,7 +129,7 @@ LOGGING = {
         },
     },
     'loggers': {
-        'blog.linkedin_service': {
+        'linkedin.linkedin_service': {
             'handlers': ['file', 'console'],
             'level': 'INFO',
             'propagate': True,
