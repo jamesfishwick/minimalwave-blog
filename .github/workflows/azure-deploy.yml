@@ -50,13 +50,13 @@ jobs:
         run: |
           # Use CI settings for in-memory database
           export DJANGO_SETTINGS_MODULE=minimalwave-blog.settings.ci
-          poetry run python manage.py test blog.tests.BlogTestCase.test_blog_entry blog.tests.BlogTestCase.test_blogmark blog.tests.BlogTestCase.test_til_detail
+          poetry run python manage.py test tests.test_blog.BlogTestCase.test_blog_entry tests.test_blog.BlogTestCase.test_blogmark tests.test_blog.BlogTestCase.test_til_detail
 
       - name: Validate templates
         run: |
           # Use CI settings for in-memory database
           export DJANGO_SETTINGS_MODULE=minimalwave-blog.settings.ci
-          poetry run python manage.py test blog.tests.TemplateValidationTests.test_all_templates_compile
+          poetry run python manage.py test tests.test_blog.TemplateValidationTests.test_all_templates_compile
 
       - name: Azure Login
         uses: azure/login@v1

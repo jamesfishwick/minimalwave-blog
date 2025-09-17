@@ -1,7 +1,8 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth.models import User
-from blog.models import Entry, Tag, Blogmark
+from blog.models import Entry, Blogmark
+from core.models import EnhancedTag
 from til.models import TIL
 from django.utils import timezone
 from django.template import engines
@@ -20,8 +21,8 @@ class BlogTestCase(TestCase):
         )
         
         # Create test tags
-        self.tag1 = Tag.objects.create(name='Django', slug='django')
-        self.tag2 = Tag.objects.create(name='Python', slug='python')
+        self.tag1 = EnhancedTag.objects.create(name='Django', slug='django')
+        self.tag2 = EnhancedTag.objects.create(name='Python', slug='python')
         
         # Create test blog entry
         self.entry = Entry.objects.create(

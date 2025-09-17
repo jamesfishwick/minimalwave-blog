@@ -59,7 +59,7 @@ def entry_published(sender, instance, created, **kwargs):
         logger.info(f"Entry '{instance.title}' was published")
         
         # Import here to avoid circular imports
-        from .linkedin_service import LinkedInService
+        from linkedin.linkedin_service import LinkedInService
         
         # Check if LinkedIn posting is enabled for this entry
         if getattr(instance, 'linkedin_enabled', False):
@@ -125,7 +125,7 @@ def blogmark_published(sender, instance, created, **kwargs):
         logger.info(f"Blogmark '{instance.title}' was published")
         
         # Import here to avoid circular imports
-        from .linkedin_service import LinkedInService
+        from linkedin.linkedin_service import LinkedInService
         
         # Check LinkedIn settings for blogmarks (default disabled)
         try:
@@ -187,7 +187,7 @@ def til_published(sender, instance, created, **kwargs):
         logger.info(f"TIL '{instance.title}' was published")
         
         # Import here to avoid circular imports
-        from .linkedin_service import LinkedInService
+        from linkedin.linkedin_service import LinkedInService
         
         # Check if LinkedIn posting is enabled for this TIL
         if getattr(instance, 'linkedin_enabled', False):
