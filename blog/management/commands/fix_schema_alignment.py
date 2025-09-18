@@ -114,6 +114,12 @@ class Command(BaseCommand):
 
                     if not options['dry_run']:
                         try:
+                            # Special handling for entry tags - need to migrate data first
+                            if table == 'blog_entry_tags' and old_col == 'tag_id':
+                                self.stdout.write("   🔄 Running tag data migration first...")
+                                from django.core.management import call_command
+                                call_command('migrate_tag_data')
+
                             # Drop foreign key constraint first
                             cursor.execute(f"""
                                 ALTER TABLE {table}
@@ -138,6 +144,9 @@ class Command(BaseCommand):
 
                         except Exception as e:
                             self.stdout.write(f"   ❌ Error renaming {table}.{old_col}: {e}")
+                            if "violates foreign key constraint" in str(e):
+                                self.stdout.write("   💡 This indicates tag data needs to be migrated first")
+                                self.stdout.write("   💡 Run: python manage.py migrate_tag_data")
 
                     else:
                         self.stdout.write(f"   🔍 Would rename {table}.{old_col} to {new_col}")
