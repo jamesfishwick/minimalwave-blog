@@ -78,8 +78,29 @@ class Command(BaseCommand):
                     fixes_needed.append(('blog_blogmark_tags', 'tag_id', 'enhancedtag_id'))
                     self.stdout.write("   🔍 Found: tag_id should be enhancedtag_id in blogmark_tags")
 
+            # Check core_enhancedtag table structure
+            self.stdout.write("\n3. Checking core_enhancedtag table...")
+            cursor.execute("""
+                SELECT column_name, data_type
+                FROM information_schema.columns
+                WHERE table_schema = 'public'
+                AND table_name = 'core_enhancedtag'
+                ORDER BY ordinal_position
+            """)
+            core_columns = cursor.fetchall()
+
+            if core_columns:
+                self.stdout.write("   Current columns:")
+                for col_name, col_type in core_columns:
+                    self.stdout.write(f"     - {col_name} ({col_type})")
+
+                actual_core_columns = [col[0] for col in core_columns]
+                if 'category' in actual_core_columns and 'category_id' not in actual_core_columns:
+                    fixes_needed.append(('core_enhancedtag', 'category', 'category_id'))
+                    self.stdout.write("   🔍 Found: category should be category_id in core_enhancedtag")
+
             # Check constraints that might need updating
-            self.stdout.write("\n3. Checking foreign key constraints...")
+            self.stdout.write("\n4. Checking foreign key constraints...")
             cursor.execute("""
                 SELECT tc.constraint_name, tc.table_name, kcu.column_name,
                        ccu.table_name AS foreign_table_name,
@@ -92,7 +113,7 @@ class Command(BaseCommand):
                   ON ccu.constraint_name = tc.constraint_name
                   AND ccu.table_schema = tc.table_schema
                 WHERE tc.constraint_type = 'FOREIGN KEY'
-                AND tc.table_name IN ('blog_entry_tags', 'blog_blogmark_tags')
+                AND tc.table_name IN ('blog_entry_tags', 'blog_blogmark_tags', 'core_enhancedtag')
             """)
             constraints = cursor.fetchall()
 
@@ -133,12 +154,22 @@ class Command(BaseCommand):
                             """)
 
                             # Recreate foreign key constraint with new name
-                            cursor.execute(f"""
-                                ALTER TABLE {table}
-                                ADD CONSTRAINT {table}_{new_col}_fkey
-                                FOREIGN KEY ({new_col}) REFERENCES core_enhancedtag(id)
-                                DEFERRABLE INITIALLY DEFERRED
-                            """)
+                            if table == 'core_enhancedtag':
+                                # For core_enhancedtag category->category_id fix
+                                cursor.execute(f"""
+                                    ALTER TABLE {table}
+                                    ADD CONSTRAINT {table}_{new_col}_fkey
+                                    FOREIGN KEY ({new_col}) REFERENCES core_category(id)
+                                    DEFERRABLE INITIALLY DEFERRED
+                                """)
+                            else:
+                                # For tag tables referring to core_enhancedtag
+                                cursor.execute(f"""
+                                    ALTER TABLE {table}
+                                    ADD CONSTRAINT {table}_{new_col}_fkey
+                                    FOREIGN KEY ({new_col}) REFERENCES core_enhancedtag(id)
+                                    DEFERRABLE INITIALLY DEFERRED
+                                """)
 
                             self.stdout.write(f"   ✅ Renamed {table}.{old_col} to {new_col}")
 
