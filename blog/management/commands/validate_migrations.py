@@ -33,7 +33,8 @@ class Command(BaseCommand):
         self.stdout.write("1. Checking migration dependencies...")
         for (app_label, migration_name), migration in loader.disk_migrations.items():
             for dep_app, dep_migration in migration.dependencies:
-                if dep_app == '__first__':
+                # Skip special dependency markers
+                if dep_app == '__first__' or dep_migration == '__first__':
                     continue
 
                 dep_key = (dep_app, dep_migration)
@@ -61,14 +62,19 @@ class Command(BaseCommand):
         for (app_label, migration_name), migration in loader.disk_migrations.items():
             if migration_name == '0001_initial':
                 for dep_app, dep_migration in migration.dependencies:
-                    if dep_app != '__first__' and dep_app != 'auth' and dep_app != 'contenttypes':
-                        # Check if the dependency app has migrations that might not exist in production
-                        if dep_app in [app.label for app in apps.get_app_configs()]:
-                            warning = f"Initial migration {app_label}.{migration_name} depends on {dep_app}.{dep_migration} - this could cause production issues"
-                            warnings.append(warning)
-                            self.stdout.write(f"   ⚠️  {warning}")
+                    # Skip standard Django dependencies and __first__ markers
+                    if (dep_app in ['__first__', 'auth', 'contenttypes', 'sessions', 'sites'] or
+                        dep_migration == '__first__'):
+                        continue
 
-        if not warnings:
+                    # Only warn about custom app dependencies
+                    if dep_app in [app.label for app in apps.get_app_configs()]:
+                        # Only flag as warning, not error, since this can be legitimate
+                        warning = f"Initial migration {app_label}.{migration_name} depends on {dep_app}.{dep_migration} - verify this is intentional"
+                        warnings.append(warning)
+                        self.stdout.write(f"   ⚠️  {warning}")
+
+        if len([w for w in warnings if "Initial migration" in w]) == 0:
             self.stdout.write("   ✅ Initial migration dependencies look safe")
 
         # Check 4: Verify no empty migrations (they often indicate problems)
