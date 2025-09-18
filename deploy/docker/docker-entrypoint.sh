@@ -9,6 +9,10 @@ python manage.py collectstatic --noinput
 echo "Repairing database state..."
 python manage.py repair_database_state || true
 
+# Fix schema alignment issues (column naming mismatches)
+echo "Fixing schema alignment..."
+python manage.py fix_schema_alignment || true
+
 # Apply database migrations
 echo "Applying database migrations..."
 python manage.py migrate --noinput
