@@ -1,16 +1,4 @@
----
-title: CLAUDE.md
-author: Livefront
-date: June 2025
-output: pdf_document
-geometry: margin=1in
-papersize: letter
-mainfont: Poppins
-colorlinks: true
-linkcolor: NavyBlue
-header-includes:
-	- \usepackage{fvextra}
-	- \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\{}}
+
 ---
 
 # CLAUDE.md

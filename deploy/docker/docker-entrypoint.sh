@@ -5,9 +5,9 @@ set -e
 echo "Collecting static files..."
 python manage.py collectstatic --noinput
 
-# Fix migration dependencies if needed (one-time production fix)
-echo "Checking migration state..."
-python manage.py fix_production_migrations || true
+# Repair database state if needed (production deployment fix)
+echo "Repairing database state..."
+python manage.py repair_database_state || true
 
 # Apply database migrations
 echo "Applying database migrations..."

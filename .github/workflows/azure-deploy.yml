@@ -35,6 +35,7 @@ jobs:
         run: |
           # Use CI settings for in-memory database
           export DJANGO_SETTINGS_MODULE=minimalwave-blog.settings.ci
+          poetry run python manage.py validate_migrations --strict
           poetry run python manage.py makemigrations --check --dry-run
           poetry run python manage.py check
 
