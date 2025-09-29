@@ -42,14 +42,57 @@ make dev
 docker-compose -f docker-compose.prod.yml up -d
 make prod
 
-# Execute commands in container
-docker-compose exec web python manage.py migrate
-docker-compose exec web python manage.py createsuperuser
+# Execute commands in container (prefer Make commands)
+make migrate-safe  # Recommended over docker-compose exec web python manage.py migrate
+make superuser     # Or: docker-compose exec web python manage.py createsuperuser
 ```
+
+### Development Admin Access
+
+**Pre-configured Admin Accounts:**
+- **Admin User**: `admin` / `adminpass123`
+- **Staff User**: `staff` / `staffpass123`
+- **Admin URL**: http://localhost:8000/admin/
+
+These credentials are configured in the `.env` file for development convenience. Use these accounts to access the Django admin interface when testing locally.
 
 ### Makefile Commands
 
-Available via `make <command>`: run, migrate, shell, test, dev, prod, format, static, clean, crontab, superuser, publish, test-schedule
+**Essential Development Commands:**
+- `make dev-safe` - Start development environment with migration validation (recommended)
+- `make dev` - Start development environment (basic)
+- `make dev-stop` - Stop development environment
+- `make dev-restart` - Restart development environment
+- `make shell` - Start the Django shell
+
+**Migration Safety Commands:**
+- `make makemigrations` - Create new migrations (with validation)
+- `make migrate-safe` - Apply migrations with validation and clean environment testing
+- `make validate-migrations` - Validate existing migrations for issues
+- `make test-migrations-clean` - Test migrations in a clean environment (like CI/CD)
+
+**Developer Workflow Setup:**
+- `make setup-dev-workflow` - Set up complete developer workflow with safety enforcement
+- `make setup-pre-commit` - Set up complete pre-commit environment for migration safety
+- `make pre-commit-install` - Install pre-commit hooks
+
+**Testing & Quality:**
+- `make test` - Run tests in Docker
+- `make test-local` - Run tests locally (requires local Python environment)
+- `make test-in-docker` - Run tests in Docker (for pre-commit hooks)
+- `make format` - Format Django templates and Python code
+
+**Utility Commands:**
+- `make run` - Run the development server
+- `make migrate` - Apply database migrations (basic)
+- `make superuser` - Create a superuser
+- `make static` - Collect static files
+- `make clean` - Remove compiled Python files and caches
+- `make publish` - Publish scheduled content
+- `make test-schedule` - Create test scheduled content
+- `make crontab` - Set up scheduled publishing cron job
+- `make prod` - Start production environment
+- `make help` - Show all available commands
 
 ## Architecture Overview
 
@@ -62,7 +105,7 @@ Available via `make <command>`: run, migrate, shell, test, dev, prod, format, st
 ### Settings Configuration
 
 - **base.py**: Shared settings using environment variables
-- **development.py**: SQLite, debug mode, extended apps (allauth, markdownx, taggit)
+- **development.py**: PostgreSQL, debug mode, extended apps (allauth, markdownx, taggit)
 - **production.py**: PostgreSQL, Redis caching, security hardening, WhiteNoise
 
 ### Content Model Architecture
@@ -86,7 +129,7 @@ Available via `make <command>`: run, migrate, shell, test, dev, prod, format, st
 
 ### Database Strategy
 
-- Development: SQLite in `data/db.sqlite3`
+- Development: PostgreSQL (matches production for consistency)
 - Production: PostgreSQL with SSL and connection pooling
 - Migration compatibility maintained across status field changes
 
@@ -149,8 +192,30 @@ Available via `make <command>`: run, migrate, shell, test, dev, prod, format, st
 
 ## Best Practices
 
-Run the code in Docker, not locally. Use the provided Makefile for convenience in managing common tasks.
-Ensure to keep the documentation updated with any changes in commands or architecture. Keep the .env updated. Keep the Azure resources file up to date with the latest resource names and configurations.Use Project Development History. Ask for help if you are unsure about any changes or commands. Ask for help if you encounter the same error multiple times. Use the issue tracker to report bugs or request features. Follow the coding standards and commit guidelines outlined in this document.
+### Development Workflow (Safety First)
+
+**Recommended Development Setup:**
+1. `make setup-dev-workflow` - Set up complete safety workflow (run once)
+2. `make dev-safe` - Always use this over `make dev` for development
+3. Use migration safety commands: `make makemigrations`, `make migrate-safe`
+
+**Essential Practices:**
+- **Run code in Docker, not locally** - Ensures environment consistency
+- **Use safety workflow** - Pre-commit hooks prevent migration issues
+- **Always validate migrations** - Use `make validate-migrations` before committing
+- **Test in clean environment** - Use `make test-migrations-clean` for CI/CD validation
+
+**Documentation Maintenance:**
+- Keep documentation updated with any changes in commands or architecture
+- Keep the .env updated with current credentials and settings
+- Keep Azure resources file current with latest resource names and configurations
+- Use Project Development History for context
+- Follow the coding standards and commit guidelines outlined in this document
+
+**When in Doubt:**
+- Ask for help if unsure about any changes or commands
+- Ask for help if encountering the same error multiple times
+- Use the issue tracker to report bugs or request features
 
 ### Database Migration Best Practices
 

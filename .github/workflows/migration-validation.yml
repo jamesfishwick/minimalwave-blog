@@ -1,0 +1,81 @@
+name: Migration Validation
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  validate-migrations:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: minimalwave_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y postgresql-client
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Set environment variables
+      run: |
+        echo "DJANGO_SETTINGS_MODULE=minimalwave-blog.settings.development" >> $GITHUB_ENV
+        echo "POSTGRES_HOST=localhost" >> $GITHUB_ENV
+        echo "POSTGRES_PORT=5432" >> $GITHUB_ENV
+        echo "POSTGRES_DB=minimalwave_test" >> $GITHUB_ENV
+        echo "POSTGRES_USER=postgres" >> $GITHUB_ENV
+        echo "POSTGRES_PASSWORD=postgres" >> $GITHUB_ENV
+
+    - name: Wait for PostgreSQL
+      run: |
+        until pg_isready -h localhost -p 5432 -U postgres; do
+          echo "Waiting for PostgreSQL..."
+          sleep 2
+        done
+
+    - name: Run migration validation
+      run: |
+        echo "🔍 Validating Django migration dependencies..."
+        python manage.py check --deploy
+
+    - name: Test migrations in clean environment
+      run: |
+        echo "🧪 Testing migrations in clean environment..."
+        python manage.py migrate --verbosity=2
+
+    - name: Verify migration completion
+      run: |
+        echo "✅ Verifying all migrations applied..."
+        python manage.py migrate --check
+
+    - name: Run additional migration safety checks
+      run: |
+        echo "🛡️ Running migration safety checks..."
+        python manage.py check --database default
+        python manage.py showmigrations --verbosity=2

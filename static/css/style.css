@@ -83,6 +83,11 @@ p, ul, ol {
   margin-bottom: var(--spacing-md);
 }
 
+li {
+  list-style-position: inside;
+  margin-left: var(--spacing-md);
+}
+
 a {
   color: var(--accent-color);
   text-decoration: none;
@@ -284,6 +289,37 @@ h1, h2, h3, .site-title {
   height: auto;
   border-radius: 5px;
   margin-bottom: var(--spacing-md);
+}
+
+/* Summary section list styles */
+.post-summary ol,
+.post-summary ul {
+  margin: var(--spacing-md) 0;
+  padding-left: var(--spacing-lg);
+}
+
+.post-summary ol li,
+.post-summary ul li {
+  margin-bottom: var(--spacing-sm);
+  list-style-position: outside;
+  margin-left: 0;
+}
+
+.post-summary ol {
+  list-style-type: decimal;
+}
+
+.post-summary ul {
+  list-style-type: disc;
+}
+
+/* Ensure proper paragraph spacing in summary */
+.post-summary p {
+  margin-bottom: var(--spacing-md);
+}
+
+.post-summary p:last-child {
+  margin-bottom: 0;
 }
 
 /* Blogmark styles */

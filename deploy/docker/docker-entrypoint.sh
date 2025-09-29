@@ -5,17 +5,30 @@ set -e
 echo "Collecting static files..."
 python manage.py collectstatic --noinput
 
-# Repair database state if needed (production deployment fix)
-echo "Repairing database state..."
-python manage.py repair_database_state || true
-
-# Fix all schema mismatches comprehensively
-echo "Fixing all schema mismatches..."
-python manage.py fix_all_schema_mismatches || true
+# Validate migrations before applying them
+echo "Validating migration state..."
+python manage.py migrate --check || {
+    echo "⚠️  Pending migrations detected"
+}
 
 # Apply database migrations
 echo "Applying database migrations..."
 python manage.py migrate --noinput
+
+# Verify migration state after application
+echo "Verifying migration completion..."
+python manage.py migrate --check && {
+    echo "✅ All migrations applied successfully"
+} || {
+    echo "❌ Migration verification failed"
+    exit 1
+}
+
+# Configure site domain for development environment
+if [[ "$DJANGO_SETTINGS_MODULE" == *"development"* ]]; then
+    echo "Configuring site for development environment..."
+    python manage.py setup_dev_site
+fi
 
 # Create superuser if DJANGO_SUPERUSER_* environment variables are set
 if [ -n "$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$DJANGO_SUPERUSER_PASSWORD" ] && [ -n "$DJANGO_SUPERUSER_EMAIL" ]; then

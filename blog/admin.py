@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
+from django import forms
 from .models import Entry, Authorship, Blogmark, SiteSettings
 # Tags are now in the core app
 
@@ -26,8 +27,26 @@ class SiteSettingsAdmin(admin.ModelAdmin):
 
 # TagAdmin moved to core app
 
+class EntryAdminForm(forms.ModelForm):
+    class Meta:
+        model = Entry
+        fields = '__all__'
+        widgets = {
+            'summary': forms.Textarea(attrs={
+                'rows': 10,
+                'cols': 80,
+                'style': 'font-family: monospace;'
+            }),
+            'body': forms.Textarea(attrs={
+                'rows': 20,
+                'cols': 80,
+                'style': 'font-family: monospace;'
+            })
+        }
+
 @admin.register(Entry)
 class EntryAdmin(admin.ModelAdmin):
+    form = EntryAdminForm
     list_display = ('title', 'created', 'status', 'get_publish_date', 'preview_link')
     list_filter = ('status', 'created', 'tags')
     search_fields = ('title', 'summary', 'body')

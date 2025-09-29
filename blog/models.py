@@ -134,8 +134,9 @@ class Entry(BaseEntry):
 
     @property
     def summary_rendered(self):
+        # Use same configuration as body_rendered to ensure consistency
         return mark_safe(markdown.markdown(
-            self.summary, 
+            self.summary,
             extensions=['extra', 'codehilite'],
             output_format="html5"
         ))
