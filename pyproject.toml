@@ -23,6 +23,7 @@ dj-database-url = "2.1.0"
 redis = "^5.0.0"
 django-redis = "^5.4.0"
 requests = "^2.31.0"
+django-storages = {extras = ["azure"], version = "^1.14"}
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.3.1"
