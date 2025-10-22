@@ -44,6 +44,10 @@ if AZURE_ACCOUNT_NAME and AZURE_ACCOUNT_KEY:
     DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
     AZURE_CUSTOM_DOMAIN = f'{AZURE_ACCOUNT_NAME}.blob.core.windows.net'
     MEDIA_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{AZURE_CONTAINER}/'
+    # Required settings for django-storages Azure backend
+    AZURE_STORAGE_ACCOUNT_NAME = AZURE_ACCOUNT_NAME
+    AZURE_STORAGE_KEY = AZURE_ACCOUNT_KEY
+    AZURE_STORAGE_CONTAINER_NAME = AZURE_CONTAINER
 else:
     # Fallback to local storage (development/testing)
     MEDIA_URL = '/media/'
