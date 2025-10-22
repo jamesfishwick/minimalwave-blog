@@ -25,6 +25,30 @@
   {{ request.build_absolute_uri }}
 {% endblock %}
 
+{% block og_image %}
+{% if til.get_image_url %}
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ til.get_image_url }}" />
+{% else %}
+{{ block.super }}
+{% endif %}
+{% endblock %}
+
+{% block twitter_title %}
+  {{ til.title }}
+{% endblock %}
+
+{% block twitter_description %}
+  {{ til.body_text|truncatewords:50 }}
+{% endblock %}
+
+{% block twitter_image %}
+  {% if til.get_image_url %}
+    <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ til.get_image_url }}" />
+  {% else %}
+    {{ block.super }}
+  {% endif %}
+{% endblock %}
+
 {% block content %}
 
   <article class="til-detail">
@@ -49,6 +73,12 @@
 
   </div>
   </header>
+
+  {% if til.get_image_url %}
+  <div class="post-image">
+    <img src="{{ til.get_image_url }}" alt="{{ til.image_alt|default:til.title }}" />
+  </div>
+  {% endif %}
 
   <div class="til-content">
   {{ til.body_rendered }}

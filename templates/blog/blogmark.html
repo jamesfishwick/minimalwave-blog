@@ -25,6 +25,30 @@
   {{ request.build_absolute_uri }}
 {% endblock %}
 
+{% block og_image %}
+{% if blogmark.get_image_url %}
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ blogmark.get_image_url }}" />
+{% else %}
+{{ block.super }}
+{% endif %}
+{% endblock %}
+
+{% block twitter_title %}
+  {{ blogmark.title }}
+{% endblock %}
+
+{% block twitter_description %}
+  {{ blogmark.commentary_rendered|striptags }}
+{% endblock %}
+
+{% block twitter_image %}
+  {% if blogmark.get_image_url %}
+    <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ blogmark.get_image_url }}" />
+  {% else %}
+    {{ block.super }}
+  {% endif %}
+{% endblock %}
+
 {% block content %}
   {% if preview %}
   <div class="preview-banner" style="background: #ff5722; color: white; padding: 10px; margin-bottom: 20px; border-radius: 4px;">
@@ -48,6 +72,12 @@
   </header>
 
   <a href="{{ blogmark.url }}" class="blogmark-url neon-text">{{ blogmark.url }}</a>
+
+  {% if blogmark.get_image_url %}
+  <div class="post-image">
+    <img src="{{ blogmark.get_image_url }}" alt="{{ blogmark.image_alt|default:blogmark.title }}" />
+  </div>
+  {% endif %}
 
   <div class="blogmark-commentary">
   {{ blogmark.commentary_rendered }}
