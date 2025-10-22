@@ -101,7 +101,19 @@ class Entry(BaseEntry):
     summary = models.TextField()
     body = models.TextField()
     card_image = models.URLField(
-        blank=True, null=True, help_text="URL to image for social media cards"
+        blank=True, null=True, help_text="URL to image for social media cards (deprecated: use image field)"
+    )
+    image = models.ImageField(
+        upload_to='blog/images/%Y/%m/',
+        blank=True,
+        null=True,
+        help_text="Upload an image for this entry (replaces card_image URL)"
+    )
+    image_alt = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        help_text="Alt text for the image (for accessibility)"
     )
     authors = models.ManyToManyField(User, through="Authorship", blank=True)
     
@@ -178,6 +190,13 @@ class Entry(BaseEntry):
             return self.linkedin_custom_text
         return self.summary_text  # Use the existing summary_text property
 
+    @property
+    def get_image_url(self):
+        """Get the effective image URL (prioritize uploaded image over card_image URL)"""
+        if self.image:
+            return self.image.url
+        return self.card_image
+
 class Authorship(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     entry = models.ForeignKey(Entry, on_delete=models.CASCADE)
@@ -193,6 +212,18 @@ class Blogmark(BaseEntry):
     commentary = models.TextField()
     via = models.URLField(blank=True, null=True, help_text="URL of where you found the link")
     via_title = models.CharField(max_length=200, blank=True, null=True, help_text="Title of where you found the link")
+    image = models.ImageField(
+        upload_to='blog/blogmarks/%Y/%m/',
+        blank=True,
+        null=True,
+        help_text="Upload an image for this blogmark"
+    )
+    image_alt = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        help_text="Alt text for the image (for accessibility)"
+    )
 
     def save(self, *args, **kwargs):
         # Ensure consistency between status and is_draft fields
@@ -223,5 +254,12 @@ class Blogmark(BaseEntry):
         return reverse('blog:blogmark_preview', kwargs={
             'slug': self.slug
         })
+
+    @property
+    def get_image_url(self):
+        """Get the image URL if available"""
+        if self.image:
+            return self.image.url
+        return None
 
 # LinkedIn models moved to linkedin app

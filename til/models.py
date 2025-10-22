@@ -13,7 +13,19 @@ class TIL(models.Model):
     slug = models.SlugField(unique_for_date='created')
     body = models.TextField()
     card_image = models.URLField(
-        blank=True, null=True, help_text="URL to image for social media cards"
+        blank=True, null=True, help_text="URL to image for social media cards (deprecated: use image field)"
+    )
+    image = models.ImageField(
+        upload_to='til/images/%Y/%m/',
+        blank=True,
+        null=True,
+        help_text="Upload an image for this TIL"
+    )
+    image_alt = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        help_text="Alt text for the image (for accessibility)"
     )
     tags = models.ManyToManyField('core.EnhancedTag', blank=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
@@ -75,3 +87,10 @@ class TIL(models.Model):
         if self.linkedin_custom_text:
             return self.linkedin_custom_text
         return self.body_text  # Use the existing body_text property
+
+    @property
+    def get_image_url(self):
+        """Get the effective image URL (prioritize uploaded image over card_image URL)"""
+        if self.image:
+            return self.image.url
+        return self.card_image
