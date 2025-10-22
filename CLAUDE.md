@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Local Development (Virtual Environment)
 
-```bash
+````bash`
 # Run development server
 python manage.py runserver 0.0.0.0:8000
 
@@ -217,7 +217,7 @@ These credentials are configured in the `.env` file for development convenience.
 - Ask for help if encountering the same error multiple times
 - Use the issue tracker to report bugs or request features
 
-### Database Migration Best Practices
+c### Database Migration Best Practices
 
 #### Manual Safety Checks
 - **ALWAYS check current state before running migrations**: Use `python manage.py showmigrations` to see what migrations exist and their status
