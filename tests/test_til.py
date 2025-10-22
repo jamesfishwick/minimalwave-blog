@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
-from blog.models import Tag
-from .models import TIL
+from core.models import EnhancedTag as Tag
+from til.models import TIL
 from django.contrib.auth.models import User
 from django.utils import timezone
 
