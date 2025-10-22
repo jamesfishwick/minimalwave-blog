@@ -13,6 +13,10 @@ class TILAdmin(admin.ModelAdmin):
         (None, {
             'fields': ('title', 'slug', 'body', 'created', 'author')
         }),
+        ('Image', {
+            'fields': ('image', 'image_alt'),
+            'description': 'Upload an image for this TIL. Replaces card_image URL.'
+        }),
         ('Publishing', {
             'fields': ('is_draft', 'tags', 'card_image')
         }),

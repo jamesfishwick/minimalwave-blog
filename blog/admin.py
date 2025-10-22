@@ -58,6 +58,10 @@ class EntryAdmin(admin.ModelAdmin):
         (None, {
             'fields': ('title', 'slug', 'summary', 'body', 'created')
         }),
+        ('Image', {
+            'fields': ('image', 'image_alt'),
+            'description': 'Upload an image for this entry. Replaces card_image URL.'
+        }),
         ('Publishing', {
             'fields': ('status', 'publish_date', 'is_draft', 'tags', 'card_image', 'preview_link')
         }),
@@ -107,6 +111,10 @@ class BlogmarkAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': ('title', 'slug', 'url', 'commentary', 'created')
+        }),
+        ('Image', {
+            'fields': ('image', 'image_alt'),
+            'description': 'Upload an image for this blogmark.'
         }),
         ('Publishing', {
             'fields': ('status', 'publish_date', 'is_draft', 'tags')
