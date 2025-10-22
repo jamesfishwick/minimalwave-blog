@@ -52,8 +52,8 @@
 {% block og_url %}{{ request.build_absolute_uri }}{% endblock %}
 
 {% block og_image %}
-{% if entry.card_image %}
-<meta property="og:image" content="{{ entry.card_image }}" />
+{% if entry.get_image_url %}
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ entry.get_image_url }}" />
 {% else %}
 {{ block.super }}
 {% endif %}
@@ -69,8 +69,8 @@
 {% endblock %}
 
 {% block twitter_image %}
-  {% if entry.card_image %}
-    <meta name="twitter:image" content="{{ entry.card_image }}" />
+  {% if entry.get_image_url %}
+    <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ entry.get_image_url }}" />
   {% else %}
     {{ block.super }}
   {% endif %}
@@ -102,6 +102,12 @@
 
   </div>
   </header>
+
+  {% if entry.get_image_url %}
+  <div class="post-image">
+    <img src="{{ entry.get_image_url }}" alt="{{ entry.image_alt|default:entry.title }}" />
+  </div>
+  {% endif %}
 
   <div class="post-summary grid-pattern">{{ entry.summary_rendered }}</div>
 
