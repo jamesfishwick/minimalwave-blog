@@ -50,19 +50,31 @@ logger.info(f"AZURE_ACCOUNT_KEY present: {bool(AZURE_ACCOUNT_KEY)}")
 logger.info(f"AZURE_CONTAINER: {AZURE_CONTAINER}")
 
 if AZURE_ACCOUNT_NAME and AZURE_ACCOUNT_KEY:
-    # Use Azure Blob Storage in production
+    # Use Azure Blob Storage in production (Django 4.2+ STORAGES format)
     logger.info("✅ Azure credentials found - configuring Azure Blob Storage")
-    DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
+
+    # Django 5.2 requires STORAGES configuration instead of DEFAULT_FILE_STORAGE
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.azure_storage.AzureStorage",
+            "OPTIONS": {
+                "account_name": AZURE_ACCOUNT_NAME,
+                "account_key": AZURE_ACCOUNT_KEY,
+                "azure_container": AZURE_CONTAINER,
+            },
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+        },
+    }
+
     AZURE_CUSTOM_DOMAIN = f'{AZURE_ACCOUNT_NAME}.blob.core.windows.net'
     MEDIA_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{AZURE_CONTAINER}/'
-    # Required settings for django-storages Azure backend
-    AZURE_STORAGE_ACCOUNT_NAME = AZURE_ACCOUNT_NAME
-    AZURE_STORAGE_KEY = AZURE_ACCOUNT_KEY
-    AZURE_STORAGE_CONTAINER_NAME = AZURE_CONTAINER
-    logger.info(f"DEFAULT_FILE_STORAGE: {DEFAULT_FILE_STORAGE}")
+
+    logger.info(f"STORAGES backend: storages.backends.azure_storage.AzureStorage")
     logger.info(f"MEDIA_URL: {MEDIA_URL}")
-    logger.info(f"AZURE_STORAGE_ACCOUNT_NAME: {AZURE_STORAGE_ACCOUNT_NAME}")
-    logger.info(f"AZURE_STORAGE_CONTAINER_NAME: {AZURE_STORAGE_CONTAINER_NAME}")
+    logger.info(f"Azure account: {AZURE_ACCOUNT_NAME}")
+    logger.info(f"Azure container: {AZURE_CONTAINER}")
     logger.info("================================================")
 else:
     # Fallback to local storage (development/testing)
@@ -70,6 +82,16 @@ else:
     logger.warning(f"AZURE_ACCOUNT_NAME: {AZURE_ACCOUNT_NAME}")
     logger.warning(f"AZURE_ACCOUNT_KEY present: {bool(AZURE_ACCOUNT_KEY)}")
     logger.info("================================================")
+
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+        },
+    }
+
     MEDIA_URL = '/media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
