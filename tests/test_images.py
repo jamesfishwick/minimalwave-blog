@@ -336,6 +336,7 @@ class ImageAltTextTests(TestCase):
         self.assertEqual(len(entry.image_alt), 255)
 
 
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
 class ImageMigrationTests(TestCase):
     """Test backward compatibility with existing entries."""
 
@@ -371,7 +372,7 @@ class ImageMigrationTests(TestCase):
         self.assertEqual(entry.get_image_url, 'https://example.com/legacy.jpg')
 
     def test_migration_from_card_image_to_upload(self):
-        """Test migrating from card_image to uploaded image."""
+        """Test migrating from card_image to uploaded image using actual file."""
         # Start with card_image
         entry = Entry.objects.create(
             title='Migrating Entry',
@@ -384,8 +385,19 @@ class ImageMigrationTests(TestCase):
 
         self.assertEqual(entry.get_image_url, 'https://example.com/old.jpg')
 
+        # Create actual test image file for migration scenario
+        image = Image.new('RGB', (100, 100), color='blue')
+        img_io = BytesIO()
+        image.save(img_io, format='JPEG')
+        img_io.seek(0)
+        test_image = SimpleUploadedFile(
+            name='new.jpg',
+            content=img_io.read(),
+            content_type='image/jpeg'
+        )
+
         # Add uploaded image (migration scenario)
-        entry.image.name = 'blog/images/2025/10/new.jpg'
+        entry.image = test_image
         entry.save()
 
         # Should now prioritize uploaded image
