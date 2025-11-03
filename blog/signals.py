@@ -11,7 +11,9 @@ logger = logging.getLogger(__name__)
 def entry_pre_save(sender, instance, **kwargs):
     """
     Track status changes before save to detect when entries are published.
+    Also log image upload operations for debugging Azure storage.
     """
+    # Track status changes
     if instance.pk:
         try:
             old_instance = Entry.objects.get(pk=instance.pk)
@@ -24,16 +26,61 @@ def entry_pre_save(sender, instance, **kwargs):
         instance._old_status = None
         instance._old_publish_date = None
 
+    # Log image upload operations
+    if instance.image:
+        logger.info(f"========== PRE-SAVE Entry Image ==========")
+        logger.info(f"Entry: {instance.title}")
+        logger.info(f"Image field: {instance.image}")
+        logger.info(f"Image name: {instance.image.name if instance.image else 'None'}")
+        logger.info(f"Has file: {bool(instance.image)}")
+
+        # Check if this is a new upload (file object vs string path)
+        if hasattr(instance.image, 'file'):
+            logger.info(f"✅ New file upload detected")
+            logger.info(f"File size: {instance.image.size if hasattr(instance.image, 'size') else 'Unknown'}")
+        else:
+            logger.info(f"📝 Existing image reference")
+        logger.info("===========================================")
+
 
 @receiver(post_save, sender=Entry)
 def entry_published(sender, instance, created, **kwargs):
     """
     Detect when an Entry is published and trigger LinkedIn posting.
-    
+    Also log image storage operations for debugging Azure.
+
     This signal fires when:
     1. Entry status changes to 'published'
     2. Entry is saved with status 'published' and publish_date in the past
     """
+    # Log image storage details
+    if instance.image:
+        logger.info(f"========== POST-SAVE Entry Image ==========")
+        logger.info(f"Entry: {instance.title}")
+        logger.info(f"Created: {created}")
+        logger.info(f"Image name: {instance.image.name}")
+
+        try:
+            logger.info(f"Image URL: {instance.image.url}")
+
+            # Check storage backend
+            storage = instance.image.storage
+            logger.info(f"Storage class: {storage.__class__.__name__}")
+            logger.info(f"Storage module: {storage.__class__.__module__}")
+
+            # Check if file exists in storage
+            exists = storage.exists(instance.image.name)
+            logger.info(f"File exists in storage: {exists}")
+
+            if hasattr(storage, 'account_name'):
+                logger.info(f"Azure account: {storage.account_name}")
+            if hasattr(storage, 'azure_container'):
+                logger.info(f"Azure container: {storage.azure_container}")
+        except Exception as e:
+            logger.error(f"❌ Error checking storage: {e}", exc_info=True)
+
+        logger.info("===========================================")
+
     if not instance.is_published:
         return
     

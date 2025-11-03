@@ -276,6 +276,14 @@ When troubleshooting issues or downloading files for analysis:
 - If you create temporary files outside the sandbox, delete them after use
 - Keep the repository clean and professional
 
+# Important Troubleshooting Resources
+
+## Azure Blob Storage Issues
+If images are not displaying on the production site (404 errors, empty Azure storage):
+- **Diagnosis & Fix:** See `docs/AZURE_STORAGE_TROUBLESHOOTING.md`
+- **Quick Fix:** Run `./scripts/fix-azure-storage.sh` then re-upload images
+- **Check Status:** `python manage.py sync_images_to_azure --dry-run`
+
 # important-instruction-reminders
 
 Do what has been asked; nothing more, nothing less.
