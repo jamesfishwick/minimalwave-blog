@@ -33,7 +33,7 @@ class ImageFieldTests(TestCase):
         )
 
     def test_entry_has_image_fields(self):
-        """Test Entry model has image and image_alt fields."""
+        """Test Entry model has image and image_caption fields."""
         entry = Entry.objects.create(
             title='Test Entry',
             slug='test-entry',
@@ -44,15 +44,15 @@ class ImageFieldTests(TestCase):
 
         # Check fields exist
         self.assertTrue(hasattr(entry, 'image'))
-        self.assertTrue(hasattr(entry, 'image_alt'))
+        self.assertTrue(hasattr(entry, 'image_caption'))
         self.assertTrue(hasattr(entry, 'card_image'))  # Legacy field
 
         # Check fields are initially None/blank
         self.assertFalse(entry.image)
-        self.assertIsNone(entry.image_alt)
+        self.assertIsNone(entry.image_caption)
 
     def test_blogmark_has_image_fields(self):
-        """Test Blogmark model has image and image_alt fields."""
+        """Test Blogmark model has image and image_caption fields."""
         blogmark = Blogmark.objects.create(
             title='Test Blogmark',
             slug='test-blogmark',
@@ -63,14 +63,14 @@ class ImageFieldTests(TestCase):
 
         # Check fields exist
         self.assertTrue(hasattr(blogmark, 'image'))
-        self.assertTrue(hasattr(blogmark, 'image_alt'))
+        self.assertTrue(hasattr(blogmark, 'image_caption'))
 
         # Check fields are initially None/blank
         self.assertFalse(blogmark.image)
-        self.assertIsNone(blogmark.image_alt)
+        self.assertIsNone(blogmark.image_caption)
 
     def test_til_has_image_fields(self):
-        """Test TIL model has image and image_alt fields."""
+        """Test TIL model has image and image_caption fields."""
         til = TIL.objects.create(
             title='Test TIL',
             slug='test-til',
@@ -80,12 +80,12 @@ class ImageFieldTests(TestCase):
 
         # Check fields exist
         self.assertTrue(hasattr(til, 'image'))
-        self.assertTrue(hasattr(til, 'image_alt'))
+        self.assertTrue(hasattr(til, 'image_caption'))
         self.assertTrue(hasattr(til, 'card_image'))  # Legacy field
 
         # Check fields are initially None/blank
         self.assertFalse(til.image)
-        self.assertIsNone(til.image_alt)
+        self.assertIsNone(til.image_caption)
 
 
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
@@ -121,13 +121,13 @@ class ImageUploadTests(TestCase):
             body='Test body',
             status='published',
             image=test_image,
-            image_alt='Test image description'
+            image_caption='Test image description'
         )
 
         # Check image was saved
         self.assertTrue(entry.image)
         self.assertIn('blog/images/', entry.image.name)
-        self.assertEqual(entry.image_alt, 'Test image description')
+        self.assertEqual(entry.image_caption, 'Test image description')
 
         # Check image file exists
         self.assertTrue(os.path.exists(entry.image.path))
@@ -143,13 +143,13 @@ class ImageUploadTests(TestCase):
             commentary='Test commentary',
             status='published',
             image=test_image,
-            image_alt='Blogmark image description'
+            image_caption='Blogmark image description'
         )
 
         # Check image was saved
         self.assertTrue(blogmark.image)
         self.assertIn('blog/blogmarks/', blogmark.image.name)
-        self.assertEqual(blogmark.image_alt, 'Blogmark image description')
+        self.assertEqual(blogmark.image_caption, 'Blogmark image description')
 
     def test_til_image_upload(self):
         """Test uploading an image to TIL model."""
@@ -161,13 +161,13 @@ class ImageUploadTests(TestCase):
             body='Test body',
             author=self.user,
             image=test_image,
-            image_alt='TIL image description'
+            image_caption='TIL image description'
         )
 
         # Check image was saved
         self.assertTrue(til.image)
         self.assertIn('til/images/', til.image.name)
-        self.assertEqual(til.image_alt, 'TIL image description')
+        self.assertEqual(til.image_caption, 'TIL image description')
 
     def test_image_upload_creates_subdirectories(self):
         """Test that images are organized by date in subdirectories."""
@@ -284,8 +284,8 @@ class ImageURLTests(TestCase):
         self.assertEqual(til.get_image_url, 'https://example.com/card.jpg')
 
 
-class ImageAltTextTests(TestCase):
-    """Test image alt text for accessibility."""
+class ImageCaptionTests(TestCase):
+    """Test image caption for accessibility and markdown rendering."""
 
     def setUp(self):
         self.user = User.objects.create_user(
@@ -293,22 +293,22 @@ class ImageAltTextTests(TestCase):
             password='testpass123'
         )
 
-    def test_image_alt_text_stored(self):
-        """Test that image alt text is properly stored."""
+    def test_image_caption_stored(self):
+        """Test that image caption is properly stored."""
         entry = Entry.objects.create(
             title='Test Entry',
             slug='test-entry',
             summary='Test',
             body='Test',
             status='published',
-            image_alt='A beautiful sunset over the ocean'
+            image_caption='A **beautiful** sunset over the ocean'
         )
 
         entry.refresh_from_db()
-        self.assertEqual(entry.image_alt, 'A beautiful sunset over the ocean')
+        self.assertEqual(entry.image_caption, 'A **beautiful** sunset over the ocean')
 
-    def test_image_alt_text_optional(self):
-        """Test that image alt text is optional."""
+    def test_image_caption_optional(self):
+        """Test that image caption is optional."""
         entry = Entry.objects.create(
             title='Test Entry',
             slug='test-entry',
@@ -318,11 +318,11 @@ class ImageAltTextTests(TestCase):
         )
 
         # Should be None/empty by default
-        self.assertIsNone(entry.image_alt)
+        self.assertIsNone(entry.image_caption)
 
-    def test_image_alt_text_max_length(self):
-        """Test image alt text respects max_length."""
-        long_alt = 'A' * 300  # Longer than max_length (255)
+    def test_image_caption_max_length(self):
+        """Test image caption respects max_length."""
+        long_caption = 'A' * 300  # Longer than max_length (255)
 
         entry = Entry.objects.create(
             title='Test Entry',
@@ -330,10 +330,54 @@ class ImageAltTextTests(TestCase):
             summary='Test',
             body='Test',
             status='published',
-            image_alt=long_alt[:255]  # Should be truncated
+            image_caption=long_caption[:255]  # Should be truncated
         )
 
-        self.assertEqual(len(entry.image_alt), 255)
+        self.assertEqual(len(entry.image_caption), 255)
+
+    def test_image_caption_html_rendering(self):
+        """Test that caption markdown is rendered to HTML."""
+        entry = Entry.objects.create(
+            title='Test Entry',
+            slug='test-entry',
+            summary='Test',
+            body='Test',
+            status='published',
+            image_caption='A **bold** and *italic* caption'
+        )
+
+        # Should render markdown
+        self.assertIn('<strong>bold</strong>', entry.image_caption_html)
+        self.assertIn('<em>italic</em>', entry.image_caption_html)
+
+    def test_image_alt_text_strips_markdown(self):
+        """Test that alt text strips markdown from caption."""
+        entry = Entry.objects.create(
+            title='Test Entry',
+            slug='test-entry',
+            summary='Test',
+            body='Test',
+            status='published',
+            image_caption='A **bold** and *italic* caption'
+        )
+
+        # Should strip all markdown/HTML for alt text
+        self.assertEqual(entry.image_alt_text, 'A bold and italic caption')
+        self.assertNotIn('**', entry.image_alt_text)
+        self.assertNotIn('*', entry.image_alt_text)
+
+    def test_image_alt_text_fallback(self):
+        """Test that alt text falls back to title when no caption."""
+        entry = Entry.objects.create(
+            title='Test Entry Title',
+            slug='test-entry',
+            summary='Test',
+            body='Test',
+            status='published'
+        )
+
+        # Should fall back to title
+        self.assertEqual(entry.image_alt_text, 'Test Entry Title')
 
 
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
@@ -352,7 +396,7 @@ class ImageMigrationTests(TestCase):
 
         # Should not crash
         self.assertFalse(entry.image)
-        self.assertIsNone(entry.image_alt)
+        self.assertIsNone(entry.image_caption)
 
         # get_image_url should handle missing image gracefully
         self.assertIsNone(entry.get_image_url)

@@ -75,9 +75,12 @@
   </header>
 
   {% if til.get_image_url %}
-  <div class="post-image">
-    <img src="{{ til.get_image_url }}" alt="{{ til.image_alt|default:til.title }}" />
-  </div>
+  <figure class="post-image">
+    <img src="{{ til.get_image_url }}" alt="{{ til.image_alt_text }}" />
+    {% if til.image_caption_html %}
+    <figcaption>{{ til.image_caption_html }}</figcaption>
+    {% endif %}
+  </figure>
   {% endif %}
 
   <div class="til-content">

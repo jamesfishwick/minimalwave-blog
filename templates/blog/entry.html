@@ -104,9 +104,12 @@
   </header>
 
   {% if entry.get_image_url %}
-  <div class="post-image">
-    <img src="{{ entry.get_image_url }}" alt="{{ entry.image_alt|default:entry.title }}" />
-  </div>
+  <figure class="post-image">
+    <img src="{{ entry.get_image_url }}" alt="{{ entry.image_alt_text }}" />
+    {% if entry.image_caption_html %}
+    <figcaption>{{ entry.image_caption_html }}</figcaption>
+    {% endif %}
+  </figure>
   {% endif %}
 
   <div class="post-summary grid-pattern">{{ entry.summary_rendered }}</div>

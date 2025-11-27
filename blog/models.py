@@ -109,11 +109,12 @@ class Entry(BaseEntry):
         null=True,
         help_text="Upload an image for this entry (replaces card_image URL)"
     )
-    image_alt = models.CharField(
+    image_caption = models.CharField(
         max_length=255,
         blank=True,
         null=True,
-        help_text="Alt text for the image (for accessibility)"
+        verbose_name="Image Title",
+        help_text="Markdown-formatted caption for the image (used as caption and stripped for alt text)"
     )
     authors = models.ManyToManyField(User, through="Authorship", blank=True)
     
@@ -197,6 +198,26 @@ class Entry(BaseEntry):
             return self.image.url
         return self.card_image
 
+    @property
+    def image_caption_html(self):
+        """Render image caption markdown as HTML for figcaption"""
+        if self.image_caption:
+            return mark_safe(markdown.markdown(
+                self.image_caption,
+                extensions=['extra'],
+                output_format="html5"
+            ))
+        return None
+
+    @property
+    def image_alt_text(self):
+        """Strip markdown from caption for use as alt text"""
+        if self.image_caption:
+            # Convert markdown to HTML then strip all HTML tags for plain text
+            html = markdown.markdown(self.image_caption, extensions=['extra'])
+            return strip_tags(html)
+        return self.title  # Fallback to entry title if no caption
+
 class Authorship(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     entry = models.ForeignKey(Entry, on_delete=models.CASCADE)
@@ -218,11 +239,12 @@ class Blogmark(BaseEntry):
         null=True,
         help_text="Upload an image for this blogmark"
     )
-    image_alt = models.CharField(
+    image_caption = models.CharField(
         max_length=255,
         blank=True,
         null=True,
-        help_text="Alt text for the image (for accessibility)"
+        verbose_name="Image Title",
+        help_text="Markdown-formatted caption for the image (used as caption and stripped for alt text)"
     )
 
     def save(self, *args, **kwargs):
@@ -261,5 +283,25 @@ class Blogmark(BaseEntry):
         if self.image:
             return self.image.url
         return None
+
+    @property
+    def image_caption_html(self):
+        """Render image caption markdown as HTML for figcaption"""
+        if self.image_caption:
+            return mark_safe(markdown.markdown(
+                self.image_caption,
+                extensions=['extra'],
+                output_format="html5"
+            ))
+        return None
+
+    @property
+    def image_alt_text(self):
+        """Strip markdown from caption for use as alt text"""
+        if self.image_caption:
+            # Convert markdown to HTML then strip all HTML tags for plain text
+            html = markdown.markdown(self.image_caption, extensions=['extra'])
+            return strip_tags(html)
+        return self.title  # Fallback to blogmark title if no caption
 
 # LinkedIn models moved to linkedin app

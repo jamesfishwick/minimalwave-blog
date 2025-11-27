@@ -74,9 +74,12 @@
   <a href="{{ blogmark.url }}" class="blogmark-url neon-text">{{ blogmark.url }}</a>
 
   {% if blogmark.get_image_url %}
-  <div class="post-image">
-    <img src="{{ blogmark.get_image_url }}" alt="{{ blogmark.image_alt|default:blogmark.title }}" />
-  </div>
+  <figure class="post-image">
+    <img src="{{ blogmark.get_image_url }}" alt="{{ blogmark.image_alt_text }}" />
+    {% if blogmark.image_caption_html %}
+    <figcaption>{{ blogmark.image_caption_html }}</figcaption>
+    {% endif %}
+  </figure>
   {% endif %}
 
   <div class="blogmark-commentary">
