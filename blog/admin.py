@@ -59,7 +59,7 @@ class EntryAdmin(admin.ModelAdmin):
             'fields': ('title', 'slug', 'summary', 'body', 'created')
         }),
         ('Image', {
-            'fields': ('image', 'image_alt'),
+            'fields': ('image', 'image_caption'),
             'description': 'Upload an image for this entry. Replaces card_image URL.'
         }),
         ('Publishing', {
@@ -113,7 +113,7 @@ class BlogmarkAdmin(admin.ModelAdmin):
             'fields': ('title', 'slug', 'url', 'commentary', 'created')
         }),
         ('Image', {
-            'fields': ('image', 'image_alt'),
+            'fields': ('image', 'image_caption'),
             'description': 'Upload an image for this blogmark.'
         }),
         ('Publishing', {
