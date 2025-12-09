@@ -176,7 +176,7 @@ def blogmark_published(sender, instance, created, **kwargs):
         
         # Check LinkedIn settings for blogmarks (default disabled)
         try:
-            from .models import LinkedInSettings
+            from linkedin.models import LinkedInSettings
             settings = LinkedInSettings.get_settings()
             if settings.auto_post_blogmarks:
                 linkedin_service = LinkedInService()
