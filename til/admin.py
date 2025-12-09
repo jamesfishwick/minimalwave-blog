@@ -14,8 +14,8 @@ class TILAdmin(admin.ModelAdmin):
             'fields': ('title', 'slug', 'body', 'created', 'author')
         }),
         ('Image', {
-            'fields': ('image', 'image_alt'),
-            'description': 'Upload an image for this TIL. Replaces card_image URL.'
+            'fields': ('image', 'image_caption'),
+            'description': 'Upload an image for this TIL.'
         }),
         ('Publishing', {
             'fields': ('is_draft', 'tags', 'card_image')
