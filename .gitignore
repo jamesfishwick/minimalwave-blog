@@ -38,12 +38,21 @@ ENV/
 .env
 .azure-resources
 
-# IDE
+# IDE & AI Tools
 .claude/
 .vscode/
 .idea/
 *.swp
 *.swo
+
+# MCP (Model Context Protocol) files
+mcp_*.json
+.mcp/
+*_mcp_*
+
+# Claude Code artifacts
+.claudecode/
+claude_*.log
 
 # OS
 .DS_Store
