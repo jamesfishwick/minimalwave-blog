@@ -28,19 +28,25 @@ def entry_pre_save(sender, instance, **kwargs):
 
     # Log image upload operations
     if instance.image:
-        logger.info(f"========== PRE-SAVE Entry Image ==========")
-        logger.info(f"Entry: {instance.title}")
-        logger.info(f"Image field: {instance.image}")
-        logger.info(f"Image name: {instance.image.name if instance.image else 'None'}")
-        logger.info(f"Has file: {bool(instance.image)}")
+        try:
+            logger.info(f"========== PRE-SAVE Entry Image ==========")
+            logger.info(f"Entry: {instance.title}")
+            logger.info(f"Image field: {instance.image}")
+            logger.info(f"Image name: {instance.image.name if instance.image else 'None'}")
+            logger.info(f"Has file: {bool(instance.image)}")
 
-        # Check if this is a new upload (file object vs string path)
-        if hasattr(instance.image, 'file'):
-            logger.info(f"✅ New file upload detected")
-            logger.info(f"File size: {instance.image.size if hasattr(instance.image, 'size') else 'Unknown'}")
-        else:
-            logger.info(f"📝 Existing image reference")
-        logger.info("===========================================")
+            # Check if this is a new upload (file object vs string path)
+            if hasattr(instance.image, 'file'):
+                logger.info(f"✅ New file upload detected")
+                try:
+                    logger.info(f"File size: {instance.image.size}")
+                except Exception as size_error:
+                    logger.warning(f"⚠️ Could not get file size: {size_error}")
+            else:
+                logger.info(f"📝 Existing image reference")
+            logger.info("===========================================")
+        except Exception as e:
+            logger.error(f"❌ Error logging image info: {e}")
 
 
 @receiver(post_save, sender=Entry)
