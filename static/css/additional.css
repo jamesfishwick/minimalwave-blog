@@ -104,3 +104,33 @@
   box-shadow: 0 0 10px var(--accent-color);
   transition: box-shadow 0.3s ease;
 }
+
+/* Post image constraints and responsive sizing */
+.post-image {
+  max-width: 900px;
+  margin: 2rem auto;
+  display: block;
+}
+
+.post-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 5px;
+}
+
+.post-image figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  text-align: center;
+  font-style: italic;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 968px) {
+  .post-image {
+    max-width: 100%;
+    margin: 1.5rem 0;
+  }
+}
