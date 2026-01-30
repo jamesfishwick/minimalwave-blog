@@ -42,55 +42,33 @@ repos:
         args: ['--max-line-length=88', '--extend-ignore=E203,W503']
         files: '\.py$'
 
-  # Django-specific checks
+  # Django-specific checks (consolidated)
   - repo: local
     hooks:
-      - id: check-migrations
-        name: Check for pending Django migrations
-        entry: scripts/check-migrations.sh
+      - id: migration-safety
+        name: Migration Safety Check
+        entry: scripts/migration-safety.sh
+        args: ['--validate']
         language: script
         files: '(models\.py|migrations/.*\.py)$'
         pass_filenames: false
-        
-      - id: validate-migrations
-        name: Validate migration dependencies
-        entry: scripts/validate-migrations.sh
-        language: script
-        files: 'migrations/.*\.py$'
-        pass_filenames: false
-        
-      - id: test-migrations-clean
-        name: Test migrations in clean environment
-        entry: scripts/test-migrations-clean.sh
+
+      - id: migration-clean-test
+        name: Test Migrations in Clean Environment
+        entry: scripts/migration-safety.sh
+        args: ['--test-clean']
         language: script
         files: '(models\.py|migrations/.*\.py)$'
         pass_filenames: false
         stages: [pre-push]  # Only run on push, not every commit
-        
-      - id: validate-migration-dependencies
-        name: Validate migration dependency graph
-        entry: scripts/validate-migration-dependencies.sh
-        language: script
-        files: 'migrations/.*\.py$'
-        pass_filenames: false
 
       - id: django-tests
         name: Run Django Tests
         entry: make
         args: ['test-in-docker']
         language: system
-        files: '\.py$'
         pass_filenames: false
-        always_run: false
-
-      - id: django-check
-        name: Django System Check
-        entry: docker-compose
-        args: ['exec', '-T', 'web', 'python', 'manage.py', 'check']
-        language: system
-        files: '\.py$'
-        pass_filenames: false
-        always_run: false
+        stages: [pre-push]  # Only run on push, not every commit
 
   # Security checks with bandit
   - repo: https://github.com/pycqa/bandit

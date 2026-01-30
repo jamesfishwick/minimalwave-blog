@@ -1,4 +1,4 @@
-.PHONY: help run migrate shell test test-in-docker dev dev-safe dev-stop dev-restart prod format static clean crontab superuser pre-commit-install makemigrations migrate-safe validate-migrations test-migrations-clean setup-pre-commit setup-dev-workflow
+.PHONY: help run migrate shell test test-in-docker dev dev-safe dev-stop dev-restart prod format static clean superuser pre-commit-install makemigrations migrate-safe validate-migrations test-migrations-clean check-pending-migrations migration-pre-check setup-pre-commit setup-dev-workflow scheduled-publish-setup scheduled-publish-test publish azure-diagnose azure-fix-storage azure-fix-domain azure-health-check
 
 # Set default target
 .DEFAULT_GOAL := help
@@ -76,74 +76,68 @@ clean: ## Remove compiled Python files and caches
 	find . -type f -name "*.pyc" -delete
 	find . -type d -name ".pytest_cache" -exec rm -rf {} +
 
-crontab: ## Set up scheduled publishing cron job
-	./scripts/setup_scheduled_publishing.sh
-
 superuser: ## Create a superuser
 	python manage.py createsuperuser
 
-publish: ## Publish scheduled content
-	python manage.py publish_scheduled
+# Scheduled Publishing Commands
+scheduled-publish-setup: ## Set up cron job for scheduled publishing
+	./scripts/scheduled-publishing.sh --setup
 
-test-schedule: ## Create test scheduled content (for testing scheduled publishing)
-	./scripts/test_scheduling.sh
+scheduled-publish-test: ## Create test scheduled content
+	./scripts/scheduled-publishing.sh --test
+
+publish: ## Publish scheduled content now
+	./scripts/scheduled-publishing.sh --run
 
 pre-commit-install: ## Install pre-commit hooks
 	pre-commit install
 	@echo "$(GREEN)Pre-commit hooks installed successfully!$(NC)"
 	@echo "$(YELLOW)Tests will now run before each commit to ensure code quality$(NC)"
 
-# Safe Migration Workflow
-makemigrations: validate-migrations ## Create new migrations (with validation)
-	@echo "$(YELLOW)Checking development environment...$(NC)"
-	./scripts/enforce-dev-environment.sh
+# Migration Safety Commands
+migration-pre-check: ## Pre-flight checklist BEFORE making model changes
+	./scripts/migration-safety.sh --pre-check
+
+makemigrations: ## Create new migrations with validation
+	@echo "$(YELLOW)Validating before creating migrations...$(NC)"
+	./scripts/migration-safety.sh --validate
 	@echo "$(YELLOW)Creating migrations...$(NC)"
 	@cd deploy/docker && docker-compose exec web python manage.py makemigrations
 	@echo "$(BLUE)Validating new migrations...$(NC)"
-	./scripts/validate-migrations.sh
+	./scripts/migration-safety.sh --validate
 	@echo "$(GREEN)Migrations created and validated successfully!$(NC)"
 
-migrate-safe: validate-migrations ## Apply migrations with validation and clean environment testing
-	@echo "$(YELLOW)Running migration safety checks...$(NC)"
-	./scripts/validate-migrations.sh
-	@echo "$(BLUE)Testing migrations in clean environment...$(NC)"
-	./scripts/test-migrations-clean.sh
-	@echo "$(GREEN)Migrations applied successfully!$(NC)"
+migrate-safe: ## Apply migrations with full safety checks
+	./scripts/migration-safety.sh --all
 
-validate-migrations: ## Validate existing migrations for issues
-	@echo "$(BLUE)Validating Django migration dependencies...$(NC)"
-	./scripts/validate-migrations.sh
+validate-migrations: ## Validate existing migrations
+	./scripts/migration-safety.sh --validate
 
-test-migrations-clean: ## Test migrations in a clean environment (like CI/CD)
-	@echo "$(YELLOW)Testing migrations in clean environment...$(NC)"
-	./scripts/test-migrations-clean.sh
+test-migrations-clean: ## Test migrations in clean environment
+	./scripts/migration-safety.sh --test-clean
 
-setup-pre-commit: ## Set up complete pre-commit environment for migration safety
-	@echo "$(BLUE)Setting up pre-commit hooks for migration safety...$(NC)"
+check-pending-migrations: ## Check for pending migrations
+	./scripts/migration-safety.sh --check-pending
+
+# Azure Operations Commands
+azure-diagnose: ## Diagnose production issues (download logs)
+	./scripts/azure-ops.sh --diagnose
+
+azure-fix-storage: ## Fix Azure storage configuration
+	./scripts/azure-ops.sh --fix-storage
+
+azure-fix-domain: ## Fix Site domain configuration
+	./scripts/azure-ops.sh --fix-domain
+
+azure-health-check: ## Run comprehensive Azure health check
+	./scripts/azure-ops.sh --health-check
+
+# Developer Setup Commands
+setup-dev-workflow: ## Complete dev environment setup (run once)
+	./scripts/setup-dev-environment.sh
+
+setup-pre-commit: ## Set up pre-commit hooks
+	@echo "$(BLUE)Installing pre-commit hooks...$(NC)"
 	pre-commit install
+	pre-commit install --hook-type pre-push
 	@echo "$(GREEN)Pre-commit hooks installed!$(NC)"
-	@echo "$(YELLOW)Making validation scripts executable...$(NC)"
-	chmod +x scripts/check-migrations.sh scripts/validate-migrations.sh scripts/test-migrations-clean.sh
-	@echo "$(GREEN)Migration safety workflow is now active!$(NC)"
-	@echo ""
-	@echo "$(BLUE)Safe workflow commands:$(NC)"
-	@echo "  $(YELLOW)make makemigrations$(NC)     - Create migrations with validation"
-	@echo "  $(YELLOW)make migrate-safe$(NC)       - Apply migrations safely"
-	@echo "  $(YELLOW)make validate-migrations$(NC) - Check existing migrations"
-	@echo "  $(YELLOW)make test-migrations-clean$(NC) - Test in clean environment"
-
-setup-dev-workflow: setup-pre-commit ## Set up complete developer workflow with safety enforcement
-	@echo "$(BLUE)Setting up complete developer workflow...$(NC)"
-	./scripts/setup-dev-aliases.sh
-	@echo "$(GREEN)Developer workflow setup complete!$(NC)"
-	@echo ""
-	@echo "$(BLUE)🛡️  Safety features enabled:$(NC)"
-	@echo "  ✅ Pre-commit hooks for migration validation"
-	@echo "  ✅ Shell aliases redirecting unsafe commands"
-	@echo "  ✅ Make targets with built-in validation"
-	@echo "  ✅ CI/CD pipeline validation"
-	@echo ""
-	@echo "$(YELLOW)Recommended workflow:$(NC)"
-	@echo "  1. $(GREEN)make dev-safe$(NC)           - Start development environment"
-	@echo "  2. $(GREEN)safe-migrate$(NC)            - Create and apply migrations safely"
-	@echo "  3. $(GREEN)git commit$(NC)              - Pre-commit hooks will validate"

@@ -66,14 +66,27 @@ These credentials are configured in the `.env` file for development convenience.
 - `make shell` - Start the Django shell
 
 **Migration Safety Commands:**
-- `make makemigrations` - Create new migrations (with validation)
-- `make migrate-safe` - Apply migrations with validation and clean environment testing
-- `make validate-migrations` - Validate existing migrations for issues
-- `make test-migrations-clean` - Test migrations in a clean environment (like CI/CD)
+- `make migration-pre-check` - Pre-flight checklist BEFORE making model changes
+- `make makemigrations` - Create new migrations with validation
+- `make migrate-safe` - Apply migrations with full safety checks
+- `make validate-migrations` - Validate existing migrations
+- `make test-migrations-clean` - Test migrations in clean environment
+- `make check-pending-migrations` - Check for pending migrations
+
+**Azure Operations Commands:**
+- `make azure-diagnose` - Diagnose production issues (download logs)
+- `make azure-fix-storage` - Fix Azure storage configuration
+- `make azure-fix-domain` - Fix Site domain configuration
+- `make azure-health-check` - Run comprehensive Azure health check
+
+**Scheduled Publishing Commands:**
+- `make scheduled-publish-setup` - Set up cron job for scheduled publishing
+- `make scheduled-publish-test` - Create test scheduled content
+- `make publish` - Publish scheduled content now
 
 **Developer Workflow Setup:**
-- `make setup-dev-workflow` - Set up complete developer workflow with safety enforcement
-- `make setup-pre-commit` - Set up complete pre-commit environment for migration safety
+- `make setup-dev-workflow` - Complete dev environment setup (run once)
+- `make setup-pre-commit` - Set up pre-commit hooks
 - `make pre-commit-install` - Install pre-commit hooks
 
 **Testing & Quality:**
@@ -88,9 +101,6 @@ These credentials are configured in the `.env` file for development convenience.
 - `make superuser` - Create a superuser
 - `make static` - Collect static files
 - `make clean` - Remove compiled Python files and caches
-- `make publish` - Publish scheduled content
-- `make test-schedule` - Create test scheduled content
-- `make crontab` - Set up scheduled publishing cron job
 - `make prod` - Start production environment
 - `make help` - Show all available commands
 
@@ -135,6 +145,10 @@ These credentials are configured in the `.env` file for development convenience.
 
 ### Deployment Architecture
 
+- **CI/CD Pipeline**: Automated GitHub Actions workflow (`.github/workflows/ci-cd.yml`)
+  - **Job 1**: Validate & Test (PostgreSQL 14, all pushes/PRs)
+  - **Job 2**: Build & Deploy (main branch only, deploys to Azure)
+  - **Documentation**: See `docs/CI-CD-PIPELINE.md` for complete guide
 - **Docker Multi-stage**: Poetry dependency management, Gunicorn WSGI
 - **Azure App Service**: SSL termination via Azure, Redis Cache integration
 - **Static Files**: WhiteNoise with manifest storage for production
