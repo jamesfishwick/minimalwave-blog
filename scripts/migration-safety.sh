@@ -19,6 +19,7 @@ usage() {
     echo "Usage: $0 [MODE]"
     echo ""
     echo "Modes:"
+    echo "  --pre-check      Pre-flight checklist BEFORE making model changes"
     echo "  --validate       Validate migration dependencies and consistency"
     echo "  --test-clean     Test migrations in clean environment"
     echo "  --check-pending  Check for pending migrations"
@@ -26,6 +27,7 @@ usage() {
     echo "  --help           Show this help message"
     echo ""
     echo "Examples:"
+    echo "  $0 --pre-check          # Before modifying models"
     echo "  $0 --validate           # Quick validation"
     echo "  $0 --test-clean         # Full clean environment test"
     echo "  $0 --all                # Complete safety check"
@@ -125,6 +127,47 @@ check_pending() {
     fi
 }
 
+pre_check() {
+    echo -e "${BLUE}🔍 Pre-migration safety checklist...${NC}"
+    echo ""
+
+    ensure_docker_running
+
+    # 1. Show current migration state
+    echo -e "${BLUE}📋 Current migration state:${NC}"
+    cd "$PROJECT_ROOT/deploy/docker" && docker-compose exec -T web python manage.py showmigrations
+    echo ""
+
+    # 2. Check for pending migrations
+    echo -e "${BLUE}📋 Checking for pending migrations...${NC}"
+    if cd "$PROJECT_ROOT/deploy/docker" && docker-compose exec -T web python manage.py makemigrations --check --dry-run 2>&1 | grep -q "No changes detected"; then
+        echo -e "${GREEN}✅ No pending migrations detected${NC}"
+    else
+        echo -e "${YELLOW}⚠️  WARNING: Pending migrations detected!${NC}"
+        echo -e "${YELLOW}Run 'python manage.py makemigrations' to see what would be created${NC}"
+        echo -e "${YELLOW}Consider committing pending migrations before making new model changes${NC}"
+    fi
+    echo ""
+
+    # 3. Check if any models have been modified since last commit
+    echo -e "${BLUE}📋 Checking for model changes since last commit...${NC}"
+    cd "$PROJECT_ROOT"
+    if git diff --name-only HEAD | grep -E "(models\.py|admin\.py)" | head -5; then
+        echo -e "${YELLOW}⚠️  Model files have been modified since last commit${NC}"
+        echo -e "${YELLOW}Review these changes carefully before creating migrations${NC}"
+    else
+        echo -e "${GREEN}✅ No model file changes detected since last commit${NC}"
+    fi
+    echo ""
+
+    # 4. Show recent migrations for context
+    echo -e "${BLUE}📋 Recent migration files:${NC}"
+    find "$PROJECT_ROOT" -path "*/migrations/*.py" -not -name "__init__.py" -mtime -7 2>/dev/null | head -10 || echo "No recent migration files found"
+    echo ""
+
+    echo -e "${GREEN}✅ Pre-migration check completed. Safe to proceed with model changes.${NC}"
+}
+
 run_all() {
     echo -e "${BLUE}🛡️  Running complete migration safety check...${NC}"
     echo ""
@@ -147,6 +190,9 @@ run_all() {
 MODE="${1:---all}"
 
 case "$MODE" in
+    --pre-check)
+        pre_check
+        ;;
     --validate)
         validate_migrations
         ;;
