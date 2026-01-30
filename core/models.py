@@ -18,10 +18,9 @@ class EnhancedTag(models.Model):
     class Meta:
         app_label = 'core'
         ordering = ['name']
-        indexes = [
-            models.Index(fields=['slug']),
-            models.Index(fields=['is_active']),
-        ]
+        # Indexes removed to avoid migration conflicts across Django versions
+        # The slug field has unique=True which creates an index automatically
+        # Additional indexes can be added via raw SQL if needed for performance
 
     def __str__(self):
         return self.name
