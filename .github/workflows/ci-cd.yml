@@ -43,18 +43,24 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y postgresql-client
 
-      - name: Cache Python dependencies
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          poetry --version
+
+      - name: Cache Poetry dependencies
         uses: actions/cache@v3
         with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
           restore-keys: |
-            ${{ runner.os }}-pip-
+            ${{ runner.os }}-poetry-
 
-      - name: Install Python dependencies
+      - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          # Check if lock file is up to date, regenerate if needed
+          poetry check || poetry lock
+          poetry install --no-interaction --no-ansi --no-root
 
       - name: Set environment variables
         run: |
@@ -76,38 +82,38 @@ jobs:
       - name: Validate migration consistency
         run: |
           echo "🔍 Validating migration dependencies and consistency..."
-          python manage.py validate_migrations
+          poetry run python manage.py validate_migrations
           echo "✓ Migration validation passed"
 
       - name: Check for pending migrations
         run: |
           echo "📋 Checking for uncommitted model changes..."
-          python manage.py makemigrations --check --dry-run
+          poetry run python manage.py makemigrations --check --dry-run
           echo "✓ No pending migrations"
 
       - name: Run Django system checks
         run: |
           echo "🔍 Running Django deployment checks..."
-          python manage.py check --deploy
+          poetry run python manage.py check --deploy
           echo "✓ System checks passed"
 
       - name: Test migrations in clean environment
         run: |
           echo "🧪 Testing migrations from scratch..."
-          python manage.py migrate --verbosity=2
-          python manage.py migrate --check
+          poetry run python manage.py migrate --verbosity=2
+          poetry run python manage.py migrate --check
           echo "✓ Migrations applied successfully"
 
       - name: Verify database schema
         run: |
           echo "📊 Verifying database schema..."
-          python manage.py showmigrations --verbosity=2
+          poetry run python manage.py showmigrations --verbosity=2
           echo "✓ Database schema verified"
 
       - name: Run test suite
         run: |
           echo "🧪 Running Django tests..."
-          python manage.py test --verbosity=2
+          poetry run python manage.py test --verbosity=2
           echo "✓ All tests passed"
 
   # Job 2: Build and Deploy (only on push to main)
