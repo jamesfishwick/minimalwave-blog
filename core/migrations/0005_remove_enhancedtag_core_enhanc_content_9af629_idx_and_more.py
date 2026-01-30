@@ -10,10 +10,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveIndex(
-            model_name="enhancedtag",
-            name="core_enhanc_content_9af629_idx",
-        ),
+        # core_enhanc_content_9af629_idx was already removed in migration 0003
+        # Only remove the indexes that were added in migration 0003
         migrations.RemoveIndex(
             model_name="enhancedtag",
             name="core_enhanc_slug_idx",

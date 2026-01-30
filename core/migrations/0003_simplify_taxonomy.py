@@ -10,6 +10,13 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        # FIRST: Remove the index on content_type before removing the field
+        # This prevents SQLite errors when dropping the column
+        migrations.RemoveIndex(
+            model_name='enhancedtag',
+            name='core_enhanc_content_9af629_idx',
+        ),
+
         # Remove SeriesEntry model (depends on Series)
         migrations.DeleteModel(
             name='SeriesEntry',
@@ -25,7 +32,7 @@ class Migration(migrations.Migration):
             name='Category',
         ),
 
-        # Remove fields from EnhancedTag
+        # Remove fields from EnhancedTag (index already removed above)
         migrations.RemoveField(
             model_name='enhancedtag',
             name='category',
