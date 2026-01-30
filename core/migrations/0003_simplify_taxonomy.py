@@ -89,15 +89,42 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # Simplify taxonomy using RunPython to handle all edge cases
-        migrations.RunPython(
-            simplify_taxonomy,
-            reverse_code=migrations.RunPython.noop,
-        ),
-
-        # Add new indexes
-        migrations.RunPython(
-            add_new_indexes,
-            reverse_code=migrations.RunPython.noop,
+        # Use SeparateDatabaseAndState to handle database ops separately from state ops
+        migrations.SeparateDatabaseAndState(
+            database_operations=[
+                # Database operations: Handle existing and non-existing tables/columns safely
+                migrations.RunPython(
+                    simplify_taxonomy,
+                    reverse_code=migrations.RunPython.noop,
+                ),
+                migrations.RunPython(
+                    add_new_indexes,
+                    reverse_code=migrations.RunPython.noop,
+                ),
+            ],
+            state_operations=[
+                # State operations: Update Django's migration state
+                # First remove the index that references content_type
+                migrations.RemoveIndex(
+                    model_name='enhancedtag',
+                    name='core_enhanc_content_9af629_idx',
+                ),
+                # Then remove fields
+                migrations.RemoveField(model_name='enhancedtag', name='category'),
+                migrations.RemoveField(model_name='enhancedtag', name='content_type'),
+                migrations.RemoveField(model_name='enhancedtag', name='color'),
+                migrations.RemoveField(model_name='enhancedtag', name='icon'),
+                migrations.RemoveField(model_name='enhancedtag', name='usage_count'),
+                migrations.RemoveField(model_name='enhancedtag', name='last_used'),
+                # Remove old models
+                migrations.DeleteModel(name='SeriesEntry'),
+                migrations.DeleteModel(name='Series'),
+                migrations.DeleteModel(name='Category'),
+                # Update model options
+                migrations.AlterModelOptions(
+                    name='enhancedtag',
+                    options={'ordering': ['name']},
+                ),
+            ],
         ),
     ]
