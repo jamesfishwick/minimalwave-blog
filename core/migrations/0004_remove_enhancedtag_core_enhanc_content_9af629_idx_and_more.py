@@ -10,14 +10,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveIndex(
-            model_name="enhancedtag",
-            name="core_enhanc_content_9af629_idx",
-        ),
-        migrations.RemoveIndex(
-            model_name="enhancedtag",
-            name="core_enhanc_slug_idx",
-        ),
+        # Note: The content and slug indexes were already removed in 0003_simplify_taxonomy
+        # when those fields were deleted. Only the is_active index rename is needed.
         migrations.RenameIndex(
             model_name="enhancedtag",
             new_name="core_enhanc_is_acti_816df5_idx",
