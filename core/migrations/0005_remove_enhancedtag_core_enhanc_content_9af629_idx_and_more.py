@@ -3,6 +3,18 @@
 from django.db import migrations
 
 
+def remove_old_indexes(apps, schema_editor):
+    """Remove indexes that were added in migration 0003 but are no longer needed"""
+    with schema_editor.connection.cursor() as cursor:
+        # Try to drop indexes if they exist
+        for index_name in ['core_enhanc_slug_idx', 'core_enhanc_is_acti_idx']:
+            try:
+                cursor.execute(f'DROP INDEX IF EXISTS {index_name}')
+            except Exception:
+                # Index doesn't exist, that's fine
+                pass
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -10,14 +22,9 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # core_enhanc_content_9af629_idx was already removed in migration 0003
-        # Only remove the indexes that were added in migration 0003
-        migrations.RemoveIndex(
-            model_name="enhancedtag",
-            name="core_enhanc_slug_idx",
-        ),
-        migrations.RemoveIndex(
-            model_name="enhancedtag",
-            name="core_enhanc_is_acti_idx",
+        # Remove indexes using RunPython since they were created via RunPython in 0003
+        migrations.RunPython(
+            remove_old_indexes,
+            reverse_code=migrations.RunPython.noop,
         ),
     ]
