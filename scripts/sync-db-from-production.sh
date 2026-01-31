@@ -197,7 +197,7 @@ export_production_database() {
 
     # Export from Azure PostgreSQL
     echo "Connecting to $PROD_HOST..."
-    PGPASSWORD="$PROD_PASSWORD" pg_dump \
+    PGSSLMODE=require PGPASSWORD="$PROD_PASSWORD" pg_dump \
         --host="$PROD_HOST" \
         --port="$PROD_PORT" \
         --username="$PROD_USER" \
