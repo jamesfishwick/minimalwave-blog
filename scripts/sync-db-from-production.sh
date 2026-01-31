@@ -119,9 +119,9 @@ load_credentials() {
         DATABASE_URL=$(grep -E "^DATABASE_URL=" "$PROJECT_ROOT/.env" | cut -d '=' -f2- | tr -d '"' | tr -d "'")
 
         if [ -n "$DATABASE_URL" ]; then
-            # Parse password from DATABASE_URL
+            # Parse password from DATABASE_URL using Python (handles @ in password)
             # Format: postgres://user:password@host:port/database
-            PROD_PASSWORD=$(echo "$DATABASE_URL" | sed -n 's/.*:\([^@]*\)@.*/\1/p')
+            PROD_PASSWORD=$(python3 -c "import urllib.parse; print(urllib.parse.urlparse('$DATABASE_URL').password)" 2>/dev/null)
 
             if [ -n "$PROD_PASSWORD" ]; then
                 echo -e "${GREEN}✓ Production password loaded from .env${NC}"
