@@ -73,6 +73,10 @@ These credentials are configured in the `.env` file for development convenience.
 - `make test-migrations-clean` - Test migrations in clean environment
 - `make check-pending-migrations` - Check for pending migrations
 
+**Database Operations:**
+- `make sync-db-from-prod` - Sync production database to local Docker
+- `make sync-db-dry-run` - Show what database sync would do (no changes)
+
 **Azure Operations Commands:**
 - `make azure-diagnose` - Diagnose production issues (download logs)
 - `make azure-fix-storage` - Fix Azure storage configuration
@@ -142,6 +146,61 @@ These credentials are configured in the `.env` file for development convenience.
 - Development: PostgreSQL (matches production for consistency)
 - Production: PostgreSQL with SSL and connection pooling
 - Migration compatibility maintained across status field changes
+
+### Database Sync Workflow
+
+**Purpose**: Pull production Azure PostgreSQL data to local Docker environment for debugging, testing with real data, or validating migrations.
+
+**Prerequisites:**
+- PostgreSQL client tools installed (`pg_dump`, `psql`)
+  - macOS: `brew install postgresql`
+  - Ubuntu: `sudo apt-get install postgresql-client`
+- Docker running with local database container
+- Production credentials in `.env` file (DATABASE_URL) or available to enter manually
+
+**Usage:**
+
+```bash
+# Full sync with automatic local backup
+make sync-db-from-prod
+
+# Preview what would happen (no changes)
+make sync-db-dry-run
+
+# Sync without local backup (faster, but no safety net)
+./scripts/sync-db-from-production.sh --no-backup
+```
+
+**What It Does:**
+1. **Pre-flight checks**: Verifies pg_dump, Docker, and containers are running
+2. **Loads credentials**: From `.env` DATABASE_URL or prompts user
+3. **Backs up local database**: Creates timestamped backup in `data/backups/` (unless `--no-backup`)
+4. **Exports production**: Downloads Azure PostgreSQL to `data/backups/prod-dump-YYYYMMDD-HHMMSS.sql`
+5. **Imports to local**: Drops/recreates local database and imports production data
+6. **Verifies**: Checks record counts in key tables
+7. **Cleanup**: Keeps last 5 dumps, deletes older ones
+
+**Safety Features:**
+- Automatic local backup before overwriting (can skip with `--no-backup`)
+- Confirmation prompt before replacing local data
+- Dry-run mode to preview actions (`--dry-run`)
+- Timestamped backups prevent overwrites
+- Dumps saved to `data/backups/` (gitignored)
+
+**Restore from Backup:**
+```bash
+# List available backups
+ls -lh data/backups/
+
+# Restore specific backup
+docker-compose exec -T db psql -U postgres -d minimalwave < data/backups/local-backup-20260130-120000.sql
+```
+
+**Security Notes:**
+- Production password never stored in git (read from `.env` or prompt)
+- Database dumps contain production data (automatically gitignored)
+- May need to allowlist your IP in Azure PostgreSQL firewall rules
+- SSL automatically enforced for Azure PostgreSQL connections
 
 ### Deployment Architecture
 

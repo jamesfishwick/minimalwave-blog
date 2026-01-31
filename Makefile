@@ -1,4 +1,4 @@
-.PHONY: help run migrate shell test test-in-docker dev dev-safe dev-stop dev-restart prod format static clean superuser pre-commit-install makemigrations migrate-safe validate-migrations test-migrations-clean check-pending-migrations migration-pre-check setup-pre-commit setup-dev-workflow scheduled-publish-setup scheduled-publish-test publish azure-diagnose azure-fix-storage azure-fix-domain azure-health-check
+.PHONY: help run migrate shell test test-in-docker dev dev-safe dev-stop dev-restart prod format static clean superuser pre-commit-install makemigrations migrate-safe validate-migrations test-migrations-clean check-pending-migrations migration-pre-check setup-pre-commit setup-dev-workflow scheduled-publish-setup scheduled-publish-test publish azure-diagnose azure-fix-storage azure-fix-domain azure-health-check sync-db-from-prod sync-db-dry-run
 
 # Set default target
 .DEFAULT_GOAL := help
@@ -131,6 +131,13 @@ azure-fix-domain: ## Fix Site domain configuration
 
 azure-health-check: ## Run comprehensive Azure health check
 	./scripts/azure-ops.sh --health-check
+
+# Database Operations
+sync-db-from-prod: ## Sync production database to local Docker
+	./scripts/sync-db-from-production.sh
+
+sync-db-dry-run: ## Show what database sync would do
+	./scripts/sync-db-from-production.sh --dry-run
 
 # Developer Setup Commands
 setup-dev-workflow: ## Complete dev environment setup (run once)

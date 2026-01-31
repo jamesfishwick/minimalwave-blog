@@ -99,4 +99,8 @@ poetry.toml
 # Data directory (except for specific files we want to keep)
 data/*
 !data/.gitkeep
+!data/backups/.gitkeep
 deploy/docker/Pictures/
+
+# Database backups (contain production data)
+data/backups/*.sql
