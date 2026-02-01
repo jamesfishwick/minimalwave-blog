@@ -15,7 +15,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-PROD_HOST="minimalwave-blog-db-2025.postgres.database.azure.com"
+PROD_HOST="minimalwave-blog-db-b1ms.postgres.database.azure.com"
 PROD_DB="minimalwave"
 PROD_USER="minimalwave"
 PROD_PORT="5432"
