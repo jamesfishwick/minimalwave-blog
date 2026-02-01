@@ -179,23 +179,13 @@ href="
 
 {% if anthropic_visitor.is_anthropic %}
 <!-- Anthropic Visitor Greeting -->
-<div class="anthropic-banner" id="anthropicBanner">
-  <div class="terminal-window">
-    <div class="terminal-header">
-      <span class="terminal-title">visitor_detection.sh</span>
-      <div class="terminal-controls">
-        <span class="terminal-btn close" onclick="document.getElementById('anthropicBanner').style.display='none'">×</span>
-      </div>
-    </div>
-    <div class="terminal-body">
-      <div class="terminal-line">
-        <span class="terminal-prompt">$</span>
-        <span class="terminal-command typed-text" data-text="./detect_visitor.sh"></span>
-      </div>
-      <div class="terminal-output">
-        <span class="typing-cursor">|</span>
-      </div>
-    </div>
+<div class="anthropic-greeting" id="anthropicGreeting">
+  <div class="greeting-content">
+    <span class="close-btn" onclick="document.getElementById('anthropicGreeting').style.display='none'">×</span>
+    <p class="greeting-hello">👋 <strong>Hello, Anthropic team!</strong></p>
+    <p>Thanks for checking out my blog. I'm excited about the opportunity to work with you on building safe, beneficial AI systems.</p>
+    <p>Feel free to explore the posts on AI alignment, verification theory, and software engineering.</p>
+    <p class="greeting-signature">— James</p>
   </div>
 </div>
 {% endif %}
@@ -266,70 +256,6 @@ Built with Django.
 
 {% endblock %}
 
-{% if anthropic_visitor.is_anthropic %}
-<script>
-// Terminal typing animation for Anthropic greeting
-(function() {
-  const lines = [
-    { type: 'output', text: 'Scanning network traffic...', delay: 500 },
-    { type: 'output', text: 'Analyzing HTTP headers...', delay: 800 },
-    { type: 'output', text: 'Cross-referencing IP ranges...', delay: 1000 },
-    { type: 'output', text: '', delay: 200 },
-    { type: 'output', text: '✓ Detection complete', delay: 400, class: 'success' },
-    { type: 'output', text: '', delay: 200 },
-    { type: 'output', text: '> Visitor origin: Anthropic', delay: 300, class: 'highlight' },
-    { type: 'output', text: '> Detection method: {{ anthropic_visitor.detection_method }}', delay: 300 },
-    { type: 'output', text: '> Confidence: {{ anthropic_visitor.confidence }}', delay: 300 },
-    { type: 'output', text: '', delay: 500 },
-    { type: 'output', text: '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', delay: 100, class: 'divider' },
-    { type: 'output', text: '', delay: 100 },
-    { type: 'output', text: '👋 Hello, Anthropic team!', delay: 400, class: 'greeting' },
-    { type: 'output', text: '', delay: 200 },
-    { type: 'output', text: 'Thanks for checking out my blog. I\'m excited about', delay: 300 },
-    { type: 'output', text: 'the opportunity to work with you on building safe,', delay: 300 },
-    { type: 'output', text: 'beneficial AI systems.', delay: 300 },
-    { type: 'output', text: '', delay: 400 },
-    { type: 'output', text: 'Feel free to explore the posts on AI alignment,', delay: 300 },
-    { type: 'output', text: 'verification theory, and software engineering.', delay: 300 },
-    { type: 'output', text: '', delay: 500 },
-    { type: 'output', text: '- James', delay: 400, class: 'signature' },
-  ];
-
-  const terminalOutput = document.querySelector('.anthropic-banner .terminal-output');
-  const cursor = document.querySelector('.typing-cursor');
-  let currentLine = 0;
-
-  function typeNextLine() {
-    if (currentLine >= lines.length) {
-      cursor.style.display = 'none';
-      return;
-    }
-
-    const line = lines[currentLine];
-    const lineElement = document.createElement('div');
-    lineElement.className = 'terminal-line ' + (line.class || '');
-
-    // Type out the text character by character
-    let charIndex = 0;
-    const typeInterval = setInterval(() => {
-      if (charIndex < line.text.length) {
-        lineElement.textContent = line.text.substring(0, charIndex + 1);
-        charIndex++;
-      } else {
-        clearInterval(typeInterval);
-        currentLine++;
-        setTimeout(typeNextLine, line.delay);
-      }
-    }, 30); // 30ms per character
-
-    terminalOutput.insertBefore(lineElement, cursor);
-  }
-
-  // Start animation after a brief delay
-  setTimeout(typeNextLine, 800);
-})();
-</script>
-{% endif %}
 
 <!-- 
     ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
