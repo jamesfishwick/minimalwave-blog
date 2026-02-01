@@ -8,7 +8,7 @@ A Django-based personal blog inspired by Simon Willison's website (simonwillison
 * **Link Blog (Blogmarks):** Share and comment on external links, similar to Simon Willison's "blogmarks".
 * **TIL (Today I Learned):** A dedicated section for short-form content, organized by topic.
 * **Tagging:** Organize all content (posts, links, TILs) using tags.
-* **Markdown Support:** Write content using Markdown with syntax highlighting.
+* **Markdown Support:** Write content using Markdown with syntax highlighting and enhanced image placement.
 * **Search:** Full-text search across blog posts, links, and TILs.
 * **Archives:** Browse content by year and month.
 * **Atom Feeds:** Separate Atom feeds for the main blog and the TIL section.
@@ -251,6 +251,44 @@ After running the test, you can:
 
 * Wait for the scheduled time to pass and verify the content is published automatically
 * Run `python manage.py publish_scheduled` to publish immediately
+
+### Enhanced Markdown Image Placement
+
+The blog supports two methods for inserting and positioning images in markdown content:
+
+#### Method 1: Markdown Attributes (Power Users)
+
+Use the `attr_list` extension to add CSS classes directly to images:
+
+```markdown
+![Photo](image.jpg){: .align-right .w-300}
+![Hero](hero.jpg){: .align-center .w-800}
+```
+
+**Available classes:**
+- Alignment: `.align-left`, `.align-right`, `.align-center`
+- Widths: `.w-200`, `.w-300`, `.w-400`, `.w-500`, `.w-800`, `.full-width`
+
+#### Method 2: Shortcode Syntax (Content Editors)
+
+Use simple shortcode syntax for common scenarios:
+
+```markdown
+{{img:uploads/photo.jpg|right|300|Caption text}}
+{{img:https://example.com/image.jpg|center|800}}
+```
+
+**Syntax:** `{{img:path|position|width|optional_caption}}`
+- `path`: Relative to `/media/` or absolute URL
+- `position`: left, right, center, full
+- `width`: 200, 300, 400, 500, 800 (pixels)
+- `caption`: Optional (becomes alt text and visible caption)
+
+**Features:**
+- Semantic HTML (`<figure>` and `<figcaption>`)
+- Mobile responsive (images stack on small screens)
+- WCAG 2.1 AA accessibility compliant
+- Lazy loading for performance
 
 ### Makefile Support
 

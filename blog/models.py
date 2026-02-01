@@ -5,6 +5,8 @@ from django.utils.html import strip_tags
 import markdown
 from django.utils.html import mark_safe
 from django.urls import reverse
+from django.conf import settings
+from blog.templatetags.markdown_extras import preprocess_image_shortcodes
 
 
 class SiteSettings(models.Model):
@@ -148,26 +150,32 @@ class Entry(BaseEntry):
     @property
     def summary_rendered(self):
         # Use same configuration as body_rendered to ensure consistency
+        # Preprocess custom shortcodes before markdown rendering
+        processed = preprocess_image_shortcodes(self.summary)
         return mark_safe(markdown.markdown(
-            self.summary,
-            extensions=['extra', 'codehilite'],
-            output_format="html5"
+            processed,
+            extensions=settings.MARKDOWN_EXTENSIONS,
+            output_format=settings.MARKDOWN_OUTPUT_FORMAT
         ))
 
     @property
     def summary_text(self):
+        # Preprocess custom shortcodes before markdown rendering
+        processed = preprocess_image_shortcodes(self.summary)
         return strip_tags(markdown.markdown(
-            self.summary, 
-            extensions=['extra', 'codehilite'],
-            output_format="html5"
+            processed,
+            extensions=settings.MARKDOWN_EXTENSIONS,
+            output_format=settings.MARKDOWN_OUTPUT_FORMAT
         ))
 
     @property
     def body_rendered(self):
+        # Preprocess custom shortcodes before markdown rendering
+        processed = preprocess_image_shortcodes(self.body)
         return mark_safe(markdown.markdown(
-            self.body, 
-            extensions=['extra', 'codehilite'],
-            output_format="html5"
+            processed,
+            extensions=settings.MARKDOWN_EXTENSIONS,
+            output_format=settings.MARKDOWN_OUTPUT_FORMAT
         ))
 
     def get_absolute_url(self):
@@ -204,8 +212,8 @@ class Entry(BaseEntry):
         if self.image_caption:
             return mark_safe(markdown.markdown(
                 self.image_caption,
-                extensions=['extra'],
-                output_format="html5"
+                extensions=settings.MARKDOWN_EXTENSIONS,
+                output_format=settings.MARKDOWN_OUTPUT_FORMAT
             ))
         return None
 
@@ -214,7 +222,10 @@ class Entry(BaseEntry):
         """Strip markdown from caption for use as alt text"""
         if self.image_caption:
             # Convert markdown to HTML then strip all HTML tags for plain text
-            html = markdown.markdown(self.image_caption, extensions=['extra'])
+            html = markdown.markdown(
+                self.image_caption,
+                extensions=settings.MARKDOWN_EXTENSIONS
+            )
             return strip_tags(html)
         return self.title  # Fallback to entry title if no caption
 
@@ -257,10 +268,12 @@ class Blogmark(BaseEntry):
 
     @property
     def commentary_rendered(self):
+        # Preprocess custom shortcodes before markdown rendering
+        processed = preprocess_image_shortcodes(self.commentary)
         return mark_safe(markdown.markdown(
-            self.commentary, 
-            extensions=['extra', 'codehilite'],
-            output_format="html5"
+            processed,
+            extensions=settings.MARKDOWN_EXTENSIONS,
+            output_format=settings.MARKDOWN_OUTPUT_FORMAT
         ))
 
     def get_absolute_url(self):
@@ -290,8 +303,8 @@ class Blogmark(BaseEntry):
         if self.image_caption:
             return mark_safe(markdown.markdown(
                 self.image_caption,
-                extensions=['extra'],
-                output_format="html5"
+                extensions=settings.MARKDOWN_EXTENSIONS,
+                output_format=settings.MARKDOWN_OUTPUT_FORMAT
             ))
         return None
 
@@ -300,7 +313,10 @@ class Blogmark(BaseEntry):
         """Strip markdown from caption for use as alt text"""
         if self.image_caption:
             # Convert markdown to HTML then strip all HTML tags for plain text
-            html = markdown.markdown(self.image_caption, extensions=['extra'])
+            html = markdown.markdown(
+                self.image_caption,
+                extensions=settings.MARKDOWN_EXTENSIONS
+            )
             return strip_tags(html)
         return self.title  # Fallback to blogmark title if no caption
 

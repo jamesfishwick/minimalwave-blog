@@ -221,6 +221,60 @@ docker-compose exec -T db psql -U postgres -d minimalwave < data/backups/local-b
 - Publish_date enables future scheduling
 - Markdown support with automatic HTML rendering
 
+#### Markdown Image Placement
+
+The blog supports two methods for inserting and positioning images in markdown content:
+
+**Method 1: Markdown `attr_list` Extension (Power Users)**
+
+Add HTML attributes directly to markdown images for full control:
+
+```markdown
+![Photo description](image.jpg){: .align-right .w-300}
+![Hero image](hero.jpg){: .align-center .w-800}
+![Banner](banner.jpg){: .full-width}
+```
+
+**Available CSS classes:**
+- **Alignment**: `.align-left`, `.align-right`, `.align-center`
+- **Widths**: `.w-200`, `.w-300`, `.w-400`, `.w-500`, `.w-800`, `.full-width`
+- **Combine classes**: `{: .align-right .w-500}`
+- **Inline styles**: `{: style="max-width: 350px;"}`
+
+**Method 2: Custom Shortcode Syntax (Content Editors)**
+
+Ultra-simple syntax for common image placement scenarios:
+
+```markdown
+{{img:uploads/photo.jpg|right|300}}
+{{img:uploads/sunset.jpg|left|400|A beautiful sunset}}
+{{img:https://example.com/image.jpg|center|800|Caption text}}
+{{img:blog/hero.jpg|full|1200}}
+```
+
+**Syntax**: `{{img:path|position|width|optional_caption}}`
+- **path**: Relative to `/media/` (auto-prepended) or absolute URL (https://...)
+- **position**: `left`, `right`, `center`, `full`
+- **width**: Pixel width (200, 300, 400, 500, 800)
+- **caption**: Optional - becomes both alt text and visible `<figcaption>`
+
+**Technical Details:**
+- Shortcodes generate semantic `<figure>` and `<figcaption>` HTML
+- XSS protection via automatic HTML escaping
+- `loading="lazy"` attribute for performance
+- Mobile responsive: floated images stack on screens < 768px
+- WCAG 2.1 AA compliant (semantic HTML, proper alt text, color contrast)
+- Both syntaxes can coexist in the same content
+
+**Markdown Configuration** (`minimalwave-blog/settings/base.py`):
+```python
+MARKDOWN_EXTENSIONS = [
+    'markdown.extensions.extra',      # Tables, footnotes, etc.
+    'markdown.extensions.codehilite',  # Syntax highlighting
+    'markdown.extensions.attr_list',   # HTML attributes in markdown
+]
+```
+
 ### Template System
 
 - Base template with comprehensive SEO meta tags

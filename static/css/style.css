@@ -691,3 +691,109 @@ table {
 .codehilite .vg { color: #40ffff } /* Name.Variable.Global */
 .codehilite .vi { color: #40ffff } /* Name.Variable.Instance */
 .codehilite .il { color: #3677a9 } /* Literal.Number.Integer.Long */
+
+/* ===================================================================
+   Markdown Image Placement Classes
+   =================================================================== */
+
+/* Image alignment classes for attr_list extension */
+.align-right {
+  float: right;
+  margin: 0 0 var(--spacing-md) var(--spacing-md);
+}
+
+.align-left {
+  float: left;
+  margin: 0 var(--spacing-md) var(--spacing-md) 0;
+}
+
+.align-center {
+  display: block;
+  margin: 0 auto var(--spacing-md);
+}
+
+/* Image width classes (standard set: 200, 300, 400, 500, 800) */
+.w-200 { max-width: 200px; }
+.w-300 { max-width: 300px; }
+.w-400 { max-width: 400px; }
+.w-500 { max-width: 500px; }
+.w-800 { max-width: 800px; }
+.full-width { width: 100%; }
+
+/* Image container classes for shortcode output */
+.image-float-right {
+  float: right;
+  margin: 0 0 var(--spacing-md) var(--spacing-md);
+  max-width: 40%;
+}
+
+.image-float-left {
+  float: left;
+  margin: 0 var(--spacing-md) var(--spacing-md) 0;
+  max-width: 40%;
+}
+
+.image-center {
+  display: block;
+  margin: 0 auto var(--spacing-md);
+}
+
+.image-full {
+  width: 100%;
+}
+
+/* Semantic HTML figure/figcaption styling */
+figure.markdown-image {
+  margin: var(--spacing-md) 0;
+}
+
+figure.markdown-image.float-left {
+  float: left;
+  margin: 0 var(--spacing-md) var(--spacing-md) 0;
+}
+
+figure.markdown-image.float-right {
+  float: right;
+  margin: 0 0 var(--spacing-md) var(--spacing-md);
+}
+
+figure.markdown-image.center {
+  text-align: center;
+}
+
+figure.markdown-image.full {
+  width: 100%;
+}
+
+figure.markdown-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+figure.markdown-image figcaption {
+  font-size: 0.9em;
+  color: var(--text-secondary);
+  margin-top: var(--spacing-sm);
+  font-style: italic;
+  text-align: left;
+}
+
+/* Mobile responsive: stack floated images on < 768px */
+@media (max-width: 767px) {
+  .image-float-left,
+  .image-float-right,
+  figure.markdown-image.float-left,
+  figure.markdown-image.float-right {
+    float: none;
+    max-width: 100%;
+    margin: var(--spacing-md) 0;
+  }
+
+  .align-left,
+  .align-right {
+    float: none;
+    display: block;
+    margin: var(--spacing-md) auto;
+  }
+}

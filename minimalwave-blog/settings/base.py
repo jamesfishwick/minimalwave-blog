@@ -113,6 +113,14 @@ PLAUSIBLE_DOMAIN = os.getenv('PLAUSIBLE_DOMAIN', 'localhost:8000')
 PLAUSIBLE_SCRIPT_URL = os.getenv('PLAUSIBLE_SCRIPT_URL', 'https://plausible.io/js/script.js')
 PLAUSIBLE_ENABLED = os.getenv('PLAUSIBLE_ENABLED', 'False').lower() == 'true'
 
+# Markdown configuration
+MARKDOWN_EXTENSIONS = [
+    'markdown.extensions.extra',      # Tables, footnotes, abbreviations, definition lists
+    'markdown.extensions.codehilite',  # Syntax highlighting for code blocks
+    'markdown.extensions.attr_list',   # Add HTML attributes to markdown elements
+]
+MARKDOWN_OUTPUT_FORMAT = 'html5'
+
 # Ensure logs directory exists
 log_dir = os.path.join(BASE_DIR, 'logs')
 os.makedirs(log_dir, exist_ok=True)

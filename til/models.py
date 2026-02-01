@@ -4,6 +4,8 @@ from django.utils import timezone
 from django.utils.html import strip_tags, mark_safe
 import markdown
 from django.urls import reverse
+from django.conf import settings
+from blog.templatetags.markdown_extras import preprocess_image_shortcodes
 # Tag import removed - using core.EnhancedTag
 
 class TIL(models.Model):
@@ -60,18 +62,22 @@ class TIL(models.Model):
 
     @property
     def body_rendered(self):
+        # Preprocess custom shortcodes before markdown rendering
+        processed = preprocess_image_shortcodes(self.body)
         return mark_safe(markdown.markdown(
-            self.body, 
-            extensions=['extra', 'codehilite'],
-            output_format="html5"
+            processed,
+            extensions=settings.MARKDOWN_EXTENSIONS,
+            output_format=settings.MARKDOWN_OUTPUT_FORMAT
         ))
 
     @property
     def body_text(self):
+        # Preprocess custom shortcodes before markdown rendering
+        processed = preprocess_image_shortcodes(self.body)
         return strip_tags(markdown.markdown(
-            self.body, 
-            extensions=['extra', 'codehilite'],
-            output_format="html5"
+            processed,
+            extensions=settings.MARKDOWN_EXTENSIONS,
+            output_format=settings.MARKDOWN_OUTPUT_FORMAT
         ))
 
     def get_absolute_url(self):
@@ -102,8 +108,8 @@ class TIL(models.Model):
         if self.image_caption:
             return mark_safe(markdown.markdown(
                 self.image_caption,
-                extensions=['extra'],
-                output_format="html5"
+                extensions=settings.MARKDOWN_EXTENSIONS,
+                output_format=settings.MARKDOWN_OUTPUT_FORMAT
             ))
         return None
 
@@ -112,6 +118,9 @@ class TIL(models.Model):
         """Strip markdown from caption for use as alt text"""
         if self.image_caption:
             # Convert markdown to HTML then strip all HTML tags for plain text
-            html = markdown.markdown(self.image_caption, extensions=['extra'])
+            html = markdown.markdown(
+                self.image_caption,
+                extensions=settings.MARKDOWN_EXTENSIONS
+            )
             return strip_tags(html)
         return self.title  # Fallback to TIL title if no caption
