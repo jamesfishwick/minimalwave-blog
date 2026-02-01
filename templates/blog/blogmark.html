@@ -85,16 +85,16 @@
 
 {% block content %}
   {% if preview %}
-  <div class="preview-banner" style="background: #ff5722; color: white; padding: 10px; margin-bottom: 20px; border-radius: 4px;">
+  <div class="preview-banner">
     <strong>PREVIEW MODE</strong> - This content is not publicly visible.
-    <div style="margin-top: 5px;">
+    <div class="preview-banner-actions">
       <span>Status: <strong>{{ blogmark.get_status_display }}</strong></span>
       {% if blogmark.publish_date %}
-      <span style="margin-left: 15px;">Scheduled to publish: <strong>{{ blogmark.publish_date|date:"F j, Y, g:i a" }}</strong></span>
+      <span class="preview-banner-schedule">Scheduled to publish: <strong>{{ blogmark.publish_date|date:"F j, Y, g:i a" }}</strong></span>
       {% endif %}
     </div>
-    <div style="margin-top: 10px;">
-      <a href="{% url 'admin:blog_blogmark_change' blogmark.id %}" style="color: white; text-decoration: underline; padding: 4px 8px; background-color: rgba(255,255,255,0.2); border-radius: 4px;">Edit in Admin</a>
+    <div class="preview-banner-edit">
+      <a href="{% url 'admin:blog_blogmark_change' blogmark.id %}">Edit in Admin</a>
     </div>
   </div>
   {% endif %}

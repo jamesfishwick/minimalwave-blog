@@ -53,8 +53,8 @@
 {% endblock %}
 
 {% block content %}
-<section class="blog-index">
-  <h2 class="synth-wave-header">Latest Posts</h2>
+<section class="blog-index" aria-labelledby="latest-posts-heading">
+  <h1 id="latest-posts-heading" class="synth-wave-header">Latest Posts</h1>
 
   {% for entry in entries %}
   <article class="post-card">
@@ -93,8 +93,8 @@
   {% endif %}
 </section>
 
-<section class="blogmarks">
-  <h2 class="synth-wave-header">Recent Links</h2>
+<section class="blogmarks" aria-labelledby="recent-links-heading">
+  <h2 id="recent-links-heading" class="synth-wave-header">Recent Links</h2>
 
   {% for blogmark in blogmarks %}
   <article class="post-card">

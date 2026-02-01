@@ -11,11 +11,11 @@
 
 {% block content %}
 
-  <section class="til-index">
-  <h1 class="synth-wave-header">Today I Learned</h1>
+  <section class="til-index" aria-labelledby="til-heading">
+  <h1 id="til-heading" class="synth-wave-header">Today I Learned</h1>
 
-  <div class="til-tags grid-pattern">
-  <h2>Browse by topic</h2>
+  <div class="til-tags grid-pattern" aria-labelledby="browse-topics-heading">
+  <h2 id="browse-topics-heading">Browse by topic</h2>
   <div class="tag-cloud">
 
   {% for tag in tags %}
@@ -31,19 +31,19 @@
 
   <form action="
   {% url 'til:search' %}
-  " method="get" class="search-form" style="margin: var(--spacing-lg) 0;">
-  <input type="text" name="q" placeholder="Search TILs..." aria-label="Search TILs">
-  <button type="submit">Search</button>
+  " method="get" class="search-form til-search-form" role="search" aria-label="Search TIL posts">
+  <input type="text" name="q" placeholder="Search TILs..." aria-label="Search TIL posts">
+  <button type="submit" aria-label="Submit search">Search</button>
   </form>
 
-  <h2>Recent TILs</h2>
+  <h2 id="recent-tils-heading">Recent TILs</h2>
 
   <ul class="til-list">
 
   {% for til in tils %}
 
     <li>
-    <span class="til-badge" style="font-size: 0.6rem; margin-bottom: var(--spacing-xs);">TIL</span>
+    <span class="til-badge">TIL</span>
     <h3><a href="{{ til.get_absolute_url }}">{{ til.title }}</a></h3>
     <div class="post-meta">{{ til.created|date:"F j, Y" }}</div>
     <div class="til-tags">

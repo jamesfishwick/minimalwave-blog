@@ -113,9 +113,9 @@
 
 {% block content %}
 {% if preview %}
-<div class="preview-banner" style="background: #ff5722; color: white; padding: 10px; margin-bottom: 20px; border-radius: 4px;">
+<div class="preview-banner">
   <strong>PREVIEW MODE</strong> - This content is not publicly visible.
-  <a href="{% url 'admin:blog_entry_change' entry.id %}" style="color: white; text-decoration: underline;">Edit in Admin</a>
+  <a href="{% url 'admin:blog_entry_change' entry.id %}">Edit in Admin</a>
 </div>
 {% endif %}
 
