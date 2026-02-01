@@ -49,6 +49,40 @@
   {% endif %}
 {% endblock %}
 
+{% block extra_head %}
+<!-- Structured Data (JSON-LD) for SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "{{ blogmark.title|escapejs }}",
+  "description": "{{ blogmark.commentary_rendered|striptags|escapejs }}",
+  "datePublished": "{{ blogmark.created|date:'c' }}",
+  "dateModified": "{{ blogmark.updated|date:'c'|default:blogmark.created|date:'c' }}",
+  "author": {
+    "@type": "Organization",
+    "name": "{{ site_name }}"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "{{ site_name }}",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ request.scheme }}://{{ request.get_host }}{% load static %}{% static 'images/logo.png' %}"
+    }
+  },
+  {% if blogmark.get_image_url %}"image": "{{ request.scheme }}://{{ request.get_host }}{{ blogmark.get_image_url }}",{% endif %}
+  "url": "{{ request.build_absolute_uri }}",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ request.build_absolute_uri }}"
+  }{% if blogmark.tags.exists %},
+  "keywords": "{% for tag in blogmark.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}"{% endif %},
+  "isBasedOn": "{{ blogmark.url }}"
+}
+</script>
+{% endblock %}
+
 {% block content %}
   {% if preview %}
   <div class="preview-banner" style="background: #ff5722; color: white; padding: 10px; margin-bottom: 20px; border-radius: 4px;">

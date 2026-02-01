@@ -49,6 +49,40 @@
   {% endif %}
 {% endblock %}
 
+{% block extra_head %}
+<!-- Structured Data (JSON-LD) for SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "{{ til.title|escapejs }}",
+  "description": "{{ til.body_text|truncatewords:50|escapejs }}",
+  "datePublished": "{{ til.created|date:'c' }}",
+  "author": {
+    "@type": "Person",
+    "name": "{% if til.author %}{{ til.author.get_full_name|default:til.author.username }}{% else %}{{ site_name }}{% endif %}"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "{{ site_name }}",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ request.scheme }}://{{ request.get_host }}{% load static %}{% static 'images/logo.png' %}"
+    }
+  },
+  {% if til.get_image_url %}"image": "{{ request.scheme }}://{{ request.get_host }}{{ til.get_image_url }}",{% endif %}
+  "url": "{{ request.build_absolute_uri }}",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ request.build_absolute_uri }}"
+  }{% if til.tags.exists %},
+  "keywords": "{% for tag in til.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}"{% endif %}{% if reading_time %},
+  "wordCount": "{{ til.body|wordcount }}",
+  "timeRequired": "PT{{ reading_time }}M"{% endif %}
+}
+</script>
+{% endblock %}
+
 {% block content %}
 
   <article class="til-detail">

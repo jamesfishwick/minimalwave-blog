@@ -1,0 +1,12 @@
+# robots.txt for minimalwave-blog
+# Allow all search engines to index the site
+
+User-agent: *
+Allow: /
+
+# Disallow admin and preview URLs
+Disallow: /admin/
+Disallow: /preview/
+
+# Sitemap location
+Sitemap: {{ request.scheme }}://{{ request.get_host }}/sitemap.xml
