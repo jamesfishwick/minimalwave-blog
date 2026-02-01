@@ -2,9 +2,20 @@
 Visitor detection utilities for special greetings.
 
 Detects visitors from specific companies (Anthropic) based on:
-- IP address ranges
-- HTTP Referer headers
-- User-Agent strings
+- IP address ranges (AS399358 - mostly infrastructure/office/VPN)
+- HTTP Referer headers (if clicking from anthropic.com domains)
+- User-Agent strings (API clients, less common for browsers)
+
+REALISTIC EXPECTATIONS:
+- IP detection catches ~5-20% of actual Anthropic visitors at best
+- Most employees work remotely or use personal networks
+- VPNs may route through cloud providers (AWS/Cloudflare)
+- Manual override (?anthropic=true) is more reliable for demonstrations
+
+PRIVACY NOTE:
+- Detection is passive, no personal data stored
+- Only logs detection events, not visitor identity
+- Respects user privacy while providing fun easter egg
 """
 
 import ipaddress
@@ -13,24 +24,35 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-# Anthropic's known IP ranges (these are public/known ranges)
-# Note: You may need to update these based on actual Anthropic infrastructure
+# Anthropic's known IP ranges (AS399358 Anthropic, PBC)
+# These are mostly infrastructure/outbound/API addresses, may catch office/VPN traffic
+# Source: Public BGP data, likely San Francisco office (548 Market St / 156 2nd St)
 ANTHROPIC_IP_RANGES = [
-    # San Francisco office ranges (example - update with actual ranges if known)
-    # ipaddress.ip_network('104.18.0.0/16'),  # Cloudflare range example
+    ipaddress.ip_network('160.79.104.0/23'),  # 512 IPs, core Anthropic block
+    ipaddress.ip_network('209.249.57.0/24'),  # 256 IPs, possibly legacy/shared
+    ipaddress.ip_network('2607:6bc0::/48'),   # IPv6 primary
+    ipaddress.ip_network('2607:6bc0:11::/48'), # IPv6 secondary
 ]
 
 # Anthropic-related referrer patterns
+# These would trigger if someone clicks from:
+# - Email client showing @anthropic.com addresses
+# - Internal tools/dashboards
+# - Public Anthropic websites
 ANTHROPIC_REFERRERS = [
     'anthropic.com',
     'claude.ai',
     'console.anthropic.com',
+    'www.anthropic.com',
+    'mail.google.com',  # Gmail with @anthropic.com (less specific but possible)
 ]
 
-# User-Agent patterns (less reliable, but can supplement)
+# User-Agent patterns (least reliable - mostly for API clients)
+# Note: Regular employee browsers won't have these, but API/tooling might
 ANTHROPIC_USER_AGENTS = [
     'anthropic',
     'claude',
+    'as399358',  # ASN identifier might appear in custom clients
 ]
 
 
