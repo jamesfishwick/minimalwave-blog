@@ -90,7 +90,7 @@
   <span class="til-badge">Today I Learned</span>
   <h1 class="synth-wave-header">{{ til.title }}</h1>
   <div class="post-meta">
-  {{ til.created|date:"F j, Y" }}
+  <time datetime="{{ til.created|date:'Y-m-d' }}">{{ til.created|date:"F j, Y" }}</time>
 
   {% if til.author %}
 

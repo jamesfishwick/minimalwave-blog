@@ -45,7 +45,7 @@
     <li>
     <span class="til-badge">TIL</span>
     <h3><a href="{{ til.get_absolute_url }}">{{ til.title }}</a></h3>
-    <div class="post-meta">{{ til.created|date:"F j, Y" }}</div>
+    <div class="post-meta"><time datetime="{{ til.created|date:'Y-m-d' }}">{{ til.created|date:"F j, Y" }}</time></div>
     <div class="til-tags">
 
     {% for tag in til.tags.all %}
