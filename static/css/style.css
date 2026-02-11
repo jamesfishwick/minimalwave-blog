@@ -216,8 +216,8 @@ pre code {
 }
 
 blockquote {
-  font-family: var(--font-mono);
-  font-style: normal;
+  font-family: var(--font-sans);
+  font-style: italic;
   padding-left: var(--spacing-md);
   margin-left: 0;
   margin-bottom: var(--spacing-md);
@@ -406,7 +406,8 @@ blockquote {
   color: var(--drac-comment);
   font-size: 0.9rem;
   margin-bottom: var(--spacing-md);
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
 }
 
 .post-tags {
@@ -580,7 +581,8 @@ blockquote {
 .archive-date {
   color: var(--drac-comment);
   margin-right: var(--spacing-sm);
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
   font-size: 0.9rem;
 }
 
