@@ -97,6 +97,15 @@ body {
   flex-direction: column;
 }
 
+/* ============================================================
+   Global Focus Styles (WCAG 2.1 AA - 2.4.7 Focus Visible)
+   ============================================================ */
+:focus-visible {
+  outline: 2px solid var(--drac-purple);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 /* Skip navigation link for accessibility */
 .skip-link {
   position: absolute;
@@ -113,8 +122,6 @@ body {
 
 .skip-link:focus {
   top: 0;
-  outline: 2px solid var(--drac-ui-focus);
-  outline-offset: 2px;
 }
 
 .container {
@@ -184,9 +191,7 @@ a:hover {
 }
 
 a:focus {
-  outline: 2px solid var(--drac-ui-focus);
-  outline-offset: 2px;
-  border-radius: 2px;
+  color: var(--drac-pink);
 }
 
 code {
@@ -307,6 +312,7 @@ blockquote {
 }
 
 .site-navigation a:focus {
+  color: var(--drac-cyan);
   background: rgba(139, 233, 253, 0.15);
 }
 
@@ -326,9 +332,7 @@ blockquote {
 }
 
 .search-form input:focus {
-  outline: none;
   border-color: var(--drac-purple);
-  box-shadow: 0 0 0 2px rgba(189, 147, 249, 0.2);
   background-color: var(--drac-ui-bg-lighter);
 }
 
