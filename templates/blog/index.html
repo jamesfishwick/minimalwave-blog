@@ -60,7 +60,7 @@
   <article class="post-card">
     <h3><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h3>
     <div class="post-meta">
-      {{ entry.created|date:"F j, Y" }}
+      <time datetime="{{ entry.created|date:'Y-m-d' }}">{{ entry.created|date:"F j, Y" }}</time>
       {% if entry.authors.exists %}
         by
         {% for authorship in entry.authorship_set.all %}
@@ -99,7 +99,7 @@
   {% for blogmark in blogmarks %}
   <article class="post-card">
     <h3><a href="{{ blogmark.get_absolute_url }}">{{ blogmark.title }}</a></h3>
-    <div class="post-meta">{{ blogmark.created|date:"F j, Y" }}</div>
+    <div class="post-meta"><time datetime="{{ blogmark.created|date:'Y-m-d' }}">{{ blogmark.created|date:"F j, Y" }}</time></div>
     <a href="{{ blogmark.url }}" class="blogmark-url neon-text">{{ blogmark.url }}</a>
     <div class="blogmark-commentary">{{ blogmark.commentary_rendered }}</div>
 
