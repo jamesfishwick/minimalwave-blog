@@ -27,9 +27,12 @@
 
 .pagination .step-links a {
   margin: 0 var(--spacing-xs);
-  padding: var(--spacing-xs) var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
   border-radius: 4px;
   transition: all 0.2s ease;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
 }
 
 .pagination .step-links a:hover {
