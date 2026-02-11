@@ -1124,3 +1124,39 @@ figure.markdown-image figcaption {
         padding: 16px;
     }
 }
+
+/* =============================================================
+   REDUCED MOTION SUPPORT (WCAG 2.1 AAA - 2.3.3)
+   Disable animations for users with vestibular disorders
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  /* Global animation and transition reduction */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* Explicitly disable signature CRT effects */
+  .crt-overlay {
+    animation: none !important;
+  }
+
+  /* Disable TIL badge pulse */
+  .til-badge {
+    animation: none !important;
+  }
+
+  /* Disable site title flicker and hue-shift */
+  .site-title a {
+    animation: none !important;
+  }
+
+  /* Disable anthropic greeting fade-in */
+  .anthropic-greeting {
+    animation: none !important;
+  }
+}
