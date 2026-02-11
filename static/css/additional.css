@@ -364,3 +364,29 @@
   background-color: rgba(255, 255, 255, 0.2);
   border-radius: 4px;
 }
+
+/* =============================================================
+   REDUCED MOTION SUPPORT (WCAG 2.1 AAA - 2.3.3)
+   Disable animations for users with vestibular disorders
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  /* Global animation and transition reduction */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* Disable tag hover slideIn animation */
+  .tags a:hover {
+    animation: none !important;
+  }
+
+  /* Disable cursor blink animation */
+  .cursor {
+    animation: none !important;
+  }
+}
