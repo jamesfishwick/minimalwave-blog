@@ -225,7 +225,7 @@ blockquote {
   color: var(--drac-comment);
   border-left: 3px solid var(--drac-purple);
   letter-spacing: 0.02em;
-  background: linear-gradient(to right, rgba(189, 147, 249, 0.05), transparent);
+  background: rgba(189, 147, 249, 0.05);
   padding: var(--spacing-md);
   border-radius: 0 4px 4px 0;
 }
@@ -339,9 +339,9 @@ blockquote {
 }
 
 .search-form button {
-  background: linear-gradient(135deg, var(--drac-purple), var(--drac-pink));
+  background: var(--drac-purple);
   color: var(--drac-fg);
-  border: none;
+  border: 1px solid var(--drac-pink);
   padding: var(--spacing-xs) var(--spacing-sm);
   cursor: pointer;
   border-radius: 0 4px 4px 0;
@@ -350,7 +350,8 @@ blockquote {
 }
 
 .search-form button:hover {
-  background: linear-gradient(135deg, var(--drac-pink), var(--drac-purple));
+  background: var(--drac-pink);
+  border-color: var(--drac-purple);
   box-shadow: 0 0 12px rgba(255, 121, 198, 0.4);
 }
 
@@ -366,7 +367,7 @@ blockquote {
 
 /* Blog post cards */
 .post-card {
-  background: linear-gradient(135deg, var(--drac-ui-bg-darker) 0%, var(--drac-bg) 100%);
+  background: var(--drac-ui-bg-darker);
   border: 1px solid var(--drac-selection);
   border-left: 3px solid var(--drac-purple);
   border-radius: 6px;
@@ -384,7 +385,7 @@ blockquote {
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(to right, transparent, var(--drac-purple), transparent);
+  background: var(--drac-purple);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -416,7 +417,7 @@ blockquote {
 
 .tag {
   display: inline-block;
-  background: linear-gradient(135deg, rgba(139, 233, 253, 0.15), rgba(189, 147, 249, 0.15));
+  background: rgba(139, 233, 253, 0.15);
   color: var(--drac-cyan);
   padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: 4px;
@@ -429,7 +430,7 @@ blockquote {
 }
 
 .tag:hover {
-  background: linear-gradient(135deg, rgba(255, 121, 198, 0.2), rgba(189, 147, 249, 0.2));
+  background: rgba(255, 121, 198, 0.2);
   color: var(--drac-pink);
   border-color: var(--drac-pink);
   text-decoration: none;
@@ -593,7 +594,7 @@ blockquote {
   text-align: center;
   color: var(--drac-comment);
   font-size: 0.9rem;
-  background: linear-gradient(to bottom, transparent, rgba(189, 147, 249, 0.03));
+  background: transparent;
   position: relative;
 }
 
@@ -604,7 +605,7 @@ blockquote {
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(to right, transparent, var(--drac-purple), transparent);
+  background: var(--drac-purple);
 }
 
 /* Responsive styles */
@@ -655,7 +656,7 @@ table {
 
 /* Table header */
 thead {
-  background: linear-gradient(135deg, var(--drac-ui-bg-dark), var(--drac-ui-bg-light));
+  background: var(--drac-ui-bg-dark);
   position: relative;
 }
 
@@ -666,10 +667,7 @@ thead::before {
   left: 0;
   right: 0;
   height: 100%;
-  background-image:
-    linear-gradient(to right, var(--drac-purple) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--drac-purple) 1px, transparent 1px);
-  background-size: 20px 20px;
+  background-color: rgba(189, 147, 249, 0.05);
   opacity: 0.05;
   pointer-events: none;
 }
@@ -705,7 +703,7 @@ tbody tr:nth-child(even) {
 
 /* Hover effect */
 tbody tr:hover {
-  background: linear-gradient(to right, rgba(189, 147, 249, 0.1), transparent);
+  background: rgba(189, 147, 249, 0.1);
   transition: background 0.2s ease;
 }
 
@@ -1044,7 +1042,7 @@ figure.markdown-image figcaption {
 }
 
 .greeting-content {
-    background: linear-gradient(135deg, var(--drac-ui-bg-dark), var(--drac-bg));
+    background: var(--drac-ui-bg-dark);
     border: 2px solid var(--drac-cyan);
     border-radius: 8px;
     padding: 20px;
@@ -1060,7 +1058,7 @@ figure.markdown-image figcaption {
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(to right, var(--drac-purple), var(--drac-cyan), var(--drac-pink));
+    background: var(--drac-cyan);
     border-radius: 8px 8px 0 0;
 }
 
