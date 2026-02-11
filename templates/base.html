@@ -175,6 +175,7 @@ href="
 
 </head>
 <body class="dark-mode">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
     <div class="crt-overlay" aria-hidden="true"></div>
 
 {% if anthropic_visitor.is_anthropic %}
@@ -217,14 +218,15 @@ action="
 "
 method="get"
 class="search-form"
+role="search"
 >
 <input
 type="text"
 name="q"
 placeholder="Search..."
-aria-label="Search"
+aria-label="Search blog posts"
 />
-<button type="submit">Search</button>
+<button type="submit" aria-label="Submit search">Search</button>
 </form>
 </li>
 </ul>
@@ -232,7 +234,7 @@ aria-label="Search"
 </div>
 </header>
 
-<main class="site-content">
+<main id="main-content" class="site-content">
 <div class="container">
 {% block content %}
 
