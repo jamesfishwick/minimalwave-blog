@@ -97,6 +97,26 @@ body {
   flex-direction: column;
 }
 
+/* Skip navigation link for accessibility */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--drac-purple);
+  color: var(--drac-bg);
+  padding: 8px 16px;
+  text-decoration: none;
+  font-weight: bold;
+  z-index: 100;
+  border-radius: 0 0 4px 0;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 2px solid var(--drac-ui-focus);
+  outline-offset: 2px;
+}
+
 .container {
   width: 100%;
   max-width: 1200px;
