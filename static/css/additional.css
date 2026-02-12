@@ -36,7 +36,7 @@
 }
 
 .pagination .step-links a:hover {
-  background: rgba(189, 147, 249, 0.1);
+  background: var(--purple-alpha-10);
 }
 
 .pagination .current {
@@ -86,7 +86,7 @@
 .related-post-card:hover {
   border-left-color: var(--accent-color);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(166, 76, 166, 0.2);
+  box-shadow: 0 4px 12px var(--purple-alpha-20);
 }
 
 .related-post-card h4 {
@@ -133,12 +133,12 @@
 /* PERFORMANCE: Keep strategic hover glow - high-value interactive feedback */
 .dark-mode .blogmark-url:hover {
   color: var(--drac-pink);
-  text-shadow: 0 0 8px rgba(255, 121, 198, 0.4);
+  text-shadow: 0 0 8px var(--pink-alpha-40);
   /* Optimization: Glow only on hover state (not persistent) = minimal paint cost */
 }
 
 .dark-mode .post-card:hover {
-  box-shadow: 0 8px 24px rgba(189, 147, 249, 0.2);
+  box-shadow: 0 8px 24px var(--purple-alpha-20);
   transition: box-shadow 0.3s ease;
 }
 
@@ -166,7 +166,7 @@
   text-align: center;
   font-style: italic;
   padding: var(--spacing-sm);
-  background: rgba(189, 147, 249, 0.05);
+  background: var(--purple-alpha-05);
 }
 
 /* Responsive adjustments for smaller screens */
@@ -214,7 +214,7 @@
   background: var(--drac-ui-bg-darker);
   border: 2px solid var(--drac-purple);
   border-radius: 8px;
-  box-shadow: 0 20px 60px rgba(189, 147, 249, 0.3);
+  box-shadow: 0 20px 60px var(--purple-alpha-30);
   overflow: hidden;
 }
 
@@ -361,7 +361,7 @@
 
 .preview-banner-edit a {
   padding: 4px 8px;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: var(--white-alpha-20);
   border-radius: 4px;
 }
 
