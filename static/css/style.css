@@ -64,6 +64,39 @@
   --border-color: var(--drac-selection);
   --border-accent: var(--drac-purple);
 
+  /* Alpha Variations (using color-mix for transparency) */
+  --purple-alpha-05: color-mix(in srgb, var(--drac-purple) 5%, transparent);
+  --purple-alpha-10: color-mix(in srgb, var(--drac-purple) 10%, transparent);
+  --purple-alpha-15: color-mix(in srgb, var(--drac-purple) 15%, transparent);
+  --purple-alpha-20: color-mix(in srgb, var(--drac-purple) 20%, transparent);
+  --purple-alpha-30: color-mix(in srgb, var(--drac-purple) 30%, transparent);
+  --purple-alpha-40: color-mix(in srgb, var(--drac-purple) 40%, transparent);
+
+  --cyan-alpha-10: color-mix(in srgb, var(--drac-cyan) 10%, transparent);
+  --cyan-alpha-15: color-mix(in srgb, var(--drac-cyan) 15%, transparent);
+  --cyan-alpha-30: color-mix(in srgb, var(--drac-cyan) 30%, transparent);
+
+  --pink-alpha-20: color-mix(in srgb, var(--drac-pink) 20%, transparent);
+  --pink-alpha-40: color-mix(in srgb, var(--drac-pink) 40%, transparent);
+  --pink-alpha-60: color-mix(in srgb, var(--drac-pink) 60%, transparent);
+
+  --green-alpha-20: color-mix(in srgb, var(--drac-green) 20%, transparent);
+  --green-alpha-30: color-mix(in srgb, var(--drac-green) 30%, transparent);
+  --green-alpha-40: color-mix(in srgb, var(--drac-green) 40%, transparent);
+  --green-alpha-50: color-mix(in srgb, var(--drac-green) 50%, transparent);
+
+  --white-alpha-05: color-mix(in srgb, #ffffff 5%, transparent);
+  --white-alpha-07: color-mix(in srgb, #ffffff 7%, transparent);
+  --white-alpha-08: color-mix(in srgb, #ffffff 8%, transparent);
+  --white-alpha-20: color-mix(in srgb, #ffffff 20%, transparent);
+  --white-alpha-30: color-mix(in srgb, #ffffff 30%, transparent);
+
+  --black-alpha-20: color-mix(in srgb, #000000 20%, transparent);
+  --black-alpha-30: color-mix(in srgb, #000000 30%, transparent);
+  --black-alpha-40: color-mix(in srgb, #000000 40%, transparent);
+
+  --bg-darker-alpha-30: color-mix(in srgb, var(--drac-ui-bg-darker) 30%, transparent);
+
   /* Typography */
   --font-sans: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
   --font-mono: 'Courier New', monospace;
@@ -143,7 +176,7 @@ h1, h2, h3, h4, h5, h6 {
 h1 {
   font-size: 2.5rem;
   color: var(--drac-purple);
-  text-shadow: 0 0 20px rgba(189, 147, 249, 0.3);
+  text-shadow: 0 0 20px var(--purple-alpha-30);
 }
 
 h2 {
@@ -200,7 +233,7 @@ code {
   color: var(--drac-green);
   padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: 3px;
-  border: 1px solid rgba(80, 250, 123, 0.2);
+  border: 1px solid var(--green-alpha-20);
 }
 
 pre {
@@ -210,7 +243,7 @@ pre {
   overflow-x: auto;
   margin-bottom: var(--spacing-md);
   border-left: 3px solid var(--drac-purple);
-  box-shadow: 0 2px 8px rgba(189, 147, 249, 0.1);
+  box-shadow: 0 2px 8px var(--purple-alpha-10);
 }
 
 pre code {
@@ -229,7 +262,7 @@ blockquote {
   color: var(--drac-comment);
   border-left: 3px solid var(--drac-purple);
   letter-spacing: 0.02em;
-  background: rgba(189, 147, 249, 0.05);
+  background: var(--purple-alpha-05);
   padding: var(--spacing-md);
   border-radius: 0 4px 4px 0;
 }
@@ -269,12 +302,12 @@ blockquote {
   color: var(--drac-purple);
   text-decoration: none;
   animation: flicker 3s infinite ease-in-out, hue-shift 10s infinite alternate ease-in-out;
-  text-shadow: 0 0 20px rgba(189, 147, 249, 0.4);
+  text-shadow: 0 0 20px var(--purple-alpha-40);
 }
 
 .site-title a:hover {
   color: var(--drac-pink);
-  text-shadow: 0 0 20px rgba(255, 121, 198, 0.6);
+  text-shadow: 0 0 20px var(--pink-alpha-60);
 }
 
 @keyframes hue-shift {
@@ -311,12 +344,12 @@ blockquote {
 
 .site-navigation a:hover {
   color: var(--drac-cyan);
-  background: rgba(139, 233, 253, 0.1);
+  background: var(--cyan-alpha-10);
 }
 
 .site-navigation a:focus {
   color: var(--drac-cyan);
-  background: rgba(139, 233, 253, 0.15);
+  background: var(--cyan-alpha-15);
 }
 
 /* Search form */
@@ -357,7 +390,7 @@ blockquote {
 .search-form button:hover {
   background: var(--drac-pink);
   border-color: var(--drac-purple);
-  box-shadow: 0 0 12px rgba(255, 121, 198, 0.4);
+  box-shadow: 0 0 12px var(--pink-alpha-40);
 }
 
 .search-form button:active {
@@ -398,7 +431,7 @@ blockquote {
 .post-card:hover {
   border-left-color: var(--drac-cyan);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(189, 147, 249, 0.15);
+  box-shadow: 0 8px 24px var(--purple-alpha-15);
 }
 
 .post-card:hover::before {
@@ -424,26 +457,26 @@ blockquote {
 .tag {
   display: inline-flex;
   align-items: center;
-  background: rgba(139, 233, 253, 0.15);
+  background: var(--cyan-alpha-15);
   color: var(--drac-cyan);
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: 4px;
   margin-right: var(--spacing-xs);
   margin-bottom: var(--spacing-xs);
   font-size: 0.8rem;
-  border: 1px solid rgba(139, 233, 253, 0.3);
+  border: 1px solid var(--cyan-alpha-30);
   transition: all 0.2s ease;
   font-weight: 500;
   min-height: 44px;
 }
 
 .tag:hover {
-  background: rgba(255, 121, 198, 0.2);
+  background: var(--pink-alpha-20);
   color: var(--drac-pink);
   border-color: var(--drac-pink);
   text-decoration: none;
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(255, 121, 198, 0.2);
+  box-shadow: 0 2px 8px var(--pink-alpha-20);
 }
 
 /* TIL Badge */
@@ -458,24 +491,24 @@ blockquote {
   padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: 6px;
   margin-right: var(--spacing-sm);
-  border: 2px solid rgba(80, 250, 123, 0.4);
-  box-shadow: 0 4px 12px rgba(80, 250, 123, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  border: 2px solid var(--green-alpha-40);
+  box-shadow: 0 4px 12px var(--green-alpha-30), inset 0 1px 0 var(--white-alpha-20);
+  text-shadow: 0 1px 2px var(--black-alpha-20);
   animation: til-pulse 3s infinite ease-in-out;
 }
 
 .til-badge::before {
   content: "🧠 ";
   margin-right: 4px;
-  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(0 0 2px var(--black-alpha-30));
 }
 
 @keyframes til-pulse {
   0%, 100% {
-    box-shadow: 0 4px 12px rgba(80, 250, 123, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 12px var(--green-alpha-30), inset 0 1px 0 var(--white-alpha-20);
   }
   50% {
-    box-shadow: 0 4px 16px rgba(80, 250, 123, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 16px var(--green-alpha-50), inset 0 1px 0 var(--white-alpha-30);
   }
 }
 /* Blog post content */
@@ -657,7 +690,7 @@ table {
   background-color: var(--drac-ui-bg-darker);
   border: 1px solid var(--drac-selection);
   font-family: var(--font-sans);
-  box-shadow: 0 4px 12px rgba(189, 147, 249, 0.15);
+  box-shadow: 0 4px 12px var(--purple-alpha-15);
   border-radius: 6px;
   overflow: hidden;
 }
@@ -675,7 +708,7 @@ thead::before {
   left: 0;
   right: 0;
   height: 100%;
-  background-color: rgba(189, 147, 249, 0.05);
+  background-color: var(--purple-alpha-05);
   opacity: 0.05;
   pointer-events: none;
 }
@@ -705,12 +738,12 @@ tr:last-child td {
 
 /* Alternating row colors for better readability */
 tbody tr:nth-child(even) {
-  background-color: rgba(68, 71, 90, 0.3);
+  background-color: var(--bg-darker-alpha-30);
 }
 
 /* Hover effect */
 tbody tr:hover {
-  background: rgba(189, 147, 249, 0.1);
+  background: var(--purple-alpha-10);
   transition: background 0.2s ease;
 }
 
@@ -718,7 +751,7 @@ tbody tr:hover {
 td:first-child {
   font-weight: 500;
   color: var(--drac-cyan);
-  border-right: 1px solid rgba(139, 233, 253, 0.1);
+  border-right: 1px solid var(--cyan-alpha-10);
 }
 
 /* Style for code content in tables */
@@ -789,8 +822,8 @@ table {
   height: calc(100% - 0.6vh);
   background-image: repeating-linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0.08) 0px,
-    rgba(255, 255, 255, 0.08) 1px,
+    var(--white-alpha-08) 0px,
+    var(--white-alpha-08) 1px,
     transparent 1px,
     transparent 3px
   );
@@ -800,7 +833,7 @@ table {
   animation: crt-lines-flicker 4s infinite ease-in-out, vertical-drift 8s infinite alternate ease-in-out;
   transform: perspective(1000px) scale(1.02) rotateX(1deg);
   border-radius: 2% / 1.5%;
-  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.4);
+  box-shadow: inset 0 0 50px var(--black-alpha-40);
 }
 
 @keyframes vertical-drift {
@@ -816,8 +849,8 @@ table {
   0%, 100% {
     background-image: repeating-linear-gradient(
       to bottom,
-      rgba(255, 255, 255, 0.05) 0px,
-      rgba(255, 255, 255, 0.05) 1px,
+      var(--white-alpha-05) 0px,
+      var(--white-alpha-05) 1px,
       transparent 1px,
       transparent 3px
     );
@@ -826,8 +859,8 @@ table {
   50% {
     background-image: repeating-linear-gradient(
       to bottom,
-      rgba(255, 255, 255, 0.07) 0px,
-      rgba(255, 255, 255, 0.07) 1px,
+      var(--white-alpha-07) 0px,
+      var(--white-alpha-07) 1px,
       transparent 1px,
       transparent 3px
     );
@@ -1054,7 +1087,7 @@ figure.markdown-image figcaption {
     border: 2px solid var(--drac-cyan);
     border-radius: 8px;
     padding: 20px;
-    box-shadow: 0 8px 24px rgba(139, 233, 253, 0.3), 0 0 40px rgba(189, 147, 249, 0.2);
+    box-shadow: 0 8px 24px var(--cyan-alpha-30), 0 0 40px var(--purple-alpha-20);
     position: relative;
     line-height: 1.6;
 }
