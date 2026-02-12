@@ -61,7 +61,13 @@
 
     {% empty %}
 
-    <li>No TILs yet.</li>
+    <li>
+      <div class="empty-state">
+        <h3>No TILs yet</h3>
+        <p>Today I Learned is where I share quick insights and discoveries.</p>
+        <p>Browse the <a href="{% url 'blog:index' %}">blog</a> for longer-form content.</p>
+      </div>
+    </li>
 
   {% endfor %}
 

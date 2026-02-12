@@ -83,7 +83,11 @@
     {% endif %}
   </article>
   {% empty %}
-  <p>No blog posts yet.</p>
+  <div class="empty-state">
+    <h3>No blog posts yet</h3>
+    <p>Check back soon for thoughts on AI safety, software engineering, and technical verification.</p>
+    <p>In the meantime, explore <a href="{% url 'til:index' %}">Today I Learned</a> for bite-sized insights.</p>
+  </div>
   {% endfor %}
 
   {% if has_more %}
@@ -118,7 +122,11 @@
     {% endif %}
   </article>
   {% empty %}
-  <p>No links yet.</p>
+  <div class="empty-state">
+    <h3>No links yet</h3>
+    <p>I'll be sharing interesting reads from around the web here.</p>
+    <p>Want to explore what I've been learning? Check out <a href="{% url 'til:index' %}">TILs</a>.</p>
+  </div>
   {% endfor %}
 {% if page_obj %}
 <nav class="pagination" aria-label="Blog posts pagination">
