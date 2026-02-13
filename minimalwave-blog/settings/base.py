@@ -123,6 +123,9 @@ MARKDOWN_EXTENSIONS = [
 ]
 MARKDOWN_OUTPUT_FORMAT = 'html5'
 
+# Pygments configuration for Dracula theme
+PYGMENTS_STYLE = 'dracula'
+
 # Ensure logs directory exists
 log_dir = os.path.join(BASE_DIR, 'logs')
 os.makedirs(log_dir, exist_ok=True)
