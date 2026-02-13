@@ -5,6 +5,17 @@
    ============================================================ */
 
 /* ============================================================
+   CUSTOM PROPERTIES
+   ============================================================ */
+:root {
+  --border-radius-sm: 4px;
+  --border-radius-md: 6px;
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --touch-target-min: 44px;
+}
+
+/* ============================================================
    LAYOUT CONTAINERS
    ============================================================ */
 body {
@@ -62,16 +73,17 @@ body {
 .site-navigation a {
   color: var(--drac-comment);
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: color var(--transition-fast);
   padding: 0.5rem 1rem;
-  border-radius: 4px;
-  min-height: 44px; /* WCAG AAA touch target */
+  border-radius: var(--border-radius-sm);
+  min-height: var(--touch-target-min);
   display: inline-flex;
   align-items: center;
 }
 
 .site-navigation a:hover {
   color: var(--drac-cyan);
+  background: rgba(139, 233, 253, 0.1); /* Fallback for older browsers */
   background: color-mix(in srgb, var(--drac-cyan) 10%, transparent);
 }
 
@@ -85,7 +97,7 @@ body {
   border: 1px solid var(--drac-selection);
   color: var(--drac-fg);
   padding: 0.5rem;
-  border-radius: 4px 0 0 4px;
+  border-radius: var(--border-radius-sm) 0 0 var(--border-radius-sm);
   font-family: inherit;
 }
 
@@ -100,7 +112,7 @@ body {
   border: 1px solid var(--drac-pink);
   padding: 0.5rem 1rem;
   cursor: pointer;
-  border-radius: 0 4px 4px 0;
+  border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
   font-weight: 600;
   font-family: inherit;
 }
@@ -109,17 +121,33 @@ body {
   background: var(--drac-pink);
 }
 
+/* Override dracula.css button sizing for WCAG AA compliance (44px minimum) */
+button,
+input[type=submit],
+input[type=reset],
+input[type=button] {
+  min-height: var(--touch-target-min);
+  padding: 0.75rem 1.5rem;
+}
+
 /* ============================================================
    POST CARDS & CONTENT
    ============================================================ */
-.post-card {
+
+/* Base card styles shared across post cards, related posts, and empty states */
+.post-card,
+.related-post-card,
+.empty-state {
   background: var(--drac-ui-bg-darker);
   border: 1px solid var(--drac-selection);
-  border-left: 3px solid var(--drac-purple);
-  border-radius: 6px;
+  border-radius: var(--border-radius-md);
   padding: 1.5rem;
+}
+
+.post-card {
+  border-left: 3px solid var(--drac-purple);
   margin-bottom: 2rem;
-  transition: border-left-color 0.3s ease, transform 0.3s ease;
+  transition: border-left-color var(--transition-normal), transform var(--transition-normal);
 }
 
 .post-card:hover {
@@ -131,49 +159,58 @@ body {
   margin-top: 0;
 }
 
+.post-meta,
+.archive-date,
+.reading-time {
+  font-variant-numeric: tabular-nums;
+}
+
 .post-meta {
   color: var(--drac-comment);
   font-size: 0.9rem;
   margin-bottom: 1rem;
-  font-variant-numeric: tabular-nums;
 }
 
 .post-summary {
   color: var(--drac-fg);
 }
 
-.post-tags {
-  margin-top: 1rem;
+.post-tags,
+.tag-cloud {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+}
+
+.post-tags {
+  margin-top: 1rem;
+}
+
+.tag-cloud {
+  margin-bottom: 1rem;
 }
 
 .tag {
   display: inline-flex;
   align-items: center;
+  background: rgba(139, 233, 253, 0.15); /* Fallback for older browsers */
   background: color-mix(in srgb, var(--drac-cyan) 15%, transparent);
   color: var(--drac-cyan);
   padding: 0.5rem 1rem;
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.8rem;
+  border: 1px solid rgba(139, 233, 253, 0.3); /* Fallback for older browsers */
   border: 1px solid color-mix(in srgb, var(--drac-cyan) 30%, transparent);
-  min-height: 44px; /* WCAG AAA touch target */
+  min-height: var(--touch-target-min);
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
 }
 
 .tag:hover {
+  background: rgba(255, 121, 198, 0.2); /* Fallback for older browsers */
   background: color-mix(in srgb, var(--drac-pink) 20%, transparent);
   color: var(--drac-pink);
   border-color: var(--drac-pink);
-}
-
-.tag-cloud {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
 }
 
 /* ============================================================
@@ -213,23 +250,24 @@ body {
   display: inline-block;
   padding: 0.75rem 1.5rem;
   background: var(--drac-ui-bg-dark);
-  border-radius: 6px;
+  border-radius: var(--border-radius-md);
   border: 1px solid var(--drac-selection);
 }
 
 .pagination .step-links a {
   margin: 0 0.5rem;
   padding: 0.5rem 1rem;
-  border-radius: 4px;
-  min-height: 44px; /* WCAG AAA touch target */
+  border-radius: var(--border-radius-sm);
+  min-height: var(--touch-target-min);
   display: inline-flex;
   align-items: center;
   text-decoration: none;
   color: var(--drac-cyan);
-  transition: background 0.2s ease;
+  transition: background var(--transition-fast);
 }
 
 .pagination .step-links a:hover {
+  background: rgba(189, 147, 249, 0.1); /* Fallback for older browsers */
   background: color-mix(in srgb, var(--drac-purple) 10%, transparent);
 }
 
@@ -260,12 +298,8 @@ body {
 }
 
 .related-post-card {
-  background: var(--drac-ui-bg-darker);
-  border: 1px solid var(--drac-selection);
   border-left: 2px solid var(--drac-cyan);
-  border-radius: 6px;
-  padding: 1.5rem;
-  transition: border-left-color 0.3s ease;
+  transition: border-left-color var(--transition-normal);
 }
 
 .related-post-card:hover {
@@ -306,7 +340,7 @@ body {
 figure.markdown-image {
   max-width: 900px;
   margin: 2rem auto;
-  border-radius: 6px;
+  border-radius: var(--border-radius-md);
   overflow: hidden;
   border: 1px solid var(--drac-selection);
 }
@@ -316,7 +350,7 @@ figure.markdown-image img {
   width: 100%;
   height: auto;
   display: block;
-  border-radius: 6px;
+  border-radius: var(--border-radius-md);
 }
 
 .post-image figcaption,
@@ -327,6 +361,7 @@ figure.markdown-image figcaption {
   color: var(--drac-comment);
   text-align: center;
   font-style: italic;
+  background: rgba(189, 147, 249, 0.05); /* Fallback for older browsers */
   background: color-mix(in srgb, var(--drac-purple) 5%, transparent);
 }
 
@@ -359,7 +394,7 @@ figure.markdown-image figcaption {
   margin-bottom: 0.75rem;
   padding-left: 1rem;
   border-left: 2px solid transparent;
-  transition: border-left-color 0.2s ease;
+  transition: border-left-color var(--transition-fast);
 }
 
 .archive-list li:hover {
@@ -369,7 +404,6 @@ figure.markdown-image figcaption {
 .archive-date {
   color: var(--drac-comment);
   margin-right: 1rem;
-  font-variant-numeric: tabular-nums;
   font-size: 0.9rem;
 }
 
@@ -392,13 +426,15 @@ figure.markdown-image figcaption {
 
 .til-badge {
   display: inline-block;
+  background: rgba(80, 250, 123, 0.2); /* Fallback for older browsers */
   background: color-mix(in srgb, var(--drac-green) 20%, transparent);
   color: var(--drac-green);
   padding: 0.25rem 0.75rem;
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.7rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
+  border: 1px solid rgba(80, 250, 123, 0.4); /* Fallback for older browsers */
   border: 1px solid color-mix(in srgb, var(--drac-green) 40%, transparent);
 }
 
@@ -429,11 +465,71 @@ figure.markdown-image figcaption {
   text-decoration: none;
   font-weight: bold;
   z-index: 100;
-  border-radius: 0 0 4px 0;
+  border-radius: 0 0 var(--border-radius-sm) 0;
 }
 
 .skip-link:focus {
   top: 0;
+}
+
+/* ============================================================
+   ANTHROPIC VISITOR GREETING
+   ============================================================ */
+.anthropic-greeting {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  max-width: 500px;
+}
+
+.greeting-content {
+  background: var(--drac-ui-bg-dark);
+  border: 2px solid var(--drac-cyan);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(139, 233, 253, 0.3); /* Fallback for older browsers */
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--drac-cyan) 30%, transparent);
+  position: relative;
+  line-height: 1.6;
+}
+
+.greeting-content .close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  color: var(--drac-comment);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  min-height: var(--touch-target-min);
+  min-width: var(--touch-target-min);
+  transition: color var(--transition-fast);
+}
+
+.greeting-content .close-btn:hover {
+  color: var(--drac-pink);
+}
+
+.greeting-hello {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.greeting-signature {
+  margin-top: 1rem;
+  font-style: italic;
+  color: var(--drac-comment);
+}
+
+@media (max-width: 768px) {
+  .anthropic-greeting {
+    position: static;
+    margin: 20px;
+    max-width: 100%;
+  }
 }
 
 /* ============================================================
@@ -465,16 +561,14 @@ figure.markdown-image figcaption {
   margin-left: 0.75rem;
   color: var(--drac-orange);
   font-size: 0.9rem;
-  font-variant-numeric: tabular-nums;
   font-weight: 500;
 }
 
 .empty-state {
   padding: 3rem;
   text-align: center;
+  background: linear-gradient(135deg, rgba(189, 147, 249, 0.05), transparent); /* Fallback for older browsers */
   background: linear-gradient(135deg, color-mix(in srgb, var(--drac-purple) 5%, transparent), transparent);
-  border: 1px solid var(--drac-selection);
-  border-radius: 6px;
   margin: 2rem 0;
 }
 
@@ -499,7 +593,7 @@ figure.markdown-image figcaption {
   font-weight: 600;
   text-decoration: none;
   border-bottom: 1px solid transparent;
-  transition: border-color 0.2s ease;
+  transition: border-color var(--transition-fast);
 }
 
 .empty-state a:hover {
@@ -511,7 +605,7 @@ figure.markdown-image figcaption {
   color: var(--drac-fg);
   padding: 10px;
   margin-bottom: 20px;
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
 }
 
 .preview-banner a {
@@ -533,8 +627,9 @@ figure.markdown-image figcaption {
 
 .preview-banner-edit a {
   padding: 4px 8px;
+  background-color: rgba(255, 255, 255, 0.2); /* Fallback for older browsers */
   background-color: color-mix(in srgb, #ffffff 20%, transparent);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
 }
 
 /* ============================================================
