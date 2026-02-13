@@ -158,10 +158,13 @@ href="
 
 <!-- CSS -->
 <link rel="stylesheet" href="
-{% static 'css/style.css' %}
+{% static 'css/dracula.css' %}
 " />
 <link rel="stylesheet" href="
-{% static 'css/additional.css' %}
+{% static 'css/dracula-pygments.css' %}
+" />
+<link rel="stylesheet" href="
+{% static 'css/custom.css' %}
 " />
 
 
@@ -176,7 +179,6 @@ href="
 </head>
 <body class="dark-mode">
     <a href="#main-content" class="skip-link">Skip to main content</a>
-    <div class="crt-overlay" aria-hidden="true"></div>
 
 {% if anthropic_visitor.is_anthropic %}
 <!-- Anthropic Visitor Greeting -->

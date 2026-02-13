@@ -121,6 +121,14 @@ MARKDOWN_EXTENSIONS = [
     'markdown.extensions.codehilite',  # Syntax highlighting for code blocks
     'markdown.extensions.attr_list',   # Add HTML attributes to markdown elements
 ]
+
+MARKDOWN_EXTENSION_CONFIGS = {
+    'markdown.extensions.codehilite': {
+        'pygments_style': 'dracula',
+        'css_class': 'highlight',
+    }
+}
+
 MARKDOWN_OUTPUT_FORMAT = 'html5'
 
 # Ensure logs directory exists

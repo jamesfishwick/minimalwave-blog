@@ -1,0 +1,700 @@
+/* ============================================================
+   Minimalwave Blog - Custom Layout & Structure
+   Foundation: Dracula CSS (dracula.css)
+   Syntax Highlighting: Dracula Pygments (dracula-pygments.css)
+   ============================================================ */
+
+/* ============================================================
+   CUSTOM PROPERTIES
+   ============================================================ */
+:root {
+  --border-radius-sm: 4px;
+  --border-radius-md: 6px;
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --touch-target-min: 44px;
+}
+
+/* ============================================================
+   LAYOUT CONTAINERS
+   ============================================================ */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.site-content {
+  flex: 1;
+  padding: 1rem 0 3rem;
+}
+
+/* ============================================================
+   HEADER & NAVIGATION
+   ============================================================ */
+.site-header {
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--drac-selection);
+  margin-bottom: 2rem;
+}
+
+.site-header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.site-title {
+  font-size: 1.75rem;
+  margin-bottom: 0;
+  color: var(--drac-purple);
+}
+
+.site-navigation ul {
+  display: flex;
+  list-style: none;
+  margin-bottom: 0;
+  flex-wrap: wrap;
+  padding-left: 0;
+}
+
+.site-navigation li {
+  margin-left: 1rem;
+}
+
+.site-navigation a {
+  color: var(--drac-comment);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-sm);
+  min-height: var(--touch-target-min);
+  display: inline-flex;
+  align-items: center;
+}
+
+.site-navigation a:hover {
+  color: var(--drac-cyan);
+  background: rgba(139, 233, 253, 0.1); /* Fallback for older browsers */
+  background: color-mix(in srgb, var(--drac-cyan) 10%, transparent);
+}
+
+.search-form {
+  display: flex;
+  margin-left: 1rem;
+}
+
+.search-form input {
+  background-color: var(--drac-ui-bg-light);
+  border: 1px solid var(--drac-selection);
+  color: var(--drac-fg);
+  padding: 0.5rem;
+  border-radius: var(--border-radius-sm) 0 0 var(--border-radius-sm);
+  font-family: inherit;
+}
+
+.search-form input:focus {
+  outline: 2px solid var(--drac-purple);
+  outline-offset: 2px;
+}
+
+.search-form button {
+  background: var(--drac-purple);
+  color: var(--drac-fg);
+  border: 1px solid var(--drac-pink);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
+  font-weight: 600;
+  font-family: inherit;
+}
+
+.search-form button:hover {
+  background: var(--drac-pink);
+}
+
+/* Override dracula.css button sizing for WCAG AA compliance (44px minimum) */
+button,
+input[type=submit],
+input[type=reset],
+input[type=button] {
+  min-height: var(--touch-target-min);
+  padding: 0.75rem 1.5rem;
+}
+
+/* ============================================================
+   POST CARDS & CONTENT
+   ============================================================ */
+
+/* Base card styles shared across post cards, related posts, and empty states */
+.post-card,
+.related-post-card,
+.empty-state {
+  background: var(--drac-ui-bg-darker);
+  border: 1px solid var(--drac-selection);
+  border-radius: var(--border-radius-md);
+  padding: 1.5rem;
+}
+
+.post-card {
+  border-left: 3px solid var(--drac-purple);
+  margin-bottom: 2rem;
+  transition: border-left-color var(--transition-normal), transform var(--transition-normal);
+}
+
+.post-card:hover {
+  border-left-color: var(--drac-cyan);
+  transform: translateY(-2px);
+}
+
+.post-card h2 {
+  margin-top: 0;
+}
+
+.post-meta,
+.archive-date,
+.reading-time {
+  font-variant-numeric: tabular-nums;
+}
+
+.post-meta {
+  color: var(--drac-comment);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.post-summary {
+  color: var(--drac-fg);
+}
+
+.post-tags,
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.post-tags {
+  margin-top: 1rem;
+}
+
+.tag-cloud {
+  margin-bottom: 1rem;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(139, 233, 253, 0.15); /* Fallback for older browsers */
+  background: color-mix(in srgb, var(--drac-cyan) 15%, transparent);
+  color: var(--drac-cyan);
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.8rem;
+  border: 1px solid rgba(139, 233, 253, 0.3); /* Fallback for older browsers */
+  border: 1px solid color-mix(in srgb, var(--drac-cyan) 30%, transparent);
+  min-height: var(--touch-target-min);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.tag:hover {
+  background: rgba(255, 121, 198, 0.2); /* Fallback for older browsers */
+  background: color-mix(in srgb, var(--drac-pink) 20%, transparent);
+  color: var(--drac-pink);
+  border-color: var(--drac-pink);
+}
+
+/* ============================================================
+   BLOGMARKS
+   ============================================================ */
+.blogmark-url {
+  color: var(--drac-cyan);
+  font-weight: 600;
+  text-decoration: none;
+  word-break: break-word;
+}
+
+.blogmark-url:hover {
+  color: var(--drac-pink);
+}
+
+.blogmark-commentary {
+  margin-top: 1rem;
+  color: var(--drac-fg);
+}
+
+.blogmark-via {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--drac-comment);
+}
+
+/* ============================================================
+   PAGINATION
+   ============================================================ */
+.pagination {
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.pagination .step-links {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: var(--drac-ui-bg-dark);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--drac-selection);
+}
+
+.pagination .step-links a {
+  margin: 0 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-sm);
+  min-height: var(--touch-target-min);
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--drac-cyan);
+  transition: background var(--transition-fast);
+}
+
+.pagination .step-links a:hover {
+  background: rgba(189, 147, 249, 0.1); /* Fallback for older browsers */
+  background: color-mix(in srgb, var(--drac-purple) 10%, transparent);
+}
+
+.pagination .current {
+  color: var(--drac-purple);
+  font-weight: 600;
+  margin: 0 1rem;
+}
+
+/* ============================================================
+   RELATED POSTS GRID
+   ============================================================ */
+.related-posts {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid var(--drac-selection);
+}
+
+.related-posts h3 {
+  margin-bottom: 1.5rem;
+  color: var(--drac-purple);
+}
+
+.related-posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.related-post-card {
+  border-left: 2px solid var(--drac-cyan);
+  transition: border-left-color var(--transition-normal);
+}
+
+.related-post-card:hover {
+  border-left-color: var(--drac-purple);
+}
+
+.related-post-card h4 {
+  margin-top: 0;
+  color: var(--drac-cyan);
+}
+
+/* ============================================================
+   MARKDOWN IMAGE PLACEMENT
+   ============================================================ */
+.align-right {
+  float: right;
+  margin: 0 0 1rem 1rem;
+}
+
+.align-left {
+  float: left;
+  margin: 0 1rem 1rem 0;
+}
+
+.align-center {
+  display: block;
+  margin: 0 auto 1rem;
+}
+
+.w-200 { max-width: 200px; }
+.w-300 { max-width: 300px; }
+.w-400 { max-width: 400px; }
+.w-500 { max-width: 500px; }
+.w-800 { max-width: 800px; }
+.full-width { width: 100%; }
+
+.post-image,
+figure.markdown-image {
+  max-width: 900px;
+  margin: 2rem auto;
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+  border: 1px solid var(--drac-selection);
+}
+
+.post-image img,
+figure.markdown-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--border-radius-md);
+}
+
+.post-image figcaption,
+figure.markdown-image figcaption {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--drac-comment);
+  text-align: center;
+  font-style: italic;
+  background: rgba(189, 147, 249, 0.05); /* Fallback for older browsers */
+  background: color-mix(in srgb, var(--drac-purple) 5%, transparent);
+}
+
+/* ============================================================
+   ARCHIVE STRUCTURE
+   ============================================================ */
+.archive-year {
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid var(--drac-purple);
+  padding-bottom: 0.5rem;
+  color: var(--drac-purple);
+  font-size: 1.75rem;
+}
+
+.archive-month {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: var(--drac-cyan);
+  font-size: 1.25rem;
+}
+
+.archive-list {
+  list-style: none;
+  margin-left: 1.5rem;
+  padding-left: 0;
+}
+
+.archive-list li {
+  margin-bottom: 0.75rem;
+  padding-left: 1rem;
+  border-left: 2px solid transparent;
+  transition: border-left-color var(--transition-fast);
+}
+
+.archive-list li:hover {
+  border-left-color: var(--drac-purple);
+}
+
+.archive-date {
+  color: var(--drac-comment);
+  margin-right: 1rem;
+  font-size: 0.9rem;
+}
+
+/* ============================================================
+   TIL SPECIFIC
+   ============================================================ */
+.til-index {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.til-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.til-list li {
+  margin-bottom: 2rem;
+}
+
+.til-badge {
+  display: inline-block;
+  background: rgba(80, 250, 123, 0.2); /* Fallback for older browsers */
+  background: color-mix(in srgb, var(--drac-green) 20%, transparent);
+  color: var(--drac-green);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  border: 1px solid rgba(80, 250, 123, 0.4); /* Fallback for older browsers */
+  border: 1px solid color-mix(in srgb, var(--drac-green) 40%, transparent);
+}
+
+.til-search-form {
+  margin: 2rem 0;
+}
+
+.til-tags {
+  margin-top: 0.5rem;
+}
+
+/* ============================================================
+   ACCESSIBILITY ENHANCEMENTS
+   ============================================================ */
+:focus-visible {
+  outline: 2px solid var(--drac-purple);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--drac-purple);
+  color: var(--drac-bg);
+  padding: 8px 16px;
+  text-decoration: none;
+  font-weight: bold;
+  z-index: 100;
+  border-radius: 0 0 var(--border-radius-sm) 0;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* ============================================================
+   ANTHROPIC VISITOR GREETING
+   ============================================================ */
+.anthropic-greeting {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  max-width: 500px;
+}
+
+.greeting-content {
+  background: var(--drac-ui-bg-dark);
+  border: 2px solid var(--drac-cyan);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(139, 233, 253, 0.3); /* Fallback for older browsers */
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--drac-cyan) 30%, transparent);
+  position: relative;
+  line-height: 1.6;
+}
+
+.greeting-content .close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  color: var(--drac-comment);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  min-height: var(--touch-target-min);
+  min-width: var(--touch-target-min);
+  transition: color var(--transition-fast);
+}
+
+.greeting-content .close-btn:hover {
+  color: var(--drac-pink);
+}
+
+.greeting-hello {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.greeting-signature {
+  margin-top: 1rem;
+  font-style: italic;
+  color: var(--drac-comment);
+}
+
+@media (max-width: 768px) {
+  .anthropic-greeting {
+    position: static;
+    margin: 20px;
+    max-width: 100%;
+  }
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.site-footer {
+  padding: 2rem 0;
+  border-top: 1px solid var(--drac-selection);
+  text-align: center;
+  color: var(--drac-comment);
+  font-size: 0.9rem;
+  margin-top: 3rem;
+}
+
+.site-footer a {
+  color: var(--drac-cyan);
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  color: var(--drac-pink);
+}
+
+/* ============================================================
+   UTILITY COMPONENTS
+   ============================================================ */
+.reading-time {
+  display: inline-block;
+  margin-left: 0.75rem;
+  color: var(--drac-orange);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.empty-state {
+  padding: 3rem;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(189, 147, 249, 0.05), transparent); /* Fallback for older browsers */
+  background: linear-gradient(135deg, color-mix(in srgb, var(--drac-purple) 5%, transparent), transparent);
+  margin: 2rem 0;
+}
+
+.empty-state h3 {
+  color: var(--drac-purple);
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+}
+
+.empty-state p {
+  color: var(--drac-comment);
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+
+.empty-state p:last-child {
+  margin-bottom: 0;
+}
+
+.empty-state a {
+  color: var(--drac-cyan);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--transition-fast);
+}
+
+.empty-state a:hover {
+  border-bottom-color: var(--drac-cyan);
+}
+
+.preview-banner {
+  background: var(--drac-red);
+  color: var(--drac-fg);
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: var(--border-radius-sm);
+}
+
+.preview-banner a {
+  color: var(--drac-fg);
+  text-decoration: underline;
+}
+
+.preview-banner-actions {
+  margin-top: 5px;
+}
+
+.preview-banner-schedule {
+  margin-left: 15px;
+}
+
+.preview-banner-edit {
+  margin-top: 10px;
+}
+
+.preview-banner-edit a {
+  padding: 4px 8px;
+  background-color: rgba(255, 255, 255, 0.2); /* Fallback for older browsers */
+  background-color: color-mix(in srgb, #ffffff 20%, transparent);
+  border-radius: var(--border-radius-sm);
+}
+
+/* ============================================================
+   RESPONSIVE DESIGN
+   ============================================================ */
+@media (max-width: 768px) {
+  .site-header .container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .site-navigation {
+    margin-top: 1rem;
+    width: 100%;
+  }
+
+  .site-navigation ul {
+    flex-direction: column;
+  }
+
+  .site-navigation li {
+    margin-left: 0;
+    margin-bottom: 0.5rem;
+  }
+
+  .search-form {
+    margin-left: 0;
+    margin-top: 1rem;
+    width: 100%;
+  }
+
+  .search-form input {
+    flex: 1;
+  }
+
+  /* Stack floated images on mobile */
+  .align-left,
+  .align-right,
+  figure.markdown-image.float-left,
+  figure.markdown-image.float-right {
+    float: none;
+    max-width: 100%;
+    margin: 1.5rem auto;
+  }
+
+  .post-image,
+  figure.markdown-image {
+    max-width: 100%;
+    margin: 1.5rem 0;
+  }
+
+  .related-posts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   REDUCED MOTION SUPPORT (WCAG 2.1 AAA)
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
