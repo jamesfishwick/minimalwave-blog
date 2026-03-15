@@ -17,12 +17,12 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--drac-heading-color);
 }
 
-h1::before { content: "# ";   color: var(--drac-comment); }
-h2::before { content: "## ";  color: var(--drac-comment); }
-h3::before { content: "### "; color: var(--drac-comment); }
-h4::before { content: "#### "; color: var(--drac-comment); }
-h5::before { content: "##### "; color: var(--drac-comment); }
-h6::before { content: "###### "; color: var(--drac-comment); }
+.page__body h1::before { content: "# ";   color: var(--drac-comment); }
+.page__body h2::before { content: "## ";  color: var(--drac-comment); }
+.page__body h3::before { content: "### "; color: var(--drac-comment); }
+.page__body h4::before { content: "#### "; color: var(--drac-comment); }
+.page__body h5::before { content: "##### "; color: var(--drac-comment); }
+.page__body h6::before { content: "###### "; color: var(--drac-comment); }
 
 /* ============================================================
    BODY & FONT
@@ -183,10 +183,6 @@ body {
   color: var(--drac-fg);
 }
 
-/* Override h1::before for aside title */
-.aside__title::before {
-  content: none;
-}
 
 .aside__description {
   color: var(--drac-comment);
