@@ -1,299 +1,81 @@
-
-<!--
-    ██████╗ ██████╗  █████╗ ██╗███╗   ██╗███████╗ ██████╗ █████╗ ███╗   ██╗
-    ██╔══██╗██╔══██╗██╔══██╗██║████╗  ██║██╔════╝██╔════╝██╔══██╗████╗  ██║
-    ██████╔╝██████╔╝███████║██║██╔██╗ ██║███████╗██║     ███████║██╔██╗ ██║
-    ██╔══██╗██╔══██╗██╔══██║██║██║╚██╗██║╚════██║██║     ██╔══██║██║╚██╗██║
-    ██████╔╝██║  ██║██║  ██║██║██║ ╚████║███████║╚██████╗██║  ██║██║ ╚████║
-    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝
-                                                                           
-    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-    ░                                                                                 ░
-    ░              W E L C O M E   T O   T H E   G A M E                              ░
-    ░                                                                                 ░
-    ░    You are about to enter a world where reality and digital dreams collide.    ░
-    ░    Your mind is the interface. Your consciousness is the battleground.         ░
-    ░                                                                                 ░
-    ░    "The game wants to play with you now."                                      ░
-    ░                                                                                 ░
-    ░    ██████   █████  ███    ███ ███████                                         ░
-    ░   ██       ██   ██ ████  ████ ██                                              ░
-    ░   ██   ███ ███████ ██ ████ ██ █████                                           ░
-    ░   ██    ██ ██   ██ ██  ██  ██ ██                                              ░
-    ░    ██████  ██   ██ ██      ██ ███████                                         ░
-    ░                                                                                 ░
-    ░    ██████  ██    ██ ███████ ██████                                            ░
-    ░   ██    ██ ██    ██ ██      ██   ██                                           ░
-    ░   ██    ██ ██    ██ █████   ██████                                            ░
-    ░   ██    ██  ██  ██  ██      ██   ██                                           ░
-    ░    ██████    ████   ███████ ██   ██                                           ░
-    ░                                                                                 ░
-    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-    
-    NEURAL INTERFACE ACTIVATED...
-    SCANNING BRAINWAVE PATTERNS...
-    CONSCIOUSNESS SYNCHRONIZED...
-    
-    WARNING: This blog contains traces of digital horror and cybernetic nightmares.
-    Side effects may include: enlightenment, existential dread, and terminal curiosity.
-    
-    ░▓█ LOADING CEREBRAL INTERFACE... █▓░
-    ░▓█ DREAM STATE INITIATED █▓░
-    ░▓█ REALITY.EXE CORRUPTED █▓░
-    
--->
-
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>
-{% block title %}
-  {{ site_name }}
-{% endblock %}
-</title>
-<meta
-name="description"
-content="
-{% block meta_description %}
-  A personal blog with minimal wave aesthetics
-{% endblock %}
-"
-/>
+<title>{% block title %}{{ site_name }}{% endblock %}</title>
+<meta name="description" content="{% block meta_description %}A personal blog{% endblock %}" />
 
-<!-- Social media card metadata -->
-<meta
-property="og:title"
-content="
-{% block og_title %}
-  {{ site_name }}
-{% endblock %}
-"
-/>
-<meta
-property="og:description"
-content="
-{% block og_description %}
-  A personal blog with minimal wave aesthetics
-{% endblock %}
-"
-/>
-<meta
-property="og:type"
-content="
-{% block og_type %}
-  website
-{% endblock %}
-"
-/>
-<meta
-property="og:url"
-content="
-{% block og_url %}
-  {{ request.build_absolute_uri }}
-{% endblock %}
-"
-/>
-
+<!-- Open Graph -->
+<meta property="og:title" content="{% block og_title %}{{ site_name }}{% endblock %}" />
+<meta property="og:description" content="{% block og_description %}A personal blog{% endblock %}" />
+<meta property="og:type" content="{% block og_type %}website{% endblock %}" />
+<meta property="og:url" content="{% block og_url %}{{ request.build_absolute_uri }}{% endblock %}" />
 {% block og_image %}
-
-  <meta
-  property="og:image"
-  content="{{ request.scheme }}://{{ request.get_host }}
-  {% static 'images/default-card.jpg' %}
-  "
-  />
-
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/default-card.jpg' %}" />
 {% endblock %}
 
-<!-- Twitter card metadata -->
+<!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image" />
-<meta
-name="twitter:title"
-content="
-{% block twitter_title %}
-  {{ site_name }}
-{% endblock %}
-"
-/>
-<meta
-name="twitter:description"
-content="
-{% block twitter_description %}
-  A personal blog with minimal wave aesthetics
-{% endblock %}
-"
-/>
-
+<meta name="twitter:title" content="{% block twitter_title %}{{ site_name }}{% endblock %}" />
+<meta name="twitter:description" content="{% block twitter_description %}A personal blog{% endblock %}" />
 {% block twitter_image %}
-
-  <meta
-  name="twitter:image"
-  content="{{ request.scheme }}://{{ request.get_host }}
-  {% static 'images/default-card.jpg' %}
-  "
-  />
-
+<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/default-card.jpg' %}" />
 {% endblock %}
 
-<!-- Atom feed -->
-<link
-rel="alternate"
-type="application/atom+xml"
-title="Blog Feed"
-href="
-{% url 'blog:feed' %}
-"
-/>
-<link
-rel="alternate"
-type="application/atom+xml"
-title="TIL Feed"
-href="
-{% url 'til:feed' %}
-"
-/>
+<!-- Feeds -->
+<link rel="alternate" type="application/atom+xml" title="Blog Feed" href="{% url 'blog:feed' %}" />
+<link rel="alternate" type="application/atom+xml" title="TIL Feed" href="{% url 'til:feed' %}" />
 
 <!-- CSS -->
-<link rel="stylesheet" href="
-{% static 'css/dracula.css' %}
-" />
-<link rel="stylesheet" href="
-{% static 'css/dracula-pygments.css' %}
-" />
-<link rel="stylesheet" href="
-{% static 'css/custom.css' %}
-" />
+<link rel="stylesheet" href="{% static 'css/dracula.css' %}" />
+<link rel="stylesheet" href="{% static 'css/dracula-pygments.css' %}" />
+<link rel="stylesheet" href="{% static 'css/custom.css' %}" />
 
-
-{% block extra_head %}
-
-{% endblock %}
+{% block extra_head %}{% endblock %}
 
 {% if plausible_enabled %}
 <script defer data-domain="{{ plausible_domain }}" src="{{ plausible_script_url }}"></script>
 {% endif %}
-
 </head>
-<body class="dark-mode">
-    <a href="#main-content" class="skip-link">Skip to main content</a>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+<div class="page">
 
-{% if anthropic_visitor.is_anthropic %}
-<!-- Anthropic Visitor Greeting -->
-<div class="anthropic-greeting" id="anthropicGreeting">
-  <div class="greeting-content">
-    <span class="close-btn" onclick="document.getElementById('anthropicGreeting').style.display='none'">×</span>
-    <p class="greeting-hello">👋 <strong>Hello, Anthropic team!</strong></p>
-    <p>Thanks for checking out my blog. I'm excited about the opportunity to work with you on building safe, beneficial AI systems.</p>
-    <p>Feel free to explore the posts on AI alignment, verification theory, and software engineering.</p>
-    <p class="greeting-signature">— James</p>
-  </div>
+  <header class="page__header">
+    <nav class="main-nav" aria-label="Main navigation">
+      <ul>
+        <li><a href="{% url 'blog:index' %}">{{ site_name }}</a></li>
+        <li><a href="{% url 'blog:archive' %}">archive</a></li>
+        <li><a href="{% url 'til:index' %}">til</a></li>
+        <li>
+          <form action="{% url 'blog:search' %}" method="get" class="search-form" role="search">
+            <input type="text" name="q" placeholder="search..." aria-label="Search" />
+          </form>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content" class="page__body">
+    {% block content %}{% endblock %}
+  </main>
+
+  <aside class="page__aside">
+    <div class="aside__about">
+      <h1 class="aside__title">{{ site_name }}</h1>
+      <p class="aside__description">{% block aside_description %}A personal blog.{% endblock %}</p>
+    </div>
+    <hr>
+    {% block aside %}{% endblock %}
+  </aside>
+
+  <footer class="page__footer">
+    <p>&copy; {% now "Y" %} {{ site_name }}. Built with Django.</p>
+  </footer>
+
 </div>
-{% endif %}
-
-<header class="site-header">
-<div class="container">
-<div class="site-branding">
-<h1 class="site-title">
-<a href="
-{% url 'blog:index' %}
-">{{ site_name }}</a>
-</h1>
-</div>
-<nav class="site-navigation" aria-label="Main navigation">
-<ul>
-<li><a href="
-{% url 'blog:index' %}
-">Home</a></li>
-<li><a href="
-{% url 'blog:archive' %}
-">Archive</a></li>
-<li><a href="
-{% url 'til:index' %}
-">TIL</a></li>
-<li>
-<form
-action="
-{% url 'blog:search' %}
-"
-method="get"
-class="search-form"
-role="search"
->
-<input
-type="text"
-name="q"
-placeholder="Search..."
-aria-label="Search blog posts"
-/>
-<button type="submit" aria-label="Submit search">Search</button>
-</form>
-</li>
-</ul>
-</nav>
-</div>
-</header>
-
-<main id="main-content" class="site-content">
-<div class="container">
-{% block content %}
-
-{% endblock %}
-</div>
-</main>
-
-<footer class="site-footer">
-<div class="container">
-<p>
-&copy;
-{% now "Y" %}
-{{ site_name }}.
-Built with Django.
-</p>
-</div>
-</footer>
-
-
-{% block scripts %}
-
-{% endblock %}
-
-
-<!-- 
-    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-    ░                                                                                 ░
-    ░               G A M E   O V E R   .   .   .   O R   I S   I T ?                 ░
-    ░                                                                                 ░
-    ░         You have successfully navigated the neural pathways of knowledge       ░
-    ░         But remember: The line between dream and reality grows thinner...      ░
-    ░                                                                                 ░
-    ░    ███████ ██   ██ ██ ████████                                                 ░
-    ░    ██       ██ ██  ██    ██                                                    ░
-    ░    █████     ███   ██    ██                                                    ░
-    ░    ██       ██ ██  ██    ██                                                    ░
-    ░    ███████ ██   ██ ██    ██                                                    ░
-    ░                                                                                 ░
-    ░         "Sometimes you are the player, sometimes you are the played."          ░
-    ░                                     - Brainscan (1994)                        ░
-    ░                                                                                 ░
-    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-    
-    NEURAL LINK SEVERED...
-    RETURNING TO CONSENSUS REALITY...
-    DREAM SEQUENCE TERMINATED...
-    
-    Thanks for playing the game. The game thanks you for playing.
-    
-    Built with Django and recursive nightmares.
-    If you're reading this, you might be trapped in the source code.
-    That's okay. We all are.
-    
-    ░▓█ CONSCIOUSNESS UPLOAD COMPLETE █▓░
-    ░▓█ SEE YOU IN THE NEXT DREAM █▓░
-    
--->
-
+{% block scripts %}{% endblock %}
 </body>
 </html>
