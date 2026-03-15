@@ -1,319 +1,301 @@
 /* ============================================================
-   Minimalwave Blog - Custom Layout & Structure
+   Minimalwave Blog - Risotto-style terminal layout
    Foundation: Dracula CSS (dracula.css)
-   Syntax Highlighting: Dracula Pygments (dracula-pygments.css)
    ============================================================ */
 
 /* ============================================================
-   CUSTOM PROPERTIES
+   RESET DRACULA.CSS HEADING SIZES
+   dracula.css sets h1=2.25em, h2=1.75em — risotto uses 1rem
    ============================================================ */
-:root {
-  --border-radius-sm: 4px;
-  --border-radius-md: 6px;
-  --transition-fast: 0.2s ease;
-  --transition-normal: 0.3s ease;
-  --touch-target-min: 44px;
+h1, h2, h3, h4, h5, h6 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 1.5em;
+  margin-bottom: 0.25em;
+  border-bottom: none;
+  line-height: 1.5;
+  color: var(--drac-heading-color);
 }
 
+h1::before { content: "# ";   color: var(--drac-comment); }
+h2::before { content: "## ";  color: var(--drac-comment); }
+h3::before { content: "### "; color: var(--drac-comment); }
+h4::before { content: "#### "; color: var(--drac-comment); }
+h5::before { content: "##### "; color: var(--drac-comment); }
+h6::before { content: "###### "; color: var(--drac-comment); }
+
 /* ============================================================
-   LAYOUT CONTAINERS
+   BODY & FONT
    ============================================================ */
 body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+  font-family: var(--drac-font-family-mono);
+  max-width: none;
+  margin: 0;
+  padding: 0;
 }
 
-.container {
-  width: 100%;
-  max-width: 1200px;
+/* ============================================================
+   PAGE GRID (risotto two-column layout)
+   ============================================================ */
+.page {
+  display: grid;
+  grid-template-areas:
+    "header"
+    "body"
+    "footer";
+  grid-template-columns: 1fr;
+  max-width: 64rem;
   margin: 0 auto;
-  padding: 0 1rem;
+  gap: 0 2rem;
+  padding: 1rem;
 }
 
-.site-content {
-  flex: 1;
-  padding: 1rem 0 3rem;
+@media (min-width: 45rem) {
+  .page {
+    grid-template-areas:
+      "header header"
+      "body   aside"
+      "footer footer";
+    grid-template-columns: minmax(0, 1fr) 16rem;
+  }
 }
 
-/* ============================================================
-   HEADER & NAVIGATION
-   ============================================================ */
-.site-header {
+.page__header {
+  grid-area: header;
   padding: 1rem 0;
-  border-bottom: 1px solid var(--drac-selection);
-  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--drac-comment);
+  margin-bottom: 1rem;
 }
 
-.site-header .container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
+.page__body {
+  grid-area: body;
+  min-width: 0;
 }
 
-.site-title {
-  font-size: 1.75rem;
-  margin-bottom: 0;
-  color: var(--drac-purple);
+.page__aside {
+  grid-area: aside;
+  position: sticky;
+  top: 1rem;
+  max-height: 95vh;
+  overflow-y: auto;
+  padding-top: 0.5rem;
 }
 
-.site-navigation ul {
-  display: flex;
-  list-style: none;
-  margin-bottom: 0;
-  flex-wrap: wrap;
-  padding-left: 0;
-}
-
-.site-navigation li {
-  margin-left: 1rem;
-}
-
-.site-navigation a {
+.page__footer {
+  grid-area: footer;
+  padding: 1rem 0;
+  border-top: 1px solid var(--drac-comment);
+  margin-top: 2rem;
   color: var(--drac-comment);
-  text-decoration: none;
-  transition: color var(--transition-fast);
-  padding: 0.5rem 1rem;
-  border-radius: var(--border-radius-sm);
-  min-height: var(--touch-target-min);
-  display: inline-flex;
-  align-items: center;
-}
-
-.site-navigation a:hover {
-  color: var(--drac-cyan);
-  background: rgba(139, 233, 253, 0.1); /* Fallback for older browsers */
-  background: color-mix(in srgb, var(--drac-cyan) 10%, transparent);
-}
-
-.search-form {
-  display: flex;
-  margin-left: 1rem;
-}
-
-.search-form input {
-  background-color: var(--drac-ui-bg-light);
-  border: 1px solid var(--drac-selection);
-  color: var(--drac-fg);
-  padding: 0.5rem;
-  border-radius: var(--border-radius-sm) 0 0 var(--border-radius-sm);
-  font-family: inherit;
-}
-
-.search-form input:focus {
-  outline: 2px solid var(--drac-purple);
-  outline-offset: 2px;
-}
-
-.search-form button {
-  background: var(--drac-purple);
-  color: var(--drac-fg);
-  border: 1px solid var(--drac-pink);
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
-  font-weight: 600;
-  font-family: inherit;
-}
-
-.search-form button:hover {
-  background: var(--drac-pink);
-}
-
-/* Override dracula.css button sizing for WCAG AA compliance (44px minimum) */
-button,
-input[type=submit],
-input[type=reset],
-input[type=button] {
-  min-height: var(--touch-target-min);
-  padding: 0.75rem 1.5rem;
+  font-size: 0.9em;
 }
 
 /* ============================================================
-   POST CARDS & CONTENT
+   NAVIGATION (risotto ./item style)
    ============================================================ */
-
-/* Base card styles shared across post cards, related posts, and empty states */
-.post-card,
-.related-post-card,
-.empty-state {
-  background: var(--drac-ui-bg-darker);
-  border: 1px solid var(--drac-selection);
-  border-radius: var(--border-radius-md);
-  padding: 1.5rem;
+.main-nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 2rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.post-card {
-  border-left: 3px solid var(--drac-purple);
-  margin-bottom: 2rem;
-  transition: border-left-color var(--transition-normal), transform var(--transition-normal);
+.main-nav li {
+  text-transform: lowercase;
 }
 
-.post-card:hover {
-  border-left-color: var(--drac-cyan);
-  transform: translateY(-2px);
-}
-
-.post-card h2 {
-  margin-top: 0;
-}
-
-.post-meta,
-.archive-date,
-.reading-time {
-  font-variant-numeric: tabular-nums;
-}
-
-.post-meta {
+.main-nav li::marker {
+  content: "./";
   color: var(--drac-comment);
-  font-size: 0.9rem;
+}
+
+/* First item is site title — no ./marker, keep as-is */
+.main-nav li:first-child {
+  list-style: none;
+  font-weight: 600;
+}
+
+.main-nav a {
+  color: var(--drac-fg);
+  text-decoration: none;
+}
+
+.main-nav a:hover {
+  color: var(--drac-cyan);
+  text-decoration: underline;
+}
+
+/* Search form inline in nav */
+.main-nav .search-form {
+  display: flex;
+  gap: 0;
+  margin: 0;
+}
+
+.main-nav .search-form input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--drac-comment);
+  color: var(--drac-fg);
+  padding: 0 0.25rem;
+  font-family: inherit;
+  font-size: inherit;
+  width: 10rem;
+}
+
+.main-nav .search-form input:focus {
+  outline: none;
+  border-bottom-color: var(--drac-cyan);
+}
+
+.main-nav .search-form input::placeholder {
+  color: var(--drac-comment);
+}
+
+/* Hide submit button in nav — Enter key submits */
+.main-nav .search-form button {
+  display: none;
+}
+
+/* ============================================================
+   SIDEBAR (aside)
+   ============================================================ */
+.aside__about {
   margin-bottom: 1rem;
 }
 
-.post-summary {
+.aside__title {
+  display: inline;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
   color: var(--drac-fg);
 }
 
+/* Override h1::before for aside title */
+.aside__title::before {
+  content: none;
+}
+
+.aside__description {
+  color: var(--drac-comment);
+  margin: 0.5rem 0 0;
+  font-size: 0.9em;
+}
+
+/* ============================================================
+   SKIP LINK (accessibility)
+   ============================================================ */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--drac-purple);
+  color: var(--drac-bg);
+  padding: 8px 16px;
+  text-decoration: none;
+  font-weight: bold;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* ============================================================
+   TAGS — [tag] bracket style
+   ============================================================ */
 .post-tags,
+.til-tags,
 .tag-cloud {
+  margin-top: 0.75rem;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.post-tags {
-  margin-top: 1rem;
-}
-
-.tag-cloud {
-  margin-bottom: 1rem;
+  gap: 0.25rem 0;
 }
 
 .tag {
-  display: inline-flex;
-  align-items: center;
-  background: rgba(139, 233, 253, 0.15); /* Fallback for older browsers */
-  background: color-mix(in srgb, var(--drac-cyan) 15%, transparent);
   color: var(--drac-cyan);
-  padding: 0.5rem 1rem;
-  border-radius: var(--border-radius-sm);
-  font-size: 0.8rem;
-  border: 1px solid rgba(139, 233, 253, 0.3); /* Fallback for older browsers */
-  border: 1px solid color-mix(in srgb, var(--drac-cyan) 30%, transparent);
-  min-height: var(--touch-target-min);
   text-decoration: none;
-  transition: all var(--transition-fast);
+  font-size: 0.9em;
 }
 
-.tag:hover {
-  background: rgba(255, 121, 198, 0.2); /* Fallback for older browsers */
-  background: color-mix(in srgb, var(--drac-pink) 20%, transparent);
-  color: var(--drac-pink);
-  border-color: var(--drac-pink);
-}
-
-/* ============================================================
-   BLOGMARKS
-   ============================================================ */
-.blogmark-url {
-  color: var(--drac-cyan);
-  font-weight: 600;
-  text-decoration: none;
-  word-break: break-word;
-}
-
-.blogmark-url:hover {
-  color: var(--drac-pink);
-}
-
-.blogmark-commentary {
-  margin-top: 1rem;
-  color: var(--drac-fg);
-}
-
-.blogmark-via {
-  margin-top: 0.5rem;
-  font-size: 0.85rem;
+.tag::before {
+  content: "[";
   color: var(--drac-comment);
 }
 
-/* ============================================================
-   PAGINATION
-   ============================================================ */
-.pagination {
-  margin: 2rem 0;
-  text-align: center;
+.tag::after {
+  content: "]";
+  color: var(--drac-comment);
 }
 
-.pagination .step-links {
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  background: var(--drac-ui-bg-dark);
-  border-radius: var(--border-radius-md);
-  border: 1px solid var(--drac-selection);
+.tag + .tag::before {
+  content: ", [";
 }
 
-.pagination .step-links a {
-  margin: 0 0.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: var(--border-radius-sm);
-  min-height: var(--touch-target-min);
-  display: inline-flex;
-  align-items: center;
-  text-decoration: none;
-  color: var(--drac-cyan);
-  transition: background var(--transition-fast);
-}
-
-.pagination .step-links a:hover {
-  background: rgba(189, 147, 249, 0.1); /* Fallback for older browsers */
-  background: color-mix(in srgb, var(--drac-purple) 10%, transparent);
-}
-
-.pagination .current {
-  color: var(--drac-purple);
-  font-weight: 600;
-  margin: 0 1rem;
+.tag:hover {
+  color: var(--drac-pink);
+  text-decoration: underline;
 }
 
 /* ============================================================
-   RELATED POSTS GRID
+   POST META (date, author, reading time)
    ============================================================ */
-.related-posts {
-  margin-top: 3rem;
-  padding-top: 1.5rem;
-  border-top: 2px solid var(--drac-selection);
+.post-meta {
+  color: var(--drac-comment);
+  font-size: 0.9em;
+  margin-bottom: 0.75rem;
+  font-variant-numeric: tabular-nums;
 }
 
-.related-posts h3 {
-  margin-bottom: 1.5rem;
-  color: var(--drac-purple);
+.reading-time {
+  color: var(--drac-comment);
 }
 
-.related-posts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-}
-
-.related-post-card {
-  border-left: 2px solid var(--drac-cyan);
-  transition: border-left-color var(--transition-normal);
-}
-
-.related-post-card:hover {
-  border-left-color: var(--drac-purple);
-}
-
-.related-post-card h4 {
-  margin-top: 0;
-  color: var(--drac-cyan);
+.reading-time::before {
+  content: " // ";
 }
 
 /* ============================================================
-   MARKDOWN IMAGE PLACEMENT
+   POST CONTENT SPACING
    ============================================================ */
+article {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--drac-ui-bg-light);
+}
+
+article:last-child {
+  border-bottom: none;
+}
+
+/* ============================================================
+   IMAGES
+   ============================================================ */
+.post-image,
+figure.markdown-image {
+  margin: 1.5rem 0;
+}
+
+.post-image img,
+figure.markdown-image img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.post-image figcaption,
+figure.markdown-image figcaption {
+  font-size: 0.85em;
+  color: var(--drac-comment);
+  margin-top: 0.25rem;
+}
+
+/* Markdown image placement */
 .align-right {
   float: right;
   margin: 0 0 1rem 1rem;
@@ -336,358 +318,184 @@ input[type=button] {
 .w-800 { max-width: 800px; }
 .full-width { width: 100%; }
 
-.post-image,
-figure.markdown-image {
-  max-width: 900px;
-  margin: 2rem auto;
-  border-radius: var(--border-radius-md);
-  overflow: hidden;
-  border: 1px solid var(--drac-selection);
-}
-
-.post-image img,
-figure.markdown-image img {
-  width: 100%;
-  height: auto;
-  display: block;
-  border-radius: var(--border-radius-md);
-}
-
-.post-image figcaption,
-figure.markdown-image figcaption {
-  margin-top: 0.5rem;
-  padding: 0.75rem;
-  font-size: 0.9rem;
-  color: var(--drac-comment);
-  text-align: center;
-  font-style: italic;
-  background: rgba(189, 147, 249, 0.05); /* Fallback for older browsers */
-  background: color-mix(in srgb, var(--drac-purple) 5%, transparent);
+@media (max-width: 768px) {
+  .align-left,
+  .align-right {
+    float: none;
+    max-width: 100%;
+    margin: 1rem auto;
+  }
 }
 
 /* ============================================================
-   ARCHIVE STRUCTURE
+   ARCHIVE
    ============================================================ */
 .archive-year {
-  margin-top: 3rem;
-  margin-bottom: 1.5rem;
-  border-bottom: 2px solid var(--drac-purple);
-  padding-bottom: 0.5rem;
   color: var(--drac-purple);
-  font-size: 1.75rem;
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
 }
 
 .archive-month {
-  margin-top: 2rem;
-  margin-bottom: 1rem;
-  color: var(--drac-cyan);
-  font-size: 1.25rem;
+  color: var(--drac-comment);
+  margin-top: 1.25rem;
+  margin-bottom: 0.25rem;
 }
 
 .archive-list {
   list-style: none;
-  margin-left: 1.5rem;
-  padding-left: 0;
+  padding: 0;
+  margin: 0;
 }
 
 .archive-list li {
-  margin-bottom: 0.75rem;
-  padding-left: 1rem;
-  border-left: 2px solid transparent;
-  transition: border-left-color var(--transition-fast);
-}
-
-.archive-list li:hover {
-  border-left-color: var(--drac-purple);
+  margin-bottom: 0.2rem;
 }
 
 .archive-date {
   color: var(--drac-comment);
   margin-right: 1rem;
-  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ============================================================
-   TIL SPECIFIC
+   BLOGMARKS
    ============================================================ */
-.til-index {
-  max-width: 900px;
-  margin: 0 auto;
+.blogmark-url {
+  color: var(--drac-cyan);
+  word-break: break-all;
+  text-decoration: none;
 }
 
-.til-list {
-  list-style: none;
-  padding-left: 0;
+.blogmark-url:hover {
+  color: var(--drac-pink);
+  text-decoration: underline;
 }
 
-.til-list li {
-  margin-bottom: 2rem;
+.blogmark-commentary {
+  margin-top: 0.75rem;
 }
 
-.til-badge {
-  display: inline-block;
-  background: rgba(80, 250, 123, 0.2); /* Fallback for older browsers */
-  background: color-mix(in srgb, var(--drac-green) 20%, transparent);
-  color: var(--drac-green);
-  padding: 0.25rem 0.75rem;
-  border-radius: var(--border-radius-sm);
-  font-size: 0.7rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  border: 1px solid rgba(80, 250, 123, 0.4); /* Fallback for older browsers */
-  border: 1px solid color-mix(in srgb, var(--drac-green) 40%, transparent);
+.blogmark-via {
+  color: var(--drac-comment);
+  font-size: 0.9em;
+  margin-top: 0.25rem;
 }
 
-.til-search-form {
-  margin: 2rem 0;
+.blogmark-via::before {
+  content: "via: ";
 }
 
-.til-tags {
+/* ============================================================
+   PAGINATION
+   ============================================================ */
+.pagination {
+  margin: 1.5rem 0;
+  color: var(--drac-comment);
+}
+
+.pagination .step-links {
+  display: inline;
+}
+
+.pagination a {
+  color: var(--drac-cyan);
+  text-decoration: none;
+  margin: 0 0.25rem;
+}
+
+.pagination a:hover {
+  text-decoration: underline;
+}
+
+.pagination .current {
+  color: var(--drac-comment);
+  margin: 0 0.25rem;
+}
+
+/* ============================================================
+   SEARCH FORMS
+   ============================================================ */
+.search-form {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.search-form input {
+  background: var(--drac-ui-bg-dark);
+  border: 1px solid var(--drac-comment);
+  color: var(--drac-fg);
+  padding: 0.25rem 0.5rem;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.search-form input:focus {
+  outline: none;
+  border-color: var(--drac-cyan);
+}
+
+.search-form button {
+  background: none;
+  border: 1px solid var(--drac-comment);
+  color: var(--drac-cyan);
+  padding: 0.25rem 0.5rem;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+}
+
+.search-form button:hover {
+  border-color: var(--drac-cyan);
+  color: var(--drac-pink);
+}
+
+/* ============================================================
+   PREVIEW BANNER
+   ============================================================ */
+.preview-banner {
+  border-left: 3px solid var(--drac-red);
+  padding: 0.5rem 1rem;
+  color: var(--drac-comment);
+  margin-bottom: 1.5rem;
+  font-size: 0.9em;
+}
+
+.preview-banner a {
+  color: var(--drac-cyan);
+}
+
+.preview-banner-actions {
+  margin-top: 0.25rem;
+}
+
+.preview-banner-schedule {
+  margin-left: 1rem;
+}
+
+.preview-banner-edit {
+  margin-top: 0.25rem;
+}
+
+/* ============================================================
+   RELATED POSTS
+   ============================================================ */
+.related-posts {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--drac-ui-bg-light);
+}
+
+.related-posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
   margin-top: 0.5rem;
 }
 
 /* ============================================================
-   ACCESSIBILITY ENHANCEMENTS
-   ============================================================ */
-:focus-visible {
-  outline: 2px solid var(--drac-purple);
-  outline-offset: 2px;
-  border-radius: 2px;
-}
-
-.skip-link {
-  position: absolute;
-  top: -40px;
-  left: 0;
-  background: var(--drac-purple);
-  color: var(--drac-bg);
-  padding: 8px 16px;
-  text-decoration: none;
-  font-weight: bold;
-  z-index: 100;
-  border-radius: 0 0 var(--border-radius-sm) 0;
-}
-
-.skip-link:focus {
-  top: 0;
-}
-
-/* ============================================================
-   ANTHROPIC VISITOR GREETING
-   ============================================================ */
-.anthropic-greeting {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 9999;
-  max-width: 500px;
-}
-
-.greeting-content {
-  background: var(--drac-ui-bg-dark);
-  border: 2px solid var(--drac-cyan);
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 8px 24px rgba(139, 233, 253, 0.3); /* Fallback for older browsers */
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--drac-cyan) 30%, transparent);
-  position: relative;
-  line-height: 1.6;
-}
-
-.greeting-content .close-btn {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 24px;
-  color: var(--drac-comment);
-  cursor: pointer;
-  background: none;
-  border: none;
-  padding: 0;
-  min-height: var(--touch-target-min);
-  min-width: var(--touch-target-min);
-  transition: color var(--transition-fast);
-}
-
-.greeting-content .close-btn:hover {
-  color: var(--drac-pink);
-}
-
-.greeting-hello {
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem;
-}
-
-.greeting-signature {
-  margin-top: 1rem;
-  font-style: italic;
-  color: var(--drac-comment);
-}
-
-@media (max-width: 768px) {
-  .anthropic-greeting {
-    position: static;
-    margin: 20px;
-    max-width: 100%;
-  }
-}
-
-/* ============================================================
-   FOOTER
-   ============================================================ */
-.site-footer {
-  padding: 2rem 0;
-  border-top: 1px solid var(--drac-selection);
-  text-align: center;
-  color: var(--drac-comment);
-  font-size: 0.9rem;
-  margin-top: 3rem;
-}
-
-.site-footer a {
-  color: var(--drac-cyan);
-  text-decoration: none;
-}
-
-.site-footer a:hover {
-  color: var(--drac-pink);
-}
-
-/* ============================================================
-   UTILITY COMPONENTS
-   ============================================================ */
-.reading-time {
-  display: inline-block;
-  margin-left: 0.75rem;
-  color: var(--drac-orange);
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-.empty-state {
-  padding: 3rem;
-  text-align: center;
-  background: linear-gradient(135deg, rgba(189, 147, 249, 0.05), transparent); /* Fallback for older browsers */
-  background: linear-gradient(135deg, color-mix(in srgb, var(--drac-purple) 5%, transparent), transparent);
-  margin: 2rem 0;
-}
-
-.empty-state h3 {
-  color: var(--drac-purple);
-  margin-bottom: 1rem;
-  font-size: 1.25rem;
-}
-
-.empty-state p {
-  color: var(--drac-comment);
-  margin-bottom: 0.75rem;
-  line-height: 1.6;
-}
-
-.empty-state p:last-child {
-  margin-bottom: 0;
-}
-
-.empty-state a {
-  color: var(--drac-cyan);
-  font-weight: 600;
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
-  transition: border-color var(--transition-fast);
-}
-
-.empty-state a:hover {
-  border-bottom-color: var(--drac-cyan);
-}
-
-.preview-banner {
-  background: var(--drac-red);
-  color: var(--drac-fg);
-  padding: 10px;
-  margin-bottom: 20px;
-  border-radius: var(--border-radius-sm);
-}
-
-.preview-banner a {
-  color: var(--drac-fg);
-  text-decoration: underline;
-}
-
-.preview-banner-actions {
-  margin-top: 5px;
-}
-
-.preview-banner-schedule {
-  margin-left: 15px;
-}
-
-.preview-banner-edit {
-  margin-top: 10px;
-}
-
-.preview-banner-edit a {
-  padding: 4px 8px;
-  background-color: rgba(255, 255, 255, 0.2); /* Fallback for older browsers */
-  background-color: color-mix(in srgb, #ffffff 20%, transparent);
-  border-radius: var(--border-radius-sm);
-}
-
-/* ============================================================
-   RESPONSIVE DESIGN
-   ============================================================ */
-@media (max-width: 768px) {
-  .site-header .container {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .site-navigation {
-    margin-top: 1rem;
-    width: 100%;
-  }
-
-  .site-navigation ul {
-    flex-direction: column;
-  }
-
-  .site-navigation li {
-    margin-left: 0;
-    margin-bottom: 0.5rem;
-  }
-
-  .search-form {
-    margin-left: 0;
-    margin-top: 1rem;
-    width: 100%;
-  }
-
-  .search-form input {
-    flex: 1;
-  }
-
-  /* Stack floated images on mobile */
-  .align-left,
-  .align-right,
-  figure.markdown-image.float-left,
-  figure.markdown-image.float-right {
-    float: none;
-    max-width: 100%;
-    margin: 1.5rem auto;
-  }
-
-  .post-image,
-  figure.markdown-image {
-    max-width: 100%;
-    margin: 1.5rem 0;
-  }
-
-  .related-posts-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ============================================================
-   REDUCED MOTION SUPPORT (WCAG 2.1 AAA)
+   REDUCED MOTION
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {
   *,
