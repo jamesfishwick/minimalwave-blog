@@ -79,6 +79,10 @@ body {
   max-height: 95vh;
   overflow-y: auto;
   padding-top: 0.5rem;
+  align-self: start;
+  background-color: transparent;
+  border-left: none;
+  border-radius: 0;
 }
 
 .page__footer {
@@ -116,6 +120,10 @@ body {
 .main-nav li:first-child {
   list-style: none;
   font-weight: 600;
+}
+
+.main-nav li:first-child::marker {
+  content: none;
 }
 
 .main-nav a {
