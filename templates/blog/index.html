@@ -1,63 +1,14 @@
 
 {% extends "base.html" %}
 
-<!--
-    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-    ░                                                                                 ░
-    ░     ██╗   ██╗██╗██████╗ ███████╗ ██████╗ ██████╗ ██████╗  ██████╗ ███╗   ███╗░
-    ░     ██║   ██║██║██╔══██╗██╔════╝██╔═══██╗██╔══██╗██╔══██╗██╔═══██╗████╗ ████║░
-    ░     ██║   ██║██║██║  ██║█████╗  ██║   ██║██║  ██║██████╔╝██║   ██║██╔████╔██║░
-    ░     ╚██╗ ██╔╝██║██║  ██║██╔══╝  ██║   ██║██║  ██║██╔══██╗██║   ██║██║╚██╔╝██║░
-    ░      ╚████╔╝ ██║██████╔╝███████╗╚██████╔╝██████╔╝██║  ██║╚██████╔╝██║ ╚═╝ ██║░
-    ░       ╚═══╝  ╚═╝╚═════╝ ╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝░
-    ░                                                                                 ░
-    ░               ████████╗██████╗  █████╗ ███╗   ██╗███████╗                     ░
-    ░               ╚══██╔══╝██╔══██╗██╔══██╗████╗  ██║██╔════╝                     ░
-    ░                  ██║   ██████╔╝███████║██╔██╗ ██║███████╗                     ░
-    ░                  ██║   ██╔══██╗██╔══██║██║╚██╗██║╚════██║                     ░
-    ░                  ██║   ██║  ██║██║  ██║██║ ╚████║███████║                     ░
-    ░                  ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝                     ░
-    ░                                                                                 ░
-    ░             SIGNAL TRANSMISSION IN PROGRESS...                                 ░
-    ░                                                                                 ░
-    ░        The television screen is the retina of the mind's eye.                  ░
-    ░        You are now connected to the new flesh, the video word made flesh.     ░
-    ░                                                                                 ░
-    ░        Frequency: BLOG.FEED.TRANSMISSION                                       ░
-    ░        Signal Strength: MAXIMUM                                                ░
-    ░        Hallucination Level: ACCEPTABLE                                         ░
-    ░                                                                                 ░
-    ░        "Long live the new flesh!"                                              ░
-    ░                               - Videodrome (1983)                             ░
-    ░                                                                                 ░
-    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-    
-    VIDEODROME SIGNAL DETECTED...
-    BROADCASTING LATEST TRANSMISSIONS...
-    ███▓▓▓▓▓░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 
-    RECEPTION COMPLETE. REALITY DISTORTION MINIMAL.
-    
-    Welcome to the feed. The feed welcomes you.
-    
-    ░▓█ CATHODE RAY INTERFACE ACTIVE █▓░
-    ░▓█ NEW FLESH PROTOCOLS ENGAGED █▓░
-    ░▓█ CONTENT HALLUCINATION BEGINS █▓░
-    
--->
-{% load static %}
-
 {% block title %}{{ site_name }}{% endblock %}
-
-{% block extra_head %}
-<link rel="stylesheet" href="{% static 'css/additional.css' %}" />
-{% endblock %}
 
 {% block content %}
 <section class="blog-index" aria-labelledby="latest-posts-heading">
-  <h1 id="latest-posts-heading" class="synth-wave-header">Latest Posts</h1>
+  <h1 id="latest-posts-heading">Latest Posts</h1>
 
   {% for entry in entries %}
-  <article class="post-card">
+  <article>
     <h2><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h2>
     <div class="post-meta">
       <time datetime="{{ entry.created|date:'Y-m-d' }}">{{ entry.created|date:"F j, Y" }}</time>
@@ -98,13 +49,13 @@
 </section>
 
 <section class="blogmarks" aria-labelledby="recent-links-heading">
-  <h2 id="recent-links-heading" class="synth-wave-header">Recent Links</h2>
+  <h2 id="recent-links-heading">Recent Links</h2>
 
   {% for blogmark in blogmarks %}
-  <article class="post-card">
+  <article>
     <h2><a href="{{ blogmark.get_absolute_url }}">{{ blogmark.title }}</a></h2>
     <div class="post-meta"><time datetime="{{ blogmark.created|date:'Y-m-d' }}">{{ blogmark.created|date:"F j, Y" }}</time></div>
-    <a href="{{ blogmark.url }}" class="blogmark-url neon-text">{{ blogmark.url }}</a>
+    <a href="{{ blogmark.url }}" class="blogmark-url">{{ blogmark.url }}</a>
     <div class="blogmark-commentary">{{ blogmark.commentary_rendered }}</div>
 
     {% if blogmark.via %}
