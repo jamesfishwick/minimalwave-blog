@@ -1,5 +1,6 @@
 
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}
   {{ til.title }} | Today I Learned | {{ site_name }}
@@ -67,7 +68,7 @@
     "name": "{{ site_name }}",
     "logo": {
       "@type": "ImageObject",
-      "url": "{{ request.scheme }}://{{ request.get_host }}{% load static %}{% static 'images/logo.png' %}"
+      "url": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/logo.png' %}"
     }
   },
   {% if til.get_image_url %}"image": "{{ request.scheme }}://{{ request.get_host }}{{ til.get_image_url }}",{% endif %}
@@ -124,8 +125,6 @@
   {% if til.tags.exists %}
 
     <div class="til-tags">
-    <h3>Tags:</h3>
-
     {% for tag in til.tags.all %}
 
       <a href="

@@ -215,7 +215,7 @@ body {
 .post-tags,
 .til-tags,
 .tag-cloud {
-  margin-top: 0.75rem;
+  margin-top: 1.5rem;
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem 0;

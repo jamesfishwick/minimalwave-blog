@@ -1,5 +1,6 @@
 
 {% extends "base.html" %}
+{% load static %}
 
 
 {% block title %}{{ entry.title }} | {{ site_name }}{% endblock %}
@@ -113,8 +114,6 @@
   {% if entry.tags.exists %}
 
     <div class="post-tags">
-    <h3>Tags:</h3>
-
     {% for tag in entry.tags.all %}
 
       <a href="
