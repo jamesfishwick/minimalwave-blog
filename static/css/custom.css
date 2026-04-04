@@ -1,0 +1,512 @@
+/* ============================================================
+   Minimalwave Blog - Risotto-style terminal layout
+   Foundation: Dracula CSS (dracula.css)
+   ============================================================ */
+
+/* ============================================================
+   RESET DRACULA.CSS HEADING SIZES
+   dracula.css sets h1=2.25em, h2=1.75em — risotto uses 1rem
+   ============================================================ */
+h1, h2, h3, h4, h5, h6 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 1.5em;
+  margin-bottom: 0.25em;
+  border-bottom: none;
+  line-height: 1.5;
+  color: var(--drac-heading-color);
+}
+
+.page__body h1::before { content: "# ";   color: var(--drac-comment); }
+.page__body h2::before { content: "## ";  color: var(--drac-comment); }
+.page__body h3::before { content: "### "; color: var(--drac-comment); }
+.page__body h4::before { content: "#### "; color: var(--drac-comment); }
+.page__body h5::before { content: "##### "; color: var(--drac-comment); }
+.page__body h6::before { content: "###### "; color: var(--drac-comment); }
+
+/* ============================================================
+   BODY & FONT
+   ============================================================ */
+body {
+  font-family: var(--drac-font-family-mono);
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ============================================================
+   PAGE GRID (risotto two-column layout)
+   ============================================================ */
+.page {
+  display: grid;
+  grid-template-areas:
+    "header"
+    "body"
+    "footer";
+  grid-template-columns: 1fr;
+  max-width: 64rem;
+  margin: 0 auto;
+  gap: 0 2rem;
+  padding: 1rem;
+}
+
+@media (min-width: 45rem) {
+  .page {
+    grid-template-areas:
+      "header header"
+      "body   aside"
+      "footer footer";
+    grid-template-columns: minmax(0, 1fr) 16rem;
+  }
+}
+
+.page__header {
+  grid-area: header;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--drac-comment);
+  margin-bottom: 1rem;
+}
+
+.page__body {
+  grid-area: body;
+  min-width: 0;
+}
+
+.page__aside {
+  grid-area: aside;
+  position: sticky;
+  top: 1rem;
+  max-height: 95vh;
+  overflow-y: auto;
+  padding-top: 0.5rem;
+  align-self: start;
+  background-color: transparent;
+  border-left: none;
+  border-radius: 0;
+}
+
+.page__footer {
+  grid-area: footer;
+  padding: 1rem 0;
+  border-top: 1px solid var(--drac-comment);
+  margin-top: 2rem;
+  color: var(--drac-comment);
+  font-size: 0.9em;
+}
+
+/* ============================================================
+   NAVIGATION (risotto ./item style)
+   ============================================================ */
+.main-nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 2rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.main-nav li {
+  text-transform: lowercase;
+}
+
+.main-nav li::marker {
+  content: "./";
+  color: var(--drac-comment);
+}
+
+/* First item is site title — no ./marker, keep as-is */
+.main-nav li:first-child {
+  list-style: none;
+  font-weight: 600;
+}
+
+.main-nav li:first-child::marker {
+  content: none;
+}
+
+.main-nav a {
+  color: var(--drac-fg);
+  text-decoration: none;
+}
+
+.main-nav a:hover {
+  color: var(--drac-cyan);
+  text-decoration: underline;
+}
+
+/* Search form inline in nav */
+.main-nav .search-form {
+  display: flex;
+  gap: 0;
+  margin: 0;
+}
+
+.main-nav .search-form input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--drac-comment);
+  color: var(--drac-fg);
+  padding: 0 0.25rem;
+  font-family: inherit;
+  font-size: inherit;
+  width: 10rem;
+}
+
+.main-nav .search-form input:focus {
+  outline: none;
+  border-bottom-color: var(--drac-cyan);
+}
+
+.main-nav .search-form input::placeholder {
+  color: var(--drac-comment);
+}
+
+/* Hide submit button in nav — Enter key submits */
+.main-nav .search-form button {
+  display: none;
+}
+
+/* ============================================================
+   SIDEBAR (aside)
+   ============================================================ */
+.aside__about {
+  margin-bottom: 1rem;
+}
+
+.aside__title {
+  display: inline;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--drac-fg);
+}
+
+
+.aside__description {
+  color: var(--drac-comment);
+  margin: 0.5rem 0 0;
+  font-size: 0.9em;
+}
+
+/* ============================================================
+   SKIP LINK (accessibility)
+   ============================================================ */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--drac-purple);
+  color: var(--drac-bg);
+  padding: 8px 16px;
+  text-decoration: none;
+  font-weight: bold;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* ============================================================
+   TAGS — [tag] bracket style
+   ============================================================ */
+.post-tags,
+.til-tags,
+.tag-cloud {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0;
+}
+
+.tag {
+  color: var(--drac-cyan);
+  text-decoration: none;
+  font-size: 0.9em;
+}
+
+.tag::before {
+  content: "[";
+  color: var(--drac-comment);
+}
+
+.tag::after {
+  content: "]";
+  color: var(--drac-comment);
+}
+
+.tag + .tag::before {
+  content: ", [";
+}
+
+.tag:hover {
+  color: var(--drac-pink);
+  text-decoration: underline;
+}
+
+/* ============================================================
+   POST META (date, author, reading time)
+   ============================================================ */
+.post-meta {
+  color: var(--drac-comment);
+  font-size: 0.9em;
+  margin-bottom: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.reading-time {
+  color: var(--drac-comment);
+}
+
+.reading-time::before {
+  content: " // ";
+}
+
+/* ============================================================
+   POST CONTENT SPACING
+   ============================================================ */
+article {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--drac-ui-bg-light);
+}
+
+article:last-child {
+  border-bottom: none;
+}
+
+/* ============================================================
+   IMAGES
+   ============================================================ */
+.post-image,
+figure.markdown-image {
+  margin: 1.5rem 0;
+}
+
+.post-image img,
+figure.markdown-image img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.post-image figcaption,
+figure.markdown-image figcaption {
+  font-size: 0.85em;
+  color: var(--drac-comment);
+  margin-top: 0.25rem;
+}
+
+/* Markdown image placement */
+.align-right {
+  float: right;
+  margin: 0 0 1rem 1rem;
+}
+
+.align-left {
+  float: left;
+  margin: 0 1rem 1rem 0;
+}
+
+.align-center {
+  display: block;
+  margin: 0 auto 1rem;
+}
+
+.w-200 { max-width: 200px; }
+.w-300 { max-width: 300px; }
+.w-400 { max-width: 400px; }
+.w-500 { max-width: 500px; }
+.w-800 { max-width: 800px; }
+.full-width { width: 100%; }
+
+@media (max-width: 768px) {
+  .align-left,
+  .align-right {
+    float: none;
+    max-width: 100%;
+    margin: 1rem auto;
+  }
+}
+
+/* ============================================================
+   ARCHIVE
+   ============================================================ */
+.archive-year {
+  color: var(--drac-purple);
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.archive-month {
+  color: var(--drac-comment);
+  margin-top: 1.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.archive-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.archive-list li {
+  margin-bottom: 0.2rem;
+}
+
+.archive-date {
+  color: var(--drac-comment);
+  margin-right: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================
+   BLOGMARKS
+   ============================================================ */
+.blogmark-url {
+  color: var(--drac-cyan);
+  word-break: break-all;
+  text-decoration: none;
+}
+
+.blogmark-url:hover {
+  color: var(--drac-pink);
+  text-decoration: underline;
+}
+
+.blogmark-commentary {
+  margin-top: 0.75rem;
+}
+
+.blogmark-via {
+  color: var(--drac-comment);
+  font-size: 0.9em;
+  margin-top: 0.25rem;
+}
+
+.blogmark-via::before {
+  content: "via: ";
+}
+
+/* ============================================================
+   PAGINATION
+   ============================================================ */
+.pagination {
+  margin: 1.5rem 0;
+  color: var(--drac-comment);
+}
+
+.pagination .step-links {
+  display: inline;
+}
+
+.pagination a {
+  color: var(--drac-cyan);
+  text-decoration: none;
+  margin: 0 0.25rem;
+}
+
+.pagination a:hover {
+  text-decoration: underline;
+}
+
+.pagination .current {
+  color: var(--drac-comment);
+  margin: 0 0.25rem;
+}
+
+/* ============================================================
+   SEARCH FORMS
+   ============================================================ */
+.search-form {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.search-form input {
+  background: var(--drac-ui-bg-dark);
+  border: 1px solid var(--drac-comment);
+  color: var(--drac-fg);
+  padding: 0.25rem 0.5rem;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.search-form input:focus {
+  outline: none;
+  border-color: var(--drac-cyan);
+}
+
+.search-form button {
+  background: none;
+  border: 1px solid var(--drac-comment);
+  color: var(--drac-cyan);
+  padding: 0.25rem 0.5rem;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+}
+
+.search-form button:hover {
+  border-color: var(--drac-cyan);
+  color: var(--drac-pink);
+}
+
+/* ============================================================
+   PREVIEW BANNER
+   ============================================================ */
+.preview-banner {
+  border-left: 3px solid var(--drac-red);
+  padding: 0.5rem 1rem;
+  color: var(--drac-comment);
+  margin-bottom: 1.5rem;
+  font-size: 0.9em;
+}
+
+.preview-banner a {
+  color: var(--drac-cyan);
+}
+
+.preview-banner-actions {
+  margin-top: 0.25rem;
+}
+
+.preview-banner-schedule {
+  margin-left: 1rem;
+}
+
+.preview-banner-edit {
+  margin-top: 0.25rem;
+}
+
+/* ============================================================
+   RELATED POSTS
+   ============================================================ */
+.related-posts {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--drac-ui-bg-light);
+}
+
+.related-posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

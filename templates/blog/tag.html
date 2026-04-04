@@ -12,7 +12,7 @@
 {% block content %}
 
   <section class="tag-page">
-  <h1 class="synth-wave-header">Tag: {{ tag.name }}</h1>
+  <h1>Tag: {{ tag.name }}</h1>
 
 
   {% if entries %}
@@ -21,7 +21,7 @@
 
     {% for entry in entries %}
 
-      <article class="post-card">
+      <article>
       <h3><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h3>
       <div class="post-meta">{{ entry.created|date:"F j, Y" }}</div>
       <div class="post-summary">
@@ -42,7 +42,7 @@
 
     {% for blogmark in blogmarks %}
 
-      <article class="post-card">
+      <article>
       <h3><a href="{{ blogmark.get_absolute_url }}">{{ blogmark.title }}</a></h3>
       <div class="post-meta">{{ blogmark.created|date:"F j, Y" }}</div>
       <a href="{{ blogmark.url }}" class="blogmark-url">{{ blogmark.url }}</a>

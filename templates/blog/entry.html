@@ -1,48 +1,7 @@
 
 {% extends "base.html" %}
-
-<!--
-    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-    ░                                                                                 ░
-    ░        ██╗ ██████╗ ██╗  ██╗███╗   ██╗███╗   ██╗██╗   ██╗                       ░
-    ░        ██║██╔═══██╗██║  ██║████╗  ██║████╗  ██║╚██╗ ██╔╝                       ░
-    ░        ██║██║   ██║███████║██╔██╗ ██║██╔██╗ ██║ ╚████╔╝                        ░
-    ░   ██   ██║██║   ██║██╔══██║██║╚██╗██║██║╚██╗██║  ╚██╔╝                         ░
-    ░   ╚█████╔╝╚██████╔╝██║  ██║██║ ╚████║██║ ╚████║   ██║                          ░
-    ░    ╚════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝   ╚═╝                          ░
-    ░                                                                                 ░
-    ░    ███╗   ███╗███╗   ██╗███████╗███╗   ███╗ ██████╗ ███╗   ██╗██╗ ██████╗     ░
-    ░    ████╗ ████║████╗  ██║██╔════╝████╗ ████║██╔═══██╗████╗  ██║██║██╔════╝     ░
-    ░    ██╔████╔██║██╔██╗ ██║█████╗  ██╔████╔██║██║   ██║██╔██╗ ██║██║██║          ░
-    ░    ██║╚██╔╝██║██║╚██╗██║██╔══╝  ██║╚██╔╝██║██║   ██║██║╚██╗██║██║██║          ░
-    ░    ██║ ╚═╝ ██║██║ ╚████║███████╗██║ ╚═╝ ██║╚██████╔╝██║ ╚████║██║╚██████╗     ░
-    ░    ╚═╝     ╚═╝╚═╝  ╚═══╝╚══════╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝ ╚═════╝     ░
-    ░                                                                                 ░
-    ░         MEMORY PALACE ACCESSED - DOWNLOADING INFORMATION...                    ░
-    ░                                                                                 ░
-    ░         Content ID: {{ entry.id }}                                             ░
-    ░         Storage Capacity: 320 GIGABYTES                                        ░
-    ░         Courier Status: ACTIVE                                                 ░
-    ░         Neural Interface: SYNCHRONIZED                                         ░
-    ░                                                                                 ░
-    ░         "I can carry nearly eighty gigs of data in my head."                   ░
-    ░                               - Johnny Mnemonic (1995)                        ░
-    ░                                                                                 ░
-    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-    
-    NEURAL JACK-IN INITIATED...
-    ACCESSING MEMORY: "{{ entry.title }}"
-    ████████████████████████████████████████████████████████████████████████████ 100%
-    DATA RETRIEVAL COMPLETE.
-    
-    WARNING: Information overload detected. Mind the storage limit.
-    
-    ░▓█ CYBERNETIC INTERFACE ACTIVE █▓░
-    ░▓█ MEMORY PALACE UNLOCKED █▓░
-    ░▓█ WISDOM TRANSFER IN PROGRESS █▓░
-    
--->
 {% load static %}
+
 
 {% block title %}{{ entry.title }} | {{ site_name }}{% endblock %}
 {% block meta_description %}{{ entry.summary_text }}{% endblock %}
@@ -121,7 +80,7 @@
 
 <article class="post-content">
   <header>
-    <h1 class="synth-wave-header">{{ entry.title }}</h1>
+    <h1>{{ entry.title }}</h1>
     <div class="post-meta">
       <time datetime="{{ entry.created|date:'Y-m-d' }}">{{ entry.created|date:"F j, Y" }}</time>
       {% if entry.authors.exists %}
@@ -147,7 +106,7 @@
   </figure>
   {% endif %}
 
-  <div class="post-summary grid-pattern">{{ entry.summary_rendered }}</div>
+  <div class="post-summary">{{ entry.summary_rendered }}</div>
 
   <div class="post-body">{{ entry.body_rendered }}</div>
 
@@ -155,8 +114,6 @@
   {% if entry.tags.exists %}
 
     <div class="post-tags">
-    <h3>Tags:</h3>
-
     {% for tag in entry.tags.all %}
 
       <a href="
@@ -172,12 +129,12 @@
   {% if related_entries %}
 
     <div class="related-posts">
-    <h3 class="neon-text">Related Posts</h3>
+    <h3>Related Posts</h3>
     <div class="related-posts-grid">
 
     {% for related in related_entries %}
 
-      <div class="related-post-card">
+      <div>
       <h4>
       <a href="{{ related.get_absolute_url }}">{{ related.title }}</a>
       </h4>

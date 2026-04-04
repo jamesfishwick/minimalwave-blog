@@ -7,10 +7,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development Commands
 
+> **IMPORTANT: Always run the development server and Django commands via Docker (`make dev`, `docker exec ...`), NOT via local `python manage.py runserver`. Running a local server alongside Docker will cause port conflicts on 8000 — the local process wins and returns 404s against an empty database while Docker's data is ignored. Use `lsof -i :8000` to check for rogue local processes.**
+
 ### Local Development (Virtual Environment)
 
+> **Prefer Docker over local.** The commands below are for reference only. Run them in Docker unless you have a specific reason not to.
+
 ````bash`
-# Run development server
+# Run development server (prefer Docker instead)
 python manage.py runserver 0.0.0.0:8000
 
 # Database operations
@@ -327,7 +331,7 @@ MARKDOWN_EXTENSIONS = [
 3. Use migration safety commands: `make makemigrations`, `make migrate-safe`
 
 **Essential Practices:**
-- **Run code in Docker, not locally** - Ensures environment consistency
+- **Run code in Docker, not locally** - Ensures environment consistency and prevents port 8000 conflicts. A rogue local `manage.py runserver` process will shadow Docker on port 8000 and serve an empty database. Check with `lsof -i :8000` if pages return unexpected 404s.
 - **Use safety workflow** - Pre-commit hooks prevent migration issues
 - **Always validate migrations** - Use `make validate-migrations` before committing
 - **Test in clean environment** - Use `make test-migrations-clean` for CI/CD validation

@@ -50,37 +50,6 @@
 {% endblock %}
 
 {% block extra_head %}
-<!-- Structured Data (JSON-LD) for SEO -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "{{ blogmark.title|escapejs }}",
-  "description": "{{ blogmark.commentary_rendered|striptags|escapejs }}",
-  "datePublished": "{{ blogmark.created|date:'c' }}",
-  "dateModified": "{{ blogmark.updated|date:'c'|default:blogmark.created|date:'c' }}",
-  "author": {
-    "@type": "Organization",
-    "name": "{{ site_name }}"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "{{ site_name }}",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "{{ request.scheme }}://{{ request.get_host }}{% load static %}{% static 'images/logo.png' %}"
-    }
-  },
-  {% if blogmark.get_image_url %}"image": "{{ request.scheme }}://{{ request.get_host }}{{ blogmark.get_image_url }}",{% endif %}
-  "url": "{{ request.build_absolute_uri }}",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "{{ request.build_absolute_uri }}"
-  }{% if blogmark.tags.exists %},
-  "keywords": "{% for tag in blogmark.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}"{% endif %},
-  "isBasedOn": "{{ blogmark.url }}"
-}
-</script>
 {% endblock %}
 
 {% block content %}
@@ -101,11 +70,11 @@
 
   <article class="post-content">
   <header>
-  <h1 class="synth-wave-header">{{ blogmark.title }}</h1>
+  <h1>{{ blogmark.title }}</h1>
   <div class="post-meta">{{ blogmark.created|date:"F j, Y" }}</div>
   </header>
 
-  <a href="{{ blogmark.url }}" class="blogmark-url neon-text">{{ blogmark.url }}</a>
+  <a href="{{ blogmark.url }}" class="blogmark-url">{{ blogmark.url }}</a>
 
   {% if blogmark.get_image_url %}
   <figure class="post-image">
