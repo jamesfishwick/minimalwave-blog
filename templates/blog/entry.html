@@ -106,7 +106,10 @@
   </figure>
   {% endif %}
 
-  <div class="post-summary">{{ entry.summary_rendered }}</div>
+  <details class="post-summary" open>
+    <summary>Summary</summary>
+    {{ entry.summary_rendered }}
+  </details>
 
   <div class="post-body">{{ entry.body_rendered }}</div>
 

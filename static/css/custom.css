@@ -332,6 +332,39 @@ figure.markdown-image figcaption {
 }
 
 /* ============================================================
+   POST SUMMARY (collapsible TL;DR on entry pages)
+   ============================================================ */
+details.post-summary {
+  margin: 1.5rem 0;
+  border: none;
+  border-left: 3px solid var(--drac-purple);
+  border-radius: 0;
+  padding: 0.5rem 1rem;
+  background-color: var(--drac-ui-bg-dark);
+}
+
+details.post-summary > summary {
+  color: var(--drac-purple);
+  text-transform: lowercase;
+  font-size: 0.9em;
+  letter-spacing: 0.05em;
+}
+
+details.post-summary[open] > summary {
+  border-bottom: 1px dashed var(--drac-comment);
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+details.post-summary > p:first-of-type {
+  margin-top: 0;
+}
+
+details.post-summary > p:last-child {
+  margin-bottom: 0;
+}
+
+/* ============================================================
    ARCHIVE
    ============================================================ */
 .archive-year {
