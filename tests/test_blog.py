@@ -63,8 +63,14 @@ class BlogTestCase(TestCase):
         self.client = Client()
 
     def test_blog_index(self):
-        """Test the blog index page loads correctly"""
+        """Test the homepage bio page loads correctly"""
         response = self.client.get(reverse('blog:index'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'home-bio')
+
+    def test_blog_posts(self):
+        """Test the posts listing page loads correctly"""
+        response = self.client.get(reverse('blog:posts'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Test Blog Post')
         self.assertContains(response, 'Test Link')
