@@ -64,6 +64,7 @@
 
   <aside class="page__aside">
     <div class="aside__about">
+      <h1 class="aside__title"><a href="{% url 'blog:index' %}">{{ site_name|default:"James Fishwick" }}</a></h1>
       <p class="aside__description">{% block aside_description %}A personal blog.{% endblock %}</p>
     </div>
     <hr>
