@@ -174,10 +174,5 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True,
         },
-        'linkedin': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': True,
-        },
     },
 }

@@ -120,21 +120,6 @@ class Entry(BaseEntry):
     )
     authors = models.ManyToManyField(User, through="Authorship", blank=True)
     
-    # LinkedIn integration fields
-    linkedin_enabled = models.BooleanField(
-        default=False,
-        help_text="Automatically post to LinkedIn when published (currently disabled)"
-    )
-    linkedin_custom_text = models.TextField(
-        blank=True,
-        null=True,
-        help_text="Custom text for LinkedIn post (leave blank to use summary)"
-    )
-    linkedin_posted = models.BooleanField(
-        default=False,
-        help_text="Whether this entry has been posted to LinkedIn"
-    )
-
     class Meta:
         verbose_name_plural = "entries"
         ordering = ['-created']
@@ -192,13 +177,6 @@ class Entry(BaseEntry):
             'slug': self.slug
         })
     
-    @property
-    def linkedin_post_text(self):
-        """Get the text that should be posted to LinkedIn"""
-        if self.linkedin_custom_text:
-            return self.linkedin_custom_text
-        return self.summary_text  # Use the existing summary_text property
-
     @property
     def get_image_url(self):
         """Get the effective image URL (prioritize uploaded image over card_image URL)"""

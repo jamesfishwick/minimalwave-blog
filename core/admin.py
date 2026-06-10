@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import EnhancedTag, ContentLinkedIn
+from .models import EnhancedTag
 
 
 @admin.register(EnhancedTag)
@@ -45,48 +45,3 @@ class EnhancedTagAdmin(admin.ModelAdmin):
     unmark_featured.short_description = "Unmark as featured"
 
 
-@admin.register(ContentLinkedIn)
-class ContentLinkedInAdmin(admin.ModelAdmin):
-    list_display = [
-        'content_type', 'content_id', 'enabled',
-        'posted', 'posted_at', 'retry_count'
-    ]
-    list_filter = [
-        'content_type', 'enabled', 'posted',
-        'posted_at'
-    ]
-    search_fields = ['content_id', 'post_id', 'post_url']
-    readonly_fields = [
-        'posted_at', 'created', 'updated',
-        'last_error', 'retry_count'
-    ]
-
-    fieldsets = (
-        (None, {
-            'fields': ('content_type', 'content_id')
-        }),
-        ('LinkedIn Settings', {
-            'fields': ('enabled', 'custom_text')
-        }),
-        ('Posting Status', {
-            'fields': (
-                'posted', 'posted_at', 'post_id',
-                'post_url', 'last_error', 'retry_count'
-            )
-        }),
-        ('Metadata', {
-            'fields': ('created', 'updated'),
-            'classes': ('collapse',)
-        })
-    )
-
-    actions = ['reset_for_retry']
-
-    def reset_for_retry(self, request, queryset):
-        queryset.update(
-            posted=False,
-            last_error='',
-            retry_count=0
-        )
-        self.message_user(request, f"Reset {queryset.count()} items for retry.")
-    reset_for_retry.short_description = "Reset for LinkedIn retry"

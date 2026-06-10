@@ -20,8 +20,4 @@ class TILAdmin(admin.ModelAdmin):
         ('Publishing', {
             'fields': ('is_draft', 'tags', 'card_image')
         }),
-        ('LinkedIn Integration', {
-            'fields': ('linkedin_enabled', 'linkedin_custom_text', 'linkedin_posted'),
-            'classes': ('collapse',)
-        }),
     )
