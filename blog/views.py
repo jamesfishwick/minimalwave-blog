@@ -68,6 +68,38 @@ def index(request):
         }
     )
 
+def posts(request):
+    entries = list(
+        Entry.objects.filter(
+            status='published'
+        ).filter(
+            models.Q(publish_date__isnull=True) | models.Q(publish_date__lte=timezone.now())
+        ).order_by("-created")[
+            : ENTRIES_ON_HOMEPAGE + 1
+        ]
+    )
+    blogmarks = list(
+        Blogmark.objects.filter(
+            status='published'
+        ).filter(
+            models.Q(publish_date__isnull=True) | models.Q(publish_date__lte=timezone.now())
+        ).order_by("-created")[
+            : ENTRIES_ON_HOMEPAGE
+        ]
+    )
+    has_more = False
+    if len(entries) > ENTRIES_ON_HOMEPAGE:
+        has_more = True
+        entries = entries[:ENTRIES_ON_HOMEPAGE]
+    for entry in entries:
+        entry.reading_time = reading_time(entry.body)
+    return render(request, "blog/posts.html", {
+        "entries": entries,
+        "blogmarks": blogmarks,
+        "has_more": has_more,
+    })
+
+
 def entry(request, year, month, day, slug):
     entry = get_object_or_404(
         Entry,

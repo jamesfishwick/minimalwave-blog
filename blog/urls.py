@@ -11,6 +11,7 @@ urlpatterns = [
     path('preview/blogmark/<slug:slug>/', views.blogmark_preview, name='blogmark_preview'),
     path('<int:year>/', views.year, name='year'),
     path('<int:year>/<str:month>/', views.month, name='month'),
+    path('posts/', views.posts, name='posts'),
     path('archive/', views.archive, name='archive'),
     path('tag/<slug:slug>/', views.tag, name='tag'),
     path('search/', views.search, name='search'),

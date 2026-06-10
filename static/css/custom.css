@@ -532,6 +532,78 @@ details.post-summary > p:last-child {
 }
 
 /* ============================================================
+   HOMEPAGE (bio layout — judesue.com-style narrow column)
+   ============================================================ */
+body.page--home .page__aside {
+  display: none;
+}
+
+@media (min-width: 45rem) {
+  body.page--home .page {
+    grid-template-areas:
+      "header"
+      "body"
+      "footer";
+    grid-template-columns: 1fr;
+    max-width: 38rem;
+  }
+}
+
+.home-bio {
+  padding-top: 0.5rem;
+  line-height: 1.8;
+}
+
+.home-bio p {
+  margin: 0 0 1.5rem;
+}
+
+.home-bio strong {
+  color: var(--drac-orange);
+  font-weight: 600;
+}
+
+.home-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.25rem 0 1.5rem;
+}
+
+.home-list li {
+  padding-left: 1.5rem;
+  position: relative;
+  margin-bottom: 0.5rem;
+  color: var(--drac-fg);
+}
+
+.home-list li::before {
+  content: "*";
+  position: absolute;
+  left: 0;
+  color: var(--drac-comment);
+}
+
+.home-nav {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--drac-ui-bg-light);
+  display: flex;
+  gap: 2rem;
+}
+
+.home-nav a {
+  color: var(--drac-comment);
+  text-decoration: none;
+  font-size: 0.9em;
+  text-transform: lowercase;
+}
+
+.home-nav a:hover {
+  color: var(--drac-cyan);
+  text-decoration: underline;
+}
+
+/* ============================================================
    REDUCED MOTION
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {
