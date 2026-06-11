@@ -12,8 +12,8 @@ Options:
     --force            Re-tag content that already has tags
     --content-type     Only process specific content type: 'entry', 'blogmark', or 'til'
     --limit N          Only process N items (useful for testing)
-    --min-tags N       Minimum number of tags to generate (default: 3)
-    --max-tags N       Maximum number of tags to generate (default: 7)
+    --min-tags N       Minimum number of tags to generate (default: 2)
+    --max-tags N       Maximum number of tags to generate (default: 5)
 """
 
 import os
@@ -54,14 +54,14 @@ class Command(BaseCommand):
         parser.add_argument(
             "--min-tags",
             type=int,
-            default=3,
-            help="Minimum number of tags to generate (default: 3)",
+            default=2,
+            help="Minimum number of tags to generate (default: 2)",
         )
         parser.add_argument(
             "--max-tags",
             type=int,
-            default=7,
-            help="Maximum number of tags to generate (default: 7)",
+            default=5,
+            help="Maximum number of tags to generate (default: 5)",
         )
 
     def handle(self, *args, **options):
@@ -78,6 +78,9 @@ class Command(BaseCommand):
         self.min_tags = options["min_tags"]
         self.max_tags = options["max_tags"]
         self.client = anthropic.Anthropic(api_key=api_key)
+
+        from taggit.models import Tag
+        self.existing_tags = sorted(Tag.objects.values_list("name", flat=True))
 
         if self.dry_run:
             self.stdout.write(
@@ -176,7 +179,7 @@ class Command(BaseCommand):
 
         try:
             # Generate tags using AI
-            tag_suggestions = self._generate_tags(title, body, content_type)
+            tag_suggestions = self._generate_tags(title, body, content_type, content_obj)
 
             if not tag_suggestions:
                 self.stdout.write(
@@ -211,7 +214,7 @@ class Command(BaseCommand):
             )
             stats["errors"] += 1
 
-    def _generate_tags(self, title: str, body: str, content_type: str) -> List[str]:
+    def _generate_tags(self, title: str, body: str, content_type: str, content_obj=None) -> List[str]:
         """
         Use Claude API to generate relevant tags for content.
 
@@ -219,6 +222,7 @@ class Command(BaseCommand):
             title: Content title
             body: Content body (may contain markdown)
             content_type: Type of content (Blog Entry, Blogmark, TIL)
+            content_obj: The model instance (used to get current tags for context)
 
         Returns:
             List of tag names
@@ -226,19 +230,26 @@ class Command(BaseCommand):
         # Truncate body if too long (keep first 2000 chars)
         truncated_body = body[:2000] + ("..." if len(body) > 2000 else "")
 
+        existing_tags_hint = ""
+        if self.existing_tags:
+            existing_tags_hint = f"""
+Existing tags already in use on this site (reuse these when relevant rather than inventing synonyms):
+{', '.join(self.existing_tags)}
+"""
+
         prompt = f"""Analyze this {content_type.lower()} post and generate {self.min_tags}-{self.max_tags} relevant tags.
 
 Title: {title}
 
 Content:
 {truncated_body}
-
+{existing_tags_hint}
 Generate tags that are:
 1. Semantically relevant to the content's main topics
-2. Optimized for SEO and content discovery
-3. Specific enough to be meaningful (avoid generic tags like "technology" or "programming")
-4. Consistent with common tagging conventions (lowercase, hyphenated if multi-word)
-5. Focused on technical topics, tools, frameworks, concepts, or industries mentioned
+2. Specific enough to be meaningful (avoid generic tags like "technology" or "programming")
+3. Lowercase and hyphenated if multi-word (e.g. web-development, not webDevelopment)
+4. Focused on technical topics, tools, frameworks, concepts, or industries mentioned
+5. Reused from the existing tag list above when a good match exists
 
 Return ONLY a comma-separated list of tag names, nothing else.
 Example: python, django, web-development, rest-api, authentication
@@ -247,7 +258,7 @@ Tags:"""
 
         try:
             message = self.client.messages.create(
-                model="claude-3-haiku-20240307",  # Using Haiku - faster and cheaper for tagging
+                model="claude-haiku-4-5-20251001",
                 max_tokens=200,
                 temperature=0.3,  # Lower temperature for more consistent tagging
                 messages=[{"role": "user", "content": prompt}],
