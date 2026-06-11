@@ -22,7 +22,7 @@
 
     <a href="
     {% url 'til:tag' tag.slug %}
-    " class="tag">{{ tag.name }} {{ tag.til_set.count }}</a>
+    " class="tag">{{ tag.name }} {{ tag.published_til_count }}</a>
 
   {% endfor %}
 

@@ -2,13 +2,18 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.syndication.views import Feed
 from django.utils.feedgenerator import Atom1Feed
 from django.db import models
+from django.db.models import Count, Q
 from .models import TIL
 from core.models import EnhancedTag
 from blog.views import get_month_number, get_month_name
 
 def index(request):
     tils = TIL.objects.filter(is_draft=False).order_by("-created")
-    tags = EnhancedTag.objects.filter(is_active=True)
+    tags = EnhancedTag.objects.filter(
+        is_active=True, til__is_draft=False
+    ).annotate(
+        published_til_count=Count('til', filter=Q(til__is_draft=False))
+    ).distinct()
     return render(
         request,
         "til/index.html",
