@@ -233,7 +233,7 @@ class Command(BaseCommand):
         existing_tags_hint = ""
         if self.existing_tags:
             existing_tags_hint = f"""
-Existing tags already in use on this site (reuse these when relevant rather than inventing synonyms):
+Tags already used on this site (prefer these when they're a natural fit, but create new ones freely):
 {', '.join(self.existing_tags)}
 """
 
@@ -249,7 +249,7 @@ Generate tags that are:
 2. Specific enough to be meaningful (avoid generic tags like "technology" or "programming")
 3. Lowercase and hyphenated if multi-word (e.g. web-development, not webDevelopment)
 4. Focused on technical topics, tools, frameworks, concepts, or industries mentioned
-5. Reused from the existing tag list above when a good match exists
+5. Drawn from the existing tag list above when there's a natural match, otherwise invent the right tag
 
 Return ONLY a comma-separated list of tag names, nothing else.
 Example: python, django, web-development, rest-api, authentication
