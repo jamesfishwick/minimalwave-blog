@@ -612,6 +612,41 @@ body.page--home .page__aside {
 }
 
 /* ============================================================
+   THEME TOGGLE
+   ============================================================ */
+.main-nav li:has(#theme-toggle)::marker {
+  content: none;
+}
+
+.main-nav #theme-toggle {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--drac-fg);
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  cursor: pointer;
+  display: inline;
+  font-weight: normal;
+  transform: none;
+}
+
+.main-nav #theme-toggle:hover {
+  color: var(--drac-cyan);
+  background: none;
+}
+
+.main-nav #theme-toggle:active {
+  transform: none;
+}
+
+.main-nav #theme-toggle:focus-visible {
+  outline: 2px solid var(--drac-ui-focus);
+  outline-offset: 2px;
+}
+
+/* ============================================================
    REDUCED MOTION
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {

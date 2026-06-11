@@ -28,6 +28,9 @@
 <link rel="alternate" type="application/atom+xml" title="Blog Feed" href="{% url 'blog:feed' %}" />
 <link rel="alternate" type="application/atom+xml" title="TIL Feed" href="{% url 'til:feed' %}" />
 
+<!-- Theme: apply saved preference before CSS paints to avoid flash -->
+<script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.classList.add('dracula-'+t);}());</script>
+
 <!-- CSS -->
 <link rel="stylesheet" href="{% static 'css/dracula.css' %}" />
 <link rel="stylesheet" href="{% static 'css/dracula-pygments.css' %}" />
@@ -54,6 +57,7 @@
             <input type="text" name="q" placeholder="search..." aria-label="Search" />
           </form>
         </li>
+        <li><button id="theme-toggle" aria-label="Toggle theme">&#x25D0;</button></li>
       </ul>
     </nav>
   </header>
@@ -77,5 +81,24 @@
 
 </div>
 {% block scripts %}{% endblock %}
+<script>
+(function () {
+  var btn = document.getElementById('theme-toggle');
+  btn.addEventListener('click', function () {
+    var html = document.documentElement;
+    var isLight = html.classList.contains('dracula-light') ||
+      (!html.classList.contains('dracula-dark') && window.matchMedia('(prefers-color-scheme: light)').matches);
+    if (isLight) {
+      html.classList.remove('dracula-light');
+      html.classList.add('dracula-dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      html.classList.remove('dracula-dark');
+      html.classList.add('dracula-light');
+      localStorage.setItem('theme', 'light');
+    }
+  });
+}());
+</script>
 </body>
 </html>
