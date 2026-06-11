@@ -76,3 +76,16 @@
   {% endfor %}
 </section>
 {% endblock %}
+
+{% block aside %}
+  {% if tags %}
+  <section class="aside-tags" aria-labelledby="tags-heading">
+    <h2 id="tags-heading">Topics</h2>
+    <div class="tag-cloud">
+      {% for tag, count in tags %}
+        <a href="{% url 'blog:tag' tag.slug %}" class="tag">{{ tag.name }} {{ count }}</a>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+{% endblock %}

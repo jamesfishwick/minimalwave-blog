@@ -69,34 +69,41 @@ def index(request):
     )
 
 def posts(request):
+    published_filter = models.Q(publish_date__isnull=True) | models.Q(publish_date__lte=timezone.now())
+
     entries = list(
-        Entry.objects.filter(
-            status='published'
-        ).filter(
-            models.Q(publish_date__isnull=True) | models.Q(publish_date__lte=timezone.now())
-        ).order_by("-created")[
-            : ENTRIES_ON_HOMEPAGE + 1
-        ]
+        Entry.objects.filter(status='published')
+            .filter(published_filter)
+            .prefetch_related('tags')
+            .order_by("-created")[:ENTRIES_ON_HOMEPAGE + 1]
     )
     blogmarks = list(
-        Blogmark.objects.filter(
-            status='published'
-        ).filter(
-            models.Q(publish_date__isnull=True) | models.Q(publish_date__lte=timezone.now())
-        ).order_by("-created")[
-            : ENTRIES_ON_HOMEPAGE
-        ]
+        Blogmark.objects.filter(status='published')
+            .filter(published_filter)
+            .prefetch_related('tags')
+            .order_by("-created")[:ENTRIES_ON_HOMEPAGE]
     )
-    has_more = False
-    if len(entries) > ENTRIES_ON_HOMEPAGE:
-        has_more = True
+
+    has_more = len(entries) > ENTRIES_ON_HOMEPAGE
+    if has_more:
         entries = entries[:ENTRIES_ON_HOMEPAGE]
+
     for entry in entries:
         entry.reading_time = reading_time(entry.body)
+
+    all_entries = Entry.objects.filter(status='published').filter(published_filter).prefetch_related('tags')
+    all_blogmarks = Blogmark.objects.filter(status='published').filter(published_filter).prefetch_related('tags')
+    tag_counts = {}
+    for obj in list(all_entries) + list(all_blogmarks):
+        for tag in obj.tags.all():
+            tag_counts[tag] = tag_counts.get(tag, 0) + 1
+    tags = sorted(tag_counts.items(), key=lambda x: x[1], reverse=True)
+
     return render(request, "blog/posts.html", {
         "entries": entries,
         "blogmarks": blogmarks,
         "has_more": has_more,
+        "tags": tags,
     })
 
 
