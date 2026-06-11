@@ -7,6 +7,7 @@ from django.utils.html import mark_safe
 from django.urls import reverse
 from django.conf import settings
 from blog.templatetags.markdown_extras import preprocess_image_shortcodes
+from taggit.managers import TaggableManager
 
 
 class SiteSettings(models.Model):
@@ -66,7 +67,7 @@ class BaseEntry(models.Model):
         help_text="Schedule this content to be published at a future date and time"
     )
     slug = models.SlugField(unique_for_date='created')
-    tags = models.ManyToManyField('core.EnhancedTag', blank=True)
+    tags = TaggableManager(blank=True)
     is_draft = models.BooleanField(
         default=False,
         help_text="Legacy field. Use 'status' instead.",

@@ -2,7 +2,6 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth.models import User
 from blog.models import Entry, Blogmark
-from core.models import EnhancedTag
 from til.models import TIL
 from django.utils import timezone
 from django.template import engines
@@ -20,10 +19,6 @@ class BlogTestCase(TestCase):
             password='testpassword'
         )
         
-        # Create test tags
-        self.tag1 = EnhancedTag.objects.create(name='Django', slug='django')
-        self.tag2 = EnhancedTag.objects.create(name='Python', slug='python')
-        
         # Create test blog entry
         self.entry = Entry.objects.create(
             title='Test Blog Post',
@@ -32,10 +27,10 @@ class BlogTestCase(TestCase):
             body='This is the full content of the test blog post.',
             created=timezone.now(),
             status='published',
-            publish_date=None  # Explicitly set to None so it shows immediately
+            publish_date=None
         )
-        self.entry.tags.add(self.tag1, self.tag2)
-        
+        self.entry.tags.add('django', 'python')
+
         # Create test blogmark
         self.blogmark = Blogmark.objects.create(
             title='Test Link',
@@ -44,20 +39,20 @@ class BlogTestCase(TestCase):
             commentary='This is a test link commentary.',
             created=timezone.now(),
             status='published',
-            publish_date=None  # Explicitly set to None so it shows immediately
+            publish_date=None
         )
-        self.blogmark.tags.add(self.tag1)
-        
+        self.blogmark.tags.add('django')
+
         # Create test TIL
         self.til = TIL.objects.create(
             title='Test TIL',
             slug='test-til',
             body='This is a test TIL content.',
             created=timezone.now(),
-            is_draft=False,  # Published TIL
+            is_draft=False,
             author=self.user
         )
-        self.til.tags.add(self.tag2)
+        self.til.tags.add('python')
         
         # Create a test client
         self.client = Client()

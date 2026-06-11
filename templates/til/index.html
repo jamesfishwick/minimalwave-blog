@@ -18,11 +18,11 @@
   <h2 id="browse-topics-heading">Browse by topic</h2>
   <div class="tag-cloud">
 
-  {% for tag in tags %}
+  {% for tag, count in tags %}
 
     <a href="
     {% url 'til:tag' tag.slug %}
-    " class="tag">{{ tag.name }} {{ tag.published_til_count }}</a>
+    " class="tag">{{ tag.name }} {{ count }}</a>
 
   {% endfor %}
 

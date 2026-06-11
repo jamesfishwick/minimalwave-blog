@@ -14,8 +14,8 @@ class TaggedContentListFilter(admin.SimpleListFilter):
     parameter_name = 'tag'
 
     def lookups(self, request, model_admin):
-        from core.models import EnhancedTag
-        return [(tag.slug, tag.name) for tag in EnhancedTag.objects.filter(is_active=True)[:20]]
+        from taggit.models import Tag
+        return [(tag.slug, tag.name) for tag in Tag.objects.all()[:20]]
 
     def queryset(self, request, queryset):
         if self.value():

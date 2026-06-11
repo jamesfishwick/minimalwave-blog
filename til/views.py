@@ -2,18 +2,17 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.syndication.views import Feed
 from django.utils.feedgenerator import Atom1Feed
 from django.db import models
-from django.db.models import Count, Q
+from taggit.models import Tag
 from .models import TIL
-from core.models import EnhancedTag
 from blog.views import get_month_number, get_month_name
 
 def index(request):
-    tils = TIL.objects.filter(is_draft=False).order_by("-created")
-    tags = EnhancedTag.objects.filter(
-        is_active=True, til__is_draft=False
-    ).annotate(
-        published_til_count=Count('til', filter=Q(til__is_draft=False))
-    ).distinct()
+    tils = TIL.objects.filter(is_draft=False).order_by("-created").prefetch_related('tags')
+    tag_counts = {}
+    for til in tils:
+        for tag in til.tags.all():
+            tag_counts[tag] = tag_counts.get(tag, 0) + 1
+    tags = sorted(tag_counts.items(), key=lambda x: x[1], reverse=True)
     return render(
         request,
         "til/index.html",
@@ -35,8 +34,8 @@ def detail(request, year, month, day, slug):
     )
 
 def tag(request, slug):
-    tag = get_object_or_404(EnhancedTag, slug=slug)
-    tils = TIL.objects.filter(tags=tag, is_draft=False).order_by("-created")
+    tag = get_object_or_404(Tag, slug=slug)
+    tils = TIL.objects.filter(tags__slug=slug, is_draft=False).order_by("-created")
     return render(
         request,
         "til/tag.html",
@@ -46,16 +45,15 @@ def tag(request, slug):
 def search(request):
     q = request.GET.get("q", "").strip()
     if q:
-        # Simple search implementation - can be enhanced later
         tils = TIL.objects.filter(
             is_draft=False
         ).filter(
-            models.Q(title__icontains=q) | 
+            models.Q(title__icontains=q) |
             models.Q(body__icontains=q)
         ).order_by("-created")
     else:
         tils = []
-    
+
     return render(
         request,
         "til/search.html",

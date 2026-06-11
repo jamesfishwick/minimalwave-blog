@@ -6,7 +6,7 @@ import markdown
 from django.urls import reverse
 from django.conf import settings
 from blog.templatetags.markdown_extras import preprocess_image_shortcodes
-# Tag import removed - using core.EnhancedTag
+from taggit.managers import TaggableManager
 
 class TIL(models.Model):
     """Today I Learned model for short-form content organized by topic"""
@@ -30,7 +30,7 @@ class TIL(models.Model):
         verbose_name="Image Title",
         help_text="Markdown-formatted caption for the image (used as caption and stripped for alt text)"
     )
-    tags = models.ManyToManyField('core.EnhancedTag', blank=True)
+    tags = TaggableManager(blank=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     is_draft = models.BooleanField(
         default=False,

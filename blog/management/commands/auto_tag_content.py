@@ -25,7 +25,6 @@ from django.db import transaction
 from django.utils.text import slugify
 
 from blog.models import Entry, Blogmark
-from core.models import EnhancedTag
 from til.models import TIL
 
 
@@ -304,18 +303,11 @@ Tags:"""
             if self.force:
                 content_obj.tags.clear()
 
-            # Get or create each tag and add it
+            # Add tags — taggit creates them automatically if they don't exist
             for tag_name in tag_names:
-                tag_slug = slugify(tag_name)
-                tag, created = EnhancedTag.objects.get_or_create(
-                    slug=tag_slug, defaults={"name": tag_name, "is_active": True}
-                )
-
-                if created:
-                    self.stdout.write(
-                        self.style.SUCCESS(f"      Created new tag: {tag_name}")
-                    )
-
-                content_obj.tags.add(tag)
+                content_obj.tags.add(tag_name)
+            self.stdout.write(
+                self.style.SUCCESS(f"      Applied tags: {', '.join(tag_names)}")
+            )
 
             content_obj.save()

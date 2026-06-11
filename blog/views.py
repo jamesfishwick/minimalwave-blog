@@ -4,7 +4,7 @@ from django.utils.feedgenerator import Atom1Feed
 from django.utils import timezone
 from django.db import models
 from .models import Entry, Blogmark, SiteSettings
-from core.models import EnhancedTag
+from taggit.models import Tag
 from .utils import paginate_queryset
 from .related import get_related_entries
 from django.contrib.auth.decorators import login_required
@@ -259,12 +259,12 @@ def archive(request):
     )
 
 def tag(request, slug):
-    tag = get_object_or_404(EnhancedTag, slug=slug)
-    entries = Entry.objects.filter(tags=tag, status='published').filter(
+    tag = get_object_or_404(Tag, slug=slug)
+    entries = Entry.objects.filter(tags__slug=slug, status='published').filter(
         models.Q(publish_date__isnull=True) | models.Q(publish_date__lte=timezone.now())
     ).order_by("-created")
 
-    blogmarks = Blogmark.objects.filter(tags=tag, status='published').filter(
+    blogmarks = Blogmark.objects.filter(tags__slug=slug, status='published').filter(
         models.Q(publish_date__isnull=True) | models.Q(publish_date__lte=timezone.now())
     ).order_by("-created")
 

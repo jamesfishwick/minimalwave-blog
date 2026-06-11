@@ -48,12 +48,11 @@ class EntryAdminForm(forms.ModelForm):
 class EntryAdmin(admin.ModelAdmin):
     form = EntryAdminForm
     list_display = ('title', 'created', 'status', 'get_publish_date', 'preview_link')
-    list_filter = ('status', 'created', 'tags')
+    list_filter = ('status', 'created')
     search_fields = ('title', 'summary', 'body')
     prepopulated_fields = {'slug': ('title',)}
     date_hierarchy = 'created'
     inlines = [AuthorshipInline]
-    filter_horizontal = ('tags',)
     fieldsets = (
         (None, {
             'fields': ('title', 'slug', 'summary', 'body', 'created')
@@ -88,11 +87,10 @@ class EntryAdmin(admin.ModelAdmin):
 @admin.register(Blogmark)
 class BlogmarkAdmin(admin.ModelAdmin):
     list_display = ('title', 'url', 'created', 'status', 'get_publish_date', 'preview_link')
-    list_filter = ('status', 'created', 'tags')
+    list_filter = ('status', 'created')
     search_fields = ('title', 'commentary', 'url')
     prepopulated_fields = {'slug': ('title',)}
     date_hierarchy = 'created'
-    filter_horizontal = ('tags',)
 
     def preview_link(self, obj):
         if obj.slug:
