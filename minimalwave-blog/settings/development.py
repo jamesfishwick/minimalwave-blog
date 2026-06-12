@@ -29,7 +29,6 @@ INSTALLED_APPS = [
 
     # Third-party apps
     'markdown',
-    'taggit',
     'markdownx',
     'allauth',
     'allauth.account',

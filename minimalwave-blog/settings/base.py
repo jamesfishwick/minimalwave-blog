@@ -21,7 +21,8 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.sitemaps',
     'django.contrib.humanize',
-    'core',  # Core models (taxonomy, etc.)
+    'taggit',
+    'core',
     'blog',
     'til',
 ]
