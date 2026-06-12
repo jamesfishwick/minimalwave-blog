@@ -138,7 +138,7 @@ class Command(BaseCommand):
             self.stdout.write(f"\nProcessing {queryset.count()} blogmarks...")
             for blogmark in queryset:
                 # Blogmarks have link and commentary
-                content = f"{blogmark.commentary}\n\nLink: {blogmark.link}"
+                content = f"{blogmark.commentary}\n\nLink: {blogmark.url}"
                 self._process_content(
                     blogmark,
                     content_type="Blogmark",
