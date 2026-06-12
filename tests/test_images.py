@@ -16,7 +16,6 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from blog.models import Entry, Blogmark
 from til.models import TIL
-from core.models import EnhancedTag
 from PIL import Image
 from io import BytesIO
 import tempfile
