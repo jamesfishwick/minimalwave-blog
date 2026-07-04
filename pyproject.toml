@@ -28,32 +28,32 @@ anthropic = ">=0.40.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.3.1"
-black = "^24.0.0"
-isort = "^5.12.0"
-flake8 = "^7.0.0"
+ruff = "^0.15.0"
 pre-commit = "^3.8.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.black]
+[tool.ruff]
 line-length = 88
-target-version = ["py310"]
-exclude = '''
-/(
-    \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | buck-out
-  | build
-  | dist
-)/
-'''
+target-version = "py310"
+# Generated/vendored/archived code and Django migrations aren't hand-formatted.
+extend-exclude = ["staticfiles", "*/migrations/*", ".archive"]
 
-[tool.isort]
-profile = "black"
-multi_line_output = 3
+[tool.ruff.lint]
+# E/W: pycodestyle, F: pyflakes, I: isort. Mirrors the old black+isort+flake8 setup.
+select = ["E", "W", "F", "I"]
+# E203 and E501 are owned by the formatter (matches the old flake8 setup; the
+# formatter deliberately leaves long strings/comments/docstrings unwrapped).
+ignore = ["E203", "E501"]
+
+[tool.ruff.lint.per-file-ignores]
+# Settings modules use `from .base import *` (star imports) by design.
+"minimalwave-blog/settings/*" = ["F403", "F405", "E402"]
+"**/__init__.py" = ["F401"]
+# Standalone Django scripts call django.setup() before importing models.
+"scripts/*" = ["E402"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["blog", "til", "projects", "core"]

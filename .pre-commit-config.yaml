@@ -17,30 +17,14 @@ repos:
       - id: pretty-format-json
         args: ['--autofix']
 
-  # Python code formatting with Black
-  - repo: https://github.com/psf/black
-    rev: '24.8.0'
+  # Python linting + import sorting + formatting with Ruff
+  # (replaces black + isort + flake8; config lives in pyproject.toml)
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.5
     hooks:
-      - id: black
-        language_version: python3
-        args: ['--line-length=88']
-        files: '\.py$'
-
-  # Import sorting with isort
-  - repo: https://github.com/pycqa/isort
-    rev: '5.13.2'
-    hooks:
-      - id: isort
-        args: ['--profile=black', '--line-length=88']
-        files: '\.py$'
-
-  # Python linting with flake8
-  - repo: https://github.com/pycqa/flake8
-    rev: '7.1.1'
-    hooks:
-      - id: flake8
-        args: ['--max-line-length=88', '--extend-ignore=E203,W503']
-        files: '\.py$'
+      - id: ruff
+        args: ['--fix']
+      - id: ruff-format
 
   # Django-specific checks (consolidated)
   - repo: local
