@@ -1,7 +1,5 @@
 from django.contrib.syndication.views import Feed
-from django.db import models
 from django.shortcuts import get_object_or_404, render
-from django.utils import timezone
 from django.utils.feedgenerator import Atom1Feed
 from taggit.models import Tag
 
@@ -9,10 +7,9 @@ from .models import Project
 
 
 def _published_projects():
-    """Published projects, respecting scheduled publish_date (as blog views do)."""
-    return Project.objects.filter(status="published").filter(
-        models.Q(publish_date__isnull=True) | models.Q(publish_date__lte=timezone.now())
-    )  # Meta.ordering handles sort_order, -start_date
+    """Publicly visible projects. Delegates to the single source of truth
+    (Project.objects.published()); Meta.ordering handles sort_order/-start_date."""
+    return Project.objects.published()
 
 
 def index(request):
