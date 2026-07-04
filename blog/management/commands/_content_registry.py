@@ -8,6 +8,7 @@ here has `title` and `slug` attributes, which the commands rely on.
 Filename starts with `_` so Django's management command loader skips it.
 """
 
+from django.core.exceptions import ImproperlyConfigured
 from django.core.management.base import CommandError
 
 from blog.models import Blogmark, Entry
@@ -21,6 +22,30 @@ CONTENT_TYPES = {
     "til": {"model": TIL, "fields": ["body"]},
     "project": {"model": Project, "fields": ["summary", "body"]},
 }
+
+
+def _validate_registry():
+    """Fail loudly at import time if the registry drifts from the models.
+
+    Turns a latent runtime AttributeError (deep inside dump/load) into an
+    explicit load-time error when a model field is renamed or removed.
+    """
+    for tname, spec in CONTENT_TYPES.items():
+        model = spec["model"]
+        field_names = {f.name for f in model._meta.get_fields()}
+        for required in ("title", "slug"):
+            if not hasattr(model, required):
+                raise ImproperlyConfigured(
+                    f"CONTENT_TYPES['{tname}']: {model.__name__} has no '{required}'"
+                )
+        for field in spec["fields"]:
+            if field not in field_names:
+                raise ImproperlyConfigured(
+                    f"CONTENT_TYPES['{tname}']: {model.__name__} has no field '{field}'"
+                )
+
+
+_validate_registry()
 
 
 def resolve_types(options):
