@@ -2,10 +2,24 @@ import markdown
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.html import mark_safe, strip_tags
 
 from blog.models import BaseEntry
 from blog.templatetags.markdown_extras import preprocess_image_shortcodes
+
+
+class ProjectQuerySet(models.QuerySet):
+    def published(self):
+        """Published projects, respecting scheduled publish_date.
+
+        Single source of truth for "publicly visible" — used by the views,
+        the Atom feed, and the sitemap so they cannot drift apart.
+        """
+        return self.filter(status="published").filter(
+            models.Q(publish_date__isnull=True)
+            | models.Q(publish_date__lte=timezone.now())
+        )
 
 
 class Project(BaseEntry):
@@ -69,8 +83,18 @@ class Project(BaseEntry):
         help_text="Screenshot or thumbnail for the card and social cards",
     )
 
+    objects = ProjectQuerySet.as_manager()
+
     class Meta:
         ordering = ["sort_order", "-start_date"]
+        constraints = [
+            # end_date is nullable ("ongoing"); when set it must not precede start.
+            models.CheckConstraint(
+                check=models.Q(end_date__isnull=True)
+                | models.Q(end_date__gte=models.F("start_date")),
+                name="project_end_date_after_start_date",
+            ),
+        ]
 
     def save(self, *args, **kwargs):
         # Keep the legacy is_draft flag in sync with status, as Entry/Blogmark do.
