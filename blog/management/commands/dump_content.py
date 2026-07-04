@@ -59,7 +59,10 @@ class Command(BaseCommand):
                         "field": field,
                         "title": obj.title,
                     }
-                    path = os.path.join(out, f"{tname}-{obj.slug}-{field}.md")
+                    # Include pk: BaseEntry.slug is unique_for_date (not global),
+                    # so two same-slug posts on different dates would otherwise
+                    # write to the same file and silently overwrite each other.
+                    path = os.path.join(out, f"{tname}-{obj.pk}-{obj.slug}-{field}.md")
                     with open(path, "w", encoding="utf-8") as fh:
                         fh.write("---\n")
                         fh.write(
