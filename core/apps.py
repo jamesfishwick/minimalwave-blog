@@ -2,6 +2,6 @@ from django.apps import AppConfig
 
 
 class CoreConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'core'
-    verbose_name = 'Content & Taxonomy'  # Better admin grouping
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "core"
+    verbose_name = "Content & Taxonomy"  # Better admin grouping

@@ -1,11 +1,16 @@
+
 {% extends "base.html" %}
 
 {% block title %}
+
   Projects tagged "{{ tag.name }}" | {{ site_name }}
+
 {% endblock %}
 
 {% block meta_description %}
+
   Projects tagged {{ tag.name }}.
+
 {% endblock %}
 
 {% block content %}
@@ -14,15 +19,26 @@
   <h1 id="projects-tag-heading">Projects tagged &ldquo;{{ tag.name }}&rdquo;</h1>
 
   <div class="projects-grid">
+
   {% for project in projects %}
+
+
     {% include "projects/_card.html" with project=project %}
-  {% empty %}
+
+
+    {% empty %}
+
     <div class="empty-state">
-      <h3>No projects with this tag</h3>
-      <p>Back to <a href="{% url 'projects:index' %}">all projects</a>.</p>
+    <h3>No projects with this tag</h3>
+    <p>Back to <a href="
+    {% url 'projects:index' %}
+    ">all projects</a>.</p>
     </div>
+
   {% endfor %}
+
   </div>
   </section>
 
 {% endblock %}
+

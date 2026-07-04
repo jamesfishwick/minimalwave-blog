@@ -1,12 +1,17 @@
 
+
 {% extends "base.html" %}
 
 {% block title %}
+
   {{ tag.name }} | {{ site_name }}
+
 {% endblock %}
 
 {% block meta_description %}
+
   Posts and links tagged with {{ tag.name }}
+
 {% endblock %}
 
 {% block content %}
@@ -19,6 +24,7 @@
 
     <h2>Blog Posts</h2>
 
+
     {% for entry in entries %}
 
       <article>
@@ -29,16 +35,17 @@
       </div>
       </article>
 
+
     {% endfor %}
 
 
   {% endif %}
 
 
-
   {% if blogmarks %}
 
     <h2>Links</h2>
+
 
     {% for blogmark in blogmarks %}
 
@@ -51,19 +58,21 @@
       </div>
       </article>
 
+
     {% endfor %}
 
 
   {% endif %}
 
 
-
   {% if not entries and not blogmarks %}
 
     <p>No content with this tag yet.</p>
+
 
   {% endif %}
 
   </section>
 
 {% endblock %}
+

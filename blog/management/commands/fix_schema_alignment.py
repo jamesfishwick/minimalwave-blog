@@ -3,35 +3,37 @@ Management command to fix schema alignment issues between models and database.
 This fixes column naming mismatches that can occur after migration restructuring.
 """
 
+import sys
+
 from django.core.management.base import BaseCommand
 from django.db import connection
-import sys
 
 
 class Command(BaseCommand):
-    help = 'Fix schema alignment issues between Django models and database'
+    help = "Fix schema alignment issues between Django models and database"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--dry-run',
-            action='store_true',
-            help='Show what would be done without making changes',
+            "--dry-run",
+            action="store_true",
+            help="Show what would be done without making changes",
         )
 
     def handle(self, *args, **options):
         self.stdout.write("=== Schema Alignment Check ===\n")
 
         with connection.cursor() as cursor:
-
             # Check blog_entry_tags table structure
             self.stdout.write("1. Checking blog_entry_tags table...")
-            cursor.execute("""
+            cursor.execute(
+                """
                 SELECT column_name, data_type
                 FROM information_schema.columns
                 WHERE table_schema = 'public'
                 AND table_name = 'blog_entry_tags'
                 ORDER BY ordinal_position
-            """)
+            """
+            )
             columns = cursor.fetchall()
 
             if not columns:
@@ -43,7 +45,7 @@ class Command(BaseCommand):
                 self.stdout.write(f"     - {col_name} ({col_type})")
 
             # Check what Django expects
-            expected_columns = ['id', 'entry_id', 'enhancedtag_id']
+            expected_columns = ["id", "entry_id", "enhancedtag_id"]
             actual_columns = [col[0] for col in columns]
 
             self.stdout.write(f"   Expected: {expected_columns}")
@@ -53,19 +55,21 @@ class Command(BaseCommand):
             fixes_needed = []
 
             # Common mapping issues
-            if 'tag_id' in actual_columns and 'enhancedtag_id' not in actual_columns:
-                fixes_needed.append(('tag_id', 'enhancedtag_id'))
+            if "tag_id" in actual_columns and "enhancedtag_id" not in actual_columns:
+                fixes_needed.append(("tag_id", "enhancedtag_id"))
                 self.stdout.write("   🔍 Found: tag_id should be enhancedtag_id")
 
             # Check blogmark_tags table too
             self.stdout.write("\n2. Checking blog_blogmark_tags table...")
-            cursor.execute("""
+            cursor.execute(
+                """
                 SELECT column_name, data_type
                 FROM information_schema.columns
                 WHERE table_schema = 'public'
                 AND table_name = 'blog_blogmark_tags'
                 ORDER BY ordinal_position
-            """)
+            """
+            )
             blogmark_columns = cursor.fetchall()
 
             if blogmark_columns:
@@ -74,19 +78,28 @@ class Command(BaseCommand):
                     self.stdout.write(f"     - {col_name} ({col_type})")
 
                 actual_blogmark_columns = [col[0] for col in blogmark_columns]
-                if 'tag_id' in actual_blogmark_columns and 'enhancedtag_id' not in actual_blogmark_columns:
-                    fixes_needed.append(('blog_blogmark_tags', 'tag_id', 'enhancedtag_id'))
-                    self.stdout.write("   🔍 Found: tag_id should be enhancedtag_id in blogmark_tags")
+                if (
+                    "tag_id" in actual_blogmark_columns
+                    and "enhancedtag_id" not in actual_blogmark_columns
+                ):
+                    fixes_needed.append(
+                        ("blog_blogmark_tags", "tag_id", "enhancedtag_id")
+                    )
+                    self.stdout.write(
+                        "   🔍 Found: tag_id should be enhancedtag_id in blogmark_tags"
+                    )
 
             # Check core_enhancedtag table structure
             self.stdout.write("\n3. Checking core_enhancedtag table...")
-            cursor.execute("""
+            cursor.execute(
+                """
                 SELECT column_name, data_type
                 FROM information_schema.columns
                 WHERE table_schema = 'public'
                 AND table_name = 'core_enhancedtag'
                 ORDER BY ordinal_position
-            """)
+            """
+            )
             core_columns = cursor.fetchall()
 
             if core_columns:
@@ -95,13 +108,19 @@ class Command(BaseCommand):
                     self.stdout.write(f"     - {col_name} ({col_type})")
 
                 actual_core_columns = [col[0] for col in core_columns]
-                if 'category' in actual_core_columns and 'category_id' not in actual_core_columns:
-                    fixes_needed.append(('core_enhancedtag', 'category', 'category_id'))
-                    self.stdout.write("   🔍 Found: category should be category_id in core_enhancedtag")
+                if (
+                    "category" in actual_core_columns
+                    and "category_id" not in actual_core_columns
+                ):
+                    fixes_needed.append(("core_enhancedtag", "category", "category_id"))
+                    self.stdout.write(
+                        "   🔍 Found: category should be category_id in core_enhancedtag"
+                    )
 
             # Check constraints that might need updating
             self.stdout.write("\n4. Checking foreign key constraints...")
-            cursor.execute("""
+            cursor.execute(
+                """
                 SELECT tc.constraint_name, tc.table_name, kcu.column_name,
                        ccu.table_name AS foreign_table_name,
                        ccu.column_name AS foreign_column_name
@@ -114,11 +133,14 @@ class Command(BaseCommand):
                   AND ccu.table_schema = tc.table_schema
                 WHERE tc.constraint_type = 'FOREIGN KEY'
                 AND tc.table_name IN ('blog_entry_tags', 'blog_blogmark_tags', 'core_enhancedtag')
-            """)
+            """
+            )
             constraints = cursor.fetchall()
 
             for constraint in constraints:
-                self.stdout.write(f"   - {constraint[1]}.{constraint[2]} -> {constraint[3]}.{constraint[4]}")
+                self.stdout.write(
+                    f"   - {constraint[1]}.{constraint[2]} -> {constraint[3]}.{constraint[4]}"
+                )
 
             # Apply fixes
             if fixes_needed:
@@ -127,64 +149,87 @@ class Command(BaseCommand):
                 for fix in fixes_needed:
                     if len(fix) == 2:  # Entry tags fix
                         old_col, new_col = fix
-                        table = 'blog_entry_tags'
+                        table = "blog_entry_tags"
                     else:  # Blogmark tags fix
                         table, old_col, new_col = fix
 
                     self.stdout.write(f"Renaming {table}.{old_col} to {new_col}")
 
-                    if not options['dry_run']:
+                    if not options["dry_run"]:
                         try:
                             # Special handling for entry tags - need to migrate data first
-                            if table == 'blog_entry_tags' and old_col == 'tag_id':
-                                self.stdout.write("   🔄 Running tag data migration first...")
+                            if table == "blog_entry_tags" and old_col == "tag_id":
+                                self.stdout.write(
+                                    "   🔄 Running tag data migration first..."
+                                )
                                 from django.core.management import call_command
-                                call_command('migrate_tag_data')
+
+                                call_command("migrate_tag_data")
 
                             # Drop foreign key constraint first
-                            cursor.execute(f"""
+                            cursor.execute(
+                                f"""
                                 ALTER TABLE {table}
                                 DROP CONSTRAINT IF EXISTS {table}_{old_col}_fkey
-                            """)
+                            """
+                            )
 
                             # Rename the column
-                            cursor.execute(f"""
+                            cursor.execute(
+                                f"""
                                 ALTER TABLE {table}
                                 RENAME COLUMN {old_col} TO {new_col}
-                            """)
+                            """
+                            )
 
                             # Recreate foreign key constraint with new name
-                            if table == 'core_enhancedtag':
+                            if table == "core_enhancedtag":
                                 # For core_enhancedtag category->category_id fix
-                                cursor.execute(f"""
+                                cursor.execute(
+                                    f"""
                                     ALTER TABLE {table}
                                     ADD CONSTRAINT {table}_{new_col}_fkey
                                     FOREIGN KEY ({new_col}) REFERENCES core_category(id)
                                     DEFERRABLE INITIALLY DEFERRED
-                                """)
+                                """
+                                )
                             else:
                                 # For tag tables referring to core_enhancedtag
-                                cursor.execute(f"""
+                                cursor.execute(
+                                    f"""
                                     ALTER TABLE {table}
                                     ADD CONSTRAINT {table}_{new_col}_fkey
                                     FOREIGN KEY ({new_col}) REFERENCES core_enhancedtag(id)
                                     DEFERRABLE INITIALLY DEFERRED
-                                """)
+                                """
+                                )
 
-                            self.stdout.write(f"   ✅ Renamed {table}.{old_col} to {new_col}")
+                            self.stdout.write(
+                                f"   ✅ Renamed {table}.{old_col} to {new_col}"
+                            )
 
                         except Exception as e:
-                            self.stdout.write(f"   ❌ Error renaming {table}.{old_col}: {e}")
+                            self.stdout.write(
+                                f"   ❌ Error renaming {table}.{old_col}: {e}"
+                            )
                             if "violates foreign key constraint" in str(e):
-                                self.stdout.write("   💡 This indicates tag data needs to be migrated first")
-                                self.stdout.write("   💡 Run: python manage.py migrate_tag_data")
+                                self.stdout.write(
+                                    "   💡 This indicates tag data needs to be migrated first"
+                                )
+                                self.stdout.write(
+                                    "   💡 Run: python manage.py migrate_tag_data"
+                                )
 
                     else:
-                        self.stdout.write(f"   🔍 Would rename {table}.{old_col} to {new_col}")
+                        self.stdout.write(
+                            f"   🔍 Would rename {table}.{old_col} to {new_col}"
+                        )
 
-                if not options['dry_run']:
+                if not options["dry_run"]:
                     self.stdout.write("\n✅ Schema alignment completed")
                 else:
-                    self.stdout.write("\n🔍 Dry run completed - use --dry-run=false to apply changes")
+                    self.stdout.write(
+                        "\n🔍 Dry run completed - use --dry-run=false to apply changes"
+                    )
             else:
                 self.stdout.write("\n✅ No schema alignment issues found")

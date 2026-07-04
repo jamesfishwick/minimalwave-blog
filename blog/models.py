@@ -1,13 +1,13 @@
-from django.db import models
-from django.contrib.auth.models import User
-from django.utils import timezone
-from django.utils.html import strip_tags
 import markdown
-from django.utils.html import mark_safe
-from django.urls import reverse
 from django.conf import settings
-from blog.templatetags.markdown_extras import preprocess_image_shortcodes
+from django.contrib.auth.models import User
+from django.db import models
+from django.urls import reverse
+from django.utils import timezone
+from django.utils.html import mark_safe, strip_tags
 from taggit.managers import TaggableManager
+
+from blog.templatetags.markdown_extras import preprocess_image_shortcodes
 
 
 class SiteSettings(models.Model):
@@ -15,26 +15,25 @@ class SiteSettings(models.Model):
     Singleton model for storing site-wide settings.
     Only one instance of this model should exist.
     """
+
     site_title = models.CharField(
-        max_length=100,
-        default="Minimal Wave Blog",
-        help_text="The title of your blog"
+        max_length=100, default="Minimal Wave Blog", help_text="The title of your blog"
     )
     site_description = models.TextField(
         default="A personal blog with minimal wave aesthetics",
-        help_text="The description of your blog"
+        help_text="The description of your blog",
     )
     header_logo = models.ImageField(
-        upload_to='site_settings/',
+        upload_to="site_settings/",
         null=True,
         blank=True,
-        help_text="Logo to display in the header (optional)"
+        help_text="Logo to display in the header (optional)",
     )
     favicon = models.ImageField(
-        upload_to='site_settings/',
+        upload_to="site_settings/",
         null=True,
         blank=True,
-        help_text="Site favicon (optional)"
+        help_text="Site favicon (optional)",
     )
 
     class Meta:
@@ -53,20 +52,21 @@ class SiteSettings(models.Model):
 
 # Tag model moved to core.models.EnhancedTag
 
+
 class BaseEntry(models.Model):
     STATUS_CHOICES = (
-        ('draft', 'Draft'),
-        ('review', 'In Review'),
-        ('published', 'Published'),
+        ("draft", "Draft"),
+        ("review", "In Review"),
+        ("published", "Published"),
     )
     title = models.CharField(max_length=200)
     created = models.DateTimeField(default=timezone.now)
     publish_date = models.DateTimeField(
         null=True,
         blank=True,
-        help_text="Schedule this content to be published at a future date and time"
+        help_text="Schedule this content to be published at a future date and time",
     )
-    slug = models.SlugField(unique_for_date='created')
+    slug = models.SlugField(unique_for_date="created")
     tags = TaggableManager(blank=True)
     is_draft = models.BooleanField(
         default=False,
@@ -75,14 +75,14 @@ class BaseEntry(models.Model):
     status = models.CharField(
         max_length=10,
         choices=STATUS_CHOICES,
-        default='draft',
-        help_text="Draft entries are only visible to logged-in users with the preview link"
+        default="draft",
+        help_text="Draft entries are only visible to logged-in users with the preview link",
     )
 
     @property
     def is_published(self):
         """Check if the entry is published and not scheduled for future"""
-        if self.status != 'published':
+        if self.status != "published":
             return False
         if self.publish_date and self.publish_date > timezone.now():
             return False
@@ -90,7 +90,7 @@ class BaseEntry(models.Model):
 
     class Meta:
         abstract = True
-        ordering = ['-created']
+        ordering = ["-created"]
 
     def __str__(self):
         return self.title
@@ -100,34 +100,37 @@ class BaseEntry(models.Model):
         """Legacy method - use is_published property instead"""
         return self.is_published
 
+
 class Entry(BaseEntry):
     summary = models.TextField()
     body = models.TextField()
     card_image = models.URLField(
-        blank=True, null=True, help_text="URL to image for social media cards (deprecated: use image field)"
-    )
-    image = models.ImageField(
-        upload_to='blog/images/%Y/%m/',
         blank=True,
         null=True,
-        help_text="Upload an image for this entry (replaces card_image URL)"
+        help_text="URL to image for social media cards (deprecated: use image field)",
+    )
+    image = models.ImageField(
+        upload_to="blog/images/%Y/%m/",
+        blank=True,
+        null=True,
+        help_text="Upload an image for this entry (replaces card_image URL)",
     )
     image_caption = models.CharField(
         max_length=255,
         blank=True,
         null=True,
         verbose_name="Image Title",
-        help_text="Markdown-formatted caption for the image (used as caption and stripped for alt text)"
+        help_text="Markdown-formatted caption for the image (used as caption and stripped for alt text)",
     )
     authors = models.ManyToManyField(User, through="Authorship", blank=True)
-    
+
     class Meta:
         verbose_name_plural = "entries"
-        ordering = ['-created']
+        ordering = ["-created"]
 
     def save(self, *args, **kwargs):
         # Ensure consistency between status and is_draft fields
-        if self.status == 'published':
+        if self.status == "published":
             self.is_draft = False
         else:
             self.is_draft = True
@@ -138,46 +141,53 @@ class Entry(BaseEntry):
         # Use same configuration as body_rendered to ensure consistency
         # Preprocess custom shortcodes before markdown rendering
         processed = preprocess_image_shortcodes(self.summary)
-        return mark_safe(markdown.markdown(
-            processed,
-            extensions=settings.MARKDOWN_EXTENSIONS,
-            output_format=settings.MARKDOWN_OUTPUT_FORMAT
-        ))
+        return mark_safe(
+            markdown.markdown(
+                processed,
+                extensions=settings.MARKDOWN_EXTENSIONS,
+                output_format=settings.MARKDOWN_OUTPUT_FORMAT,
+            )
+        )
 
     @property
     def summary_text(self):
         # Preprocess custom shortcodes before markdown rendering
         processed = preprocess_image_shortcodes(self.summary)
-        return strip_tags(markdown.markdown(
-            processed,
-            extensions=settings.MARKDOWN_EXTENSIONS,
-            output_format=settings.MARKDOWN_OUTPUT_FORMAT
-        ))
+        return strip_tags(
+            markdown.markdown(
+                processed,
+                extensions=settings.MARKDOWN_EXTENSIONS,
+                output_format=settings.MARKDOWN_OUTPUT_FORMAT,
+            )
+        )
 
     @property
     def body_rendered(self):
         # Preprocess custom shortcodes before markdown rendering
         processed = preprocess_image_shortcodes(self.body)
-        return mark_safe(markdown.markdown(
-            processed,
-            extensions=settings.MARKDOWN_EXTENSIONS,
-            output_format=settings.MARKDOWN_OUTPUT_FORMAT
-        ))
+        return mark_safe(
+            markdown.markdown(
+                processed,
+                extensions=settings.MARKDOWN_EXTENSIONS,
+                output_format=settings.MARKDOWN_OUTPUT_FORMAT,
+            )
+        )
 
     def get_absolute_url(self):
-        return reverse('blog:entry', kwargs={
-            'year': self.created.year,
-            'month': self.created.strftime('%b').lower(),
-            'day': self.created.day,
-            'slug': self.slug
-        })
+        return reverse(
+            "blog:entry",
+            kwargs={
+                "year": self.created.year,
+                "month": self.created.strftime("%b").lower(),
+                "day": self.created.day,
+                "slug": self.slug,
+            },
+        )
 
     def get_preview_url(self):
         """Get URL for previewing draft entries"""
-        return reverse('blog:entry_preview', kwargs={
-            'slug': self.slug
-        })
-    
+        return reverse("blog:entry_preview", kwargs={"slug": self.slug})
+
     @property
     def get_image_url(self):
         """Get the effective image URL (prioritize uploaded image over card_image URL)"""
@@ -189,11 +199,13 @@ class Entry(BaseEntry):
     def image_caption_html(self):
         """Render image caption markdown as HTML for figcaption"""
         if self.image_caption:
-            return mark_safe(markdown.markdown(
-                self.image_caption,
-                extensions=settings.MARKDOWN_EXTENSIONS,
-                output_format=settings.MARKDOWN_OUTPUT_FORMAT
-            ))
+            return mark_safe(
+                markdown.markdown(
+                    self.image_caption,
+                    extensions=settings.MARKDOWN_EXTENSIONS,
+                    output_format=settings.MARKDOWN_OUTPUT_FORMAT,
+                )
+            )
         return None
 
     @property
@@ -202,11 +214,11 @@ class Entry(BaseEntry):
         if self.image_caption:
             # Convert markdown to HTML then strip all HTML tags for plain text
             html = markdown.markdown(
-                self.image_caption,
-                extensions=settings.MARKDOWN_EXTENSIONS
+                self.image_caption, extensions=settings.MARKDOWN_EXTENSIONS
             )
             return strip_tags(html)
         return self.title  # Fallback to entry title if no caption
+
 
 class Authorship(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -217,29 +229,38 @@ class Authorship(models.Model):
         ordering = ["order"]
         verbose_name_plural = "authorships"
 
+
 class Blogmark(BaseEntry):
     """Link blog implementation similar to Simon's 'blogmarks'"""
+
     url = models.URLField()
     commentary = models.TextField()
-    via = models.URLField(blank=True, null=True, help_text="URL of where you found the link")
-    via_title = models.CharField(max_length=200, blank=True, null=True, help_text="Title of where you found the link")
-    image = models.ImageField(
-        upload_to='blog/blogmarks/%Y/%m/',
+    via = models.URLField(
+        blank=True, null=True, help_text="URL of where you found the link"
+    )
+    via_title = models.CharField(
+        max_length=200,
         blank=True,
         null=True,
-        help_text="Upload an image for this blogmark"
+        help_text="Title of where you found the link",
+    )
+    image = models.ImageField(
+        upload_to="blog/blogmarks/%Y/%m/",
+        blank=True,
+        null=True,
+        help_text="Upload an image for this blogmark",
     )
     image_caption = models.CharField(
         max_length=255,
         blank=True,
         null=True,
         verbose_name="Image Title",
-        help_text="Markdown-formatted caption for the image (used as caption and stripped for alt text)"
+        help_text="Markdown-formatted caption for the image (used as caption and stripped for alt text)",
     )
 
     def save(self, *args, **kwargs):
         # Ensure consistency between status and is_draft fields
-        if self.status == 'published':
+        if self.status == "published":
             self.is_draft = False
         else:
             self.is_draft = True
@@ -249,25 +270,28 @@ class Blogmark(BaseEntry):
     def commentary_rendered(self):
         # Preprocess custom shortcodes before markdown rendering
         processed = preprocess_image_shortcodes(self.commentary)
-        return mark_safe(markdown.markdown(
-            processed,
-            extensions=settings.MARKDOWN_EXTENSIONS,
-            output_format=settings.MARKDOWN_OUTPUT_FORMAT
-        ))
+        return mark_safe(
+            markdown.markdown(
+                processed,
+                extensions=settings.MARKDOWN_EXTENSIONS,
+                output_format=settings.MARKDOWN_OUTPUT_FORMAT,
+            )
+        )
 
     def get_absolute_url(self):
-        return reverse('blog:blogmark', kwargs={
-            'year': self.created.year,
-            'month': self.created.strftime('%b').lower(),
-            'day': self.created.day,
-            'slug': self.slug
-        })
+        return reverse(
+            "blog:blogmark",
+            kwargs={
+                "year": self.created.year,
+                "month": self.created.strftime("%b").lower(),
+                "day": self.created.day,
+                "slug": self.slug,
+            },
+        )
 
     def get_preview_url(self):
         """Get URL for previewing draft blogmarks"""
-        return reverse('blog:blogmark_preview', kwargs={
-            'slug': self.slug
-        })
+        return reverse("blog:blogmark_preview", kwargs={"slug": self.slug})
 
     @property
     def get_image_url(self):
@@ -280,11 +304,13 @@ class Blogmark(BaseEntry):
     def image_caption_html(self):
         """Render image caption markdown as HTML for figcaption"""
         if self.image_caption:
-            return mark_safe(markdown.markdown(
-                self.image_caption,
-                extensions=settings.MARKDOWN_EXTENSIONS,
-                output_format=settings.MARKDOWN_OUTPUT_FORMAT
-            ))
+            return mark_safe(
+                markdown.markdown(
+                    self.image_caption,
+                    extensions=settings.MARKDOWN_EXTENSIONS,
+                    output_format=settings.MARKDOWN_OUTPUT_FORMAT,
+                )
+            )
         return None
 
     @property
@@ -293,10 +319,10 @@ class Blogmark(BaseEntry):
         if self.image_caption:
             # Convert markdown to HTML then strip all HTML tags for plain text
             html = markdown.markdown(
-                self.image_caption,
-                extensions=settings.MARKDOWN_EXTENSIONS
+                self.image_caption, extensions=settings.MARKDOWN_EXTENSIONS
             )
             return strip_tags(html)
         return self.title  # Fallback to blogmark title if no caption
+
 
 # LinkedIn models moved to linkedin app

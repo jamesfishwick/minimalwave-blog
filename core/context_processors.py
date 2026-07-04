@@ -14,6 +14,4 @@ def anthropic_detection(request):
             <div class="anthropic-greeting">Hello, Anthropic! 👋</div>
         {% endif %}
     """
-    return {
-        'anthropic_visitor': is_anthropic_visitor(request)
-    }
+    return {"anthropic_visitor": is_anthropic_visitor(request)}

@@ -7,11 +7,12 @@ here has `title` and `slug` attributes, which the commands rely on.
 
 Filename starts with `_` so Django's management command loader skips it.
 """
+
 from django.core.management.base import CommandError
 
-from blog.models import Entry, Blogmark
-from til.models import TIL
+from blog.models import Blogmark, Entry
 from projects.models import Project
+from til.models import TIL
 
 # type-name -> {model, fields}. `fields` are the markdown columns to export.
 CONTENT_TYPES = {
@@ -30,5 +31,7 @@ def resolve_types(options):
     if not t:
         raise CommandError("Specify --type <type> or --all")
     if t not in CONTENT_TYPES:
-        raise CommandError(f"Unknown type '{t}'. Choices: {', '.join(sorted(CONTENT_TYPES))}")
+        raise CommandError(
+            f"Unknown type '{t}'. Choices: {', '.join(sorted(CONTENT_TYPES))}"
+        )
     return [t]

@@ -6,28 +6,40 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('blog', '0002_add_image_fields'),
+        ("blog", "0002_add_image_fields"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='blogmark',
-            old_name='image_alt',
-            new_name='image_caption',
+            model_name="blogmark",
+            old_name="image_alt",
+            new_name="image_caption",
         ),
         migrations.RenameField(
-            model_name='entry',
-            old_name='image_alt',
-            new_name='image_caption',
+            model_name="entry",
+            old_name="image_alt",
+            new_name="image_caption",
         ),
         migrations.AlterField(
-            model_name='blogmark',
-            name='image_caption',
-            field=models.CharField(blank=True, help_text='Markdown-formatted caption for the image (used as caption and stripped for alt text)', max_length=255, null=True, verbose_name='Image Title'),
+            model_name="blogmark",
+            name="image_caption",
+            field=models.CharField(
+                blank=True,
+                help_text="Markdown-formatted caption for the image (used as caption and stripped for alt text)",
+                max_length=255,
+                null=True,
+                verbose_name="Image Title",
+            ),
         ),
         migrations.AlterField(
-            model_name='entry',
-            name='image_caption',
-            field=models.CharField(blank=True, help_text='Markdown-formatted caption for the image (used as caption and stripped for alt text)', max_length=255, null=True, verbose_name='Image Title'),
+            model_name="entry",
+            name="image_caption",
+            field=models.CharField(
+                blank=True,
+                help_text="Markdown-formatted caption for the image (used as caption and stripped for alt text)",
+                max_length=255,
+                null=True,
+                verbose_name="Image Title",
+            ),
         ),
     ]

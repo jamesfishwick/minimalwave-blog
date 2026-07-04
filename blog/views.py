@@ -1,17 +1,20 @@
-from django.contrib.syndication.views import Feed
-from django.shortcuts import render, get_object_or_404
-from django.utils.feedgenerator import Atom1Feed
-from django.utils import timezone
-from django.db import models
-from .models import Entry, Blogmark, SiteSettings
-from taggit.models import Tag
-from .utils import paginate_queryset
-from .related import get_related_entries
-from django.contrib.auth.decorators import login_required
-import re
 import math
+import re
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.syndication.views import Feed
+from django.db import models
+from django.shortcuts import get_object_or_404, render
+from django.utils import timezone
+from django.utils.feedgenerator import Atom1Feed
+from taggit.models import Tag
+
+from .models import Blogmark, Entry, SiteSettings
+from .related import get_related_entries
+from .utils import paginate_queryset
 
 ENTRIES_ON_HOMEPAGE = 5
+
 
 def reading_time(text):
     """
@@ -19,7 +22,7 @@ def reading_time(text):
     Average reading speed is about 200-250 words per minute.
     """
     # Strip HTML tags if present
-    text = re.sub(r'<[^>]+>', '', text)
+    text = re.sub(r"<[^>]+>", "", text)
 
     # Count words
     words = len(text.split())
@@ -29,25 +32,24 @@ def reading_time(text):
 
     return minutes
 
+
 def index(request):
     # Using the new status field to filter published content
     entries = list(
-        Entry.objects.filter(
-            status='published'
-        ).filter(
-            models.Q(publish_date__isnull=True) | models.Q(publish_date__lte=timezone.now())
-        ).order_by("-created")[
-            : ENTRIES_ON_HOMEPAGE + 1
-        ]
+        Entry.objects.filter(status="published")
+        .filter(
+            models.Q(publish_date__isnull=True)
+            | models.Q(publish_date__lte=timezone.now())
+        )
+        .order_by("-created")[: ENTRIES_ON_HOMEPAGE + 1]
     )
     blogmarks = list(
-        Blogmark.objects.filter(
-            status='published'
-        ).filter(
-            models.Q(publish_date__isnull=True) | models.Q(publish_date__lte=timezone.now())
-        ).order_by("-created")[
-            : ENTRIES_ON_HOMEPAGE
-        ]
+        Blogmark.objects.filter(status="published")
+        .filter(
+            models.Q(publish_date__isnull=True)
+            | models.Q(publish_date__lte=timezone.now())
+        )
+        .order_by("-created")[:ENTRIES_ON_HOMEPAGE]
     )
     has_more = False
     if len(entries) > ENTRIES_ON_HOMEPAGE:
@@ -61,27 +63,26 @@ def index(request):
     return render(
         request,
         "blog/index.html",
-        {
-            "entries": entries,
-            "blogmarks": blogmarks,
-            "has_more": has_more
-        }
+        {"entries": entries, "blogmarks": blogmarks, "has_more": has_more},
     )
+
 
 def posts(request):
-    published_filter = models.Q(publish_date__isnull=True) | models.Q(publish_date__lte=timezone.now())
+    published_filter = models.Q(publish_date__isnull=True) | models.Q(
+        publish_date__lte=timezone.now()
+    )
 
     entries = list(
-        Entry.objects.filter(status='published')
-            .filter(published_filter)
-            .prefetch_related('tags')
-            .order_by("-created")[:ENTRIES_ON_HOMEPAGE + 1]
+        Entry.objects.filter(status="published")
+        .filter(published_filter)
+        .prefetch_related("tags")
+        .order_by("-created")[: ENTRIES_ON_HOMEPAGE + 1]
     )
     blogmarks = list(
-        Blogmark.objects.filter(status='published')
-            .filter(published_filter)
-            .prefetch_related('tags')
-            .order_by("-created")[:ENTRIES_ON_HOMEPAGE]
+        Blogmark.objects.filter(status="published")
+        .filter(published_filter)
+        .prefetch_related("tags")
+        .order_by("-created")[:ENTRIES_ON_HOMEPAGE]
     )
 
     has_more = len(entries) > ENTRIES_ON_HOMEPAGE
@@ -91,20 +92,32 @@ def posts(request):
     for entry in entries:
         entry.reading_time = reading_time(entry.body)
 
-    all_entries = Entry.objects.filter(status='published').filter(published_filter).prefetch_related('tags')
-    all_blogmarks = Blogmark.objects.filter(status='published').filter(published_filter).prefetch_related('tags')
+    all_entries = (
+        Entry.objects.filter(status="published")
+        .filter(published_filter)
+        .prefetch_related("tags")
+    )
+    all_blogmarks = (
+        Blogmark.objects.filter(status="published")
+        .filter(published_filter)
+        .prefetch_related("tags")
+    )
     tag_counts = {}
     for obj in list(all_entries) + list(all_blogmarks):
         for tag in obj.tags.all():
             tag_counts[tag] = tag_counts.get(tag, 0) + 1
     tags = sorted(tag_counts.items(), key=lambda x: x[1], reverse=True)
 
-    return render(request, "blog/posts.html", {
-        "entries": entries,
-        "blogmarks": blogmarks,
-        "has_more": has_more,
-        "tags": tags,
-    })
+    return render(
+        request,
+        "blog/posts.html",
+        {
+            "entries": entries,
+            "blogmarks": blogmarks,
+            "has_more": has_more,
+            "tags": tags,
+        },
+    )
 
 
 def entry(request, year, month, day, slug):
@@ -113,7 +126,7 @@ def entry(request, year, month, day, slug):
         created__year=year,
         created__month=get_month_number(month),
         created__day=day,
-        slug=slug
+        slug=slug,
     )
 
     # Get related entries
@@ -122,11 +135,9 @@ def entry(request, year, month, day, slug):
     return render(
         request,
         "blog/entry.html",
-        {
-            "entry": entry,
-            "related_entries": related_entries
-        },
+        {"entry": entry, "related_entries": related_entries},
     )
+
 
 @login_required
 def entry_preview(request, slug):
@@ -142,12 +153,9 @@ def entry_preview(request, slug):
     return render(
         request,
         "blog/entry.html",
-        {
-            "entry": entry,
-            "related_entries": related_entries,
-            "preview": preview
-        },
+        {"entry": entry, "related_entries": related_entries, "preview": preview},
     )
+
 
 def blogmark(request, year, month, day, slug):
     blogmark = get_object_or_404(
@@ -155,13 +163,14 @@ def blogmark(request, year, month, day, slug):
         created__year=year,
         created__month=get_month_number(month),
         created__day=day,
-        slug=slug
+        slug=slug,
     )
     return render(
         request,
         "blog/blogmark.html",
         {"blogmark": blogmark},
     )
+
 
 @login_required
 def blogmark_preview(request, slug):
@@ -174,26 +183,28 @@ def blogmark_preview(request, slug):
     return render(
         request,
         "blog/blogmark.html",
-        {
-            "blogmark": blogmark,
-            "preview": preview
-        },
+        {"blogmark": blogmark, "preview": preview},
     )
 
-def year(request, year):
-    entries = Entry.objects.filter(
-        created__year=year,
-        status='published'
-    ).filter(
-        models.Q(publish_date__isnull=True) | models.Q(publish_date__lte=timezone.now())
-    ).order_by("-created")
 
-    blogmarks = Blogmark.objects.filter(
-        created__year=year,
-        status='published'
-    ).filter(
-        models.Q(publish_date__isnull=True) | models.Q(publish_date__lte=timezone.now())
-    ).order_by("-created")
+def year(request, year):
+    entries = (
+        Entry.objects.filter(created__year=year, status="published")
+        .filter(
+            models.Q(publish_date__isnull=True)
+            | models.Q(publish_date__lte=timezone.now())
+        )
+        .order_by("-created")
+    )
+
+    blogmarks = (
+        Blogmark.objects.filter(created__year=year, status="published")
+        .filter(
+            models.Q(publish_date__isnull=True)
+            | models.Q(publish_date__lte=timezone.now())
+        )
+        .order_by("-created")
+    )
 
     # Paginate entries
     paginated_entries = paginate_queryset(request, entries)
@@ -205,27 +216,34 @@ def year(request, year):
             "entries": paginated_entries,
             "blogmarks": blogmarks,
             "year": year,
-            "page_obj": paginated_entries
-        }
+            "page_obj": paginated_entries,
+        },
     )
+
 
 def month(request, year, month):
     month_number = get_month_number(month)
-    entries = Entry.objects.filter(
-        created__year=year,
-        created__month=month_number,
-        status='published'
-    ).filter(
-        models.Q(publish_date__isnull=True) | models.Q(publish_date__lte=timezone.now())
-    ).order_by("-created")
+    entries = (
+        Entry.objects.filter(
+            created__year=year, created__month=month_number, status="published"
+        )
+        .filter(
+            models.Q(publish_date__isnull=True)
+            | models.Q(publish_date__lte=timezone.now())
+        )
+        .order_by("-created")
+    )
 
-    blogmarks = Blogmark.objects.filter(
-        created__year=year,
-        created__month=month_number,
-        status='published'
-    ).filter(
-        models.Q(publish_date__isnull=True) | models.Q(publish_date__lte=timezone.now())
-    ).order_by("-created")
+    blogmarks = (
+        Blogmark.objects.filter(
+            created__year=year, created__month=month_number, status="published"
+        )
+        .filter(
+            models.Q(publish_date__isnull=True)
+            | models.Q(publish_date__lte=timezone.now())
+        )
+        .order_by("-created")
+    )
 
     # Paginate entries
     paginated_entries = paginate_queryset(request, entries)
@@ -239,18 +257,29 @@ def month(request, year, month):
             "year": year,
             "month": month,
             "month_name": get_month_name(month_number),
-            "page_obj": paginated_entries
-        }
+            "page_obj": paginated_entries,
+        },
     )
 
-def archive(request):
-    entries = Entry.objects.filter(status='published').filter(
-        models.Q(publish_date__isnull=True) | models.Q(publish_date__lte=timezone.now())
-    ).order_by("-created")
 
-    blogmarks = Blogmark.objects.filter(status='published').filter(
-        models.Q(publish_date__isnull=True) | models.Q(publish_date__lte=timezone.now())
-    ).order_by("-created")
+def archive(request):
+    entries = (
+        Entry.objects.filter(status="published")
+        .filter(
+            models.Q(publish_date__isnull=True)
+            | models.Q(publish_date__lte=timezone.now())
+        )
+        .order_by("-created")
+    )
+
+    blogmarks = (
+        Blogmark.objects.filter(status="published")
+        .filter(
+            models.Q(publish_date__isnull=True)
+            | models.Q(publish_date__lte=timezone.now())
+        )
+        .order_by("-created")
+    )
 
     # Paginate entries
     paginated_entries = paginate_queryset(request, entries)
@@ -261,19 +290,30 @@ def archive(request):
         {
             "entries": paginated_entries,
             "blogmarks": blogmarks,
-            "page_obj": paginated_entries
-        }
+            "page_obj": paginated_entries,
+        },
     )
+
 
 def tag(request, slug):
     tag = get_object_or_404(Tag, slug=slug)
-    entries = Entry.objects.filter(tags__slug=slug, status='published').filter(
-        models.Q(publish_date__isnull=True) | models.Q(publish_date__lte=timezone.now())
-    ).order_by("-created")
+    entries = (
+        Entry.objects.filter(tags__slug=slug, status="published")
+        .filter(
+            models.Q(publish_date__isnull=True)
+            | models.Q(publish_date__lte=timezone.now())
+        )
+        .order_by("-created")
+    )
 
-    blogmarks = Blogmark.objects.filter(tags__slug=slug, status='published').filter(
-        models.Q(publish_date__isnull=True) | models.Q(publish_date__lte=timezone.now())
-    ).order_by("-created")
+    blogmarks = (
+        Blogmark.objects.filter(tags__slug=slug, status="published")
+        .filter(
+            models.Q(publish_date__isnull=True)
+            | models.Q(publish_date__lte=timezone.now())
+        )
+        .order_by("-created")
+    )
 
     # Paginate entries
     paginated_entries = paginate_queryset(request, entries)
@@ -285,32 +325,38 @@ def tag(request, slug):
             "tag": tag,
             "entries": paginated_entries,
             "blogmarks": blogmarks,
-            "page_obj": paginated_entries
-        }
+            "page_obj": paginated_entries,
+        },
     )
+
 
 def search(request):
     q = request.GET.get("q", "").strip()
     if q:
         # Simple search implementation - can be enhanced later
-        entries = Entry.objects.filter(
-            status='published'
-        ).filter(
-            models.Q(publish_date__isnull=True) | models.Q(publish_date__lte=timezone.now())
-        ).filter(
-            models.Q(title__icontains=q) |
-            models.Q(summary__icontains=q) |
-            models.Q(body__icontains=q)
-        ).order_by("-created")
+        entries = (
+            Entry.objects.filter(status="published")
+            .filter(
+                models.Q(publish_date__isnull=True)
+                | models.Q(publish_date__lte=timezone.now())
+            )
+            .filter(
+                models.Q(title__icontains=q)
+                | models.Q(summary__icontains=q)
+                | models.Q(body__icontains=q)
+            )
+            .order_by("-created")
+        )
 
-        blogmarks = Blogmark.objects.filter(
-            status='published'
-        ).filter(
-            models.Q(publish_date__isnull=True) | models.Q(publish_date__lte=timezone.now())
-        ).filter(
-            models.Q(title__icontains=q) |
-            models.Q(commentary__icontains=q)
-        ).order_by("-created")
+        blogmarks = (
+            Blogmark.objects.filter(status="published")
+            .filter(
+                models.Q(publish_date__isnull=True)
+                | models.Q(publish_date__lte=timezone.now())
+            )
+            .filter(models.Q(title__icontains=q) | models.Q(commentary__icontains=q))
+            .order_by("-created")
+        )
 
         # Paginate entries
         paginated_entries = paginate_queryset(request, entries)
@@ -326,23 +372,28 @@ def search(request):
             "q": q,
             "entries": paginated_entries,
             "blogmarks": blogmarks,
-            "page_obj": paginated_entries
+            "page_obj": paginated_entries,
         },
     )
+
 
 class AtomFeed(Feed):
     def title(self):
         return SiteSettings.get_settings().site_title
+
     link = "/blog/"
     subtitle = "Latest blog posts"
     feed_type = Atom1Feed
 
     def items(self):
-        return Entry.objects.filter(
-            status='published'
-        ).filter(
-            models.Q(publish_date__isnull=True) | models.Q(publish_date__lte=timezone.now())
-        ).order_by("-created")[:15]
+        return (
+            Entry.objects.filter(status="published")
+            .filter(
+                models.Q(publish_date__isnull=True)
+                | models.Q(publish_date__lte=timezone.now())
+            )
+            .order_by("-created")[:15]
+        )
 
     def item_title(self, item):
         return item.title
@@ -353,21 +404,40 @@ class AtomFeed(Feed):
     def item_pubdate(self, item):
         return item.created
 
+
 def get_month_number(month_name):
     """Convert month name to number (1-12)"""
     months = {
-        'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4,
-        'may': 5, 'jun': 6, 'jul': 7, 'aug': 8,
-        'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12
+        "jan": 1,
+        "feb": 2,
+        "mar": 3,
+        "apr": 4,
+        "may": 5,
+        "jun": 6,
+        "jul": 7,
+        "aug": 8,
+        "sep": 9,
+        "oct": 10,
+        "nov": 11,
+        "dec": 12,
     }
     return months.get(month_name.lower()[:3], 1)
+
 
 def get_month_name(month_number):
     """Convert month number to name"""
     months = {
-        1: 'January', 2: 'February', 3: 'March', 4: 'April',
-        5: 'May', 6: 'June', 7: 'July', 8: 'August',
-        9: 'September', 10: 'October', 11: 'November', 12: 'December'
+        1: "January",
+        2: "February",
+        3: "March",
+        4: "April",
+        5: "May",
+        6: "June",
+        7: "July",
+        8: "August",
+        9: "September",
+        10: "October",
+        11: "November",
+        12: "December",
     }
-    return months.get(month_number, 'January')
-
+    return months.get(month_number, "January")

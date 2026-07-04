@@ -6,18 +6,24 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('til', '0002_add_image_fields'),
+        ("til", "0002_add_image_fields"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='til',
-            old_name='image_alt',
-            new_name='image_caption',
+            model_name="til",
+            old_name="image_alt",
+            new_name="image_caption",
         ),
         migrations.AlterField(
-            model_name='til',
-            name='image_caption',
-            field=models.CharField(blank=True, help_text='Markdown-formatted caption for the image (used as caption and stripped for alt text)', max_length=255, null=True, verbose_name='Image Title'),
+            model_name="til",
+            name="image_caption",
+            field=models.CharField(
+                blank=True,
+                help_text="Markdown-formatted caption for the image (used as caption and stripped for alt text)",
+                max_length=255,
+                null=True,
+                verbose_name="Image Title",
+            ),
         ),
     ]

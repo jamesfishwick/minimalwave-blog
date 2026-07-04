@@ -1,8 +1,8 @@
-from django.db import models
-from django.utils.html import strip_tags, mark_safe
-from django.urls import reverse
-from django.conf import settings
 import markdown
+from django.conf import settings
+from django.db import models
+from django.urls import reverse
+from django.utils.html import mark_safe, strip_tags
 
 from blog.models import BaseEntry
 from blog.templatetags.markdown_extras import preprocess_image_shortcodes
@@ -20,10 +20,10 @@ class Project(BaseEntry):
     """
 
     PROJECT_STATUS_CHOICES = (
-        ('wip', 'Work in Progress'),
-        ('active', 'Active'),
-        ('shipped', 'Shipped'),
-        ('archived', 'Archived'),
+        ("wip", "Work in Progress"),
+        ("active", "Active"),
+        ("shipped", "Shipped"),
+        ("archived", "Archived"),
     )
 
     # Override the inherited slug: projects are not date-scoped, so drop
@@ -47,12 +47,14 @@ class Project(BaseEntry):
     project_status = models.CharField(
         max_length=10,
         choices=PROJECT_STATUS_CHOICES,
-        default='active',
+        default="active",
         help_text="Lifecycle state of the project itself (distinct from publish status)",
     )
     start_date = models.DateField(help_text="When work on the project began")
     end_date = models.DateField(
-        null=True, blank=True, help_text="When the project shipped or was archived (blank = ongoing)"
+        null=True,
+        blank=True,
+        help_text="When the project shipped or was archived (blank = ongoing)",
     )
     featured = models.BooleanField(
         default=False, help_text="Highlight this project at the top of the grid"
@@ -61,51 +63,57 @@ class Project(BaseEntry):
         default=0, help_text="Lower numbers sort first in the curated grid"
     )
     screenshot = models.ImageField(
-        upload_to='projects/images/%Y/%m/',
+        upload_to="projects/images/%Y/%m/",
         blank=True,
         null=True,
         help_text="Screenshot or thumbnail for the card and social cards",
     )
 
     class Meta:
-        ordering = ['sort_order', '-start_date']
+        ordering = ["sort_order", "-start_date"]
 
     def save(self, *args, **kwargs):
         # Keep the legacy is_draft flag in sync with status, as Entry/Blogmark do.
-        self.is_draft = self.status != 'published'
+        self.is_draft = self.status != "published"
         super().save(*args, **kwargs)
 
     @property
     def tech_stack_list(self):
         """Split the comma-separated tech_stack into a list for chip rendering."""
-        return [t.strip() for t in self.tech_stack.split(',') if t.strip()]
+        return [t.strip() for t in self.tech_stack.split(",") if t.strip()]
 
     @property
     def summary_rendered(self):
         processed = preprocess_image_shortcodes(self.summary)
-        return mark_safe(markdown.markdown(
-            processed,
-            extensions=settings.MARKDOWN_EXTENSIONS,
-            output_format=settings.MARKDOWN_OUTPUT_FORMAT,
-        ))
+        return mark_safe(
+            markdown.markdown(
+                processed,
+                extensions=settings.MARKDOWN_EXTENSIONS,
+                output_format=settings.MARKDOWN_OUTPUT_FORMAT,
+            )
+        )
 
     @property
     def summary_text(self):
         processed = preprocess_image_shortcodes(self.summary)
-        return strip_tags(markdown.markdown(
-            processed,
-            extensions=settings.MARKDOWN_EXTENSIONS,
-            output_format=settings.MARKDOWN_OUTPUT_FORMAT,
-        ))
+        return strip_tags(
+            markdown.markdown(
+                processed,
+                extensions=settings.MARKDOWN_EXTENSIONS,
+                output_format=settings.MARKDOWN_OUTPUT_FORMAT,
+            )
+        )
 
     @property
     def body_rendered(self):
         processed = preprocess_image_shortcodes(self.body)
-        return mark_safe(markdown.markdown(
-            processed,
-            extensions=settings.MARKDOWN_EXTENSIONS,
-            output_format=settings.MARKDOWN_OUTPUT_FORMAT,
-        ))
+        return mark_safe(
+            markdown.markdown(
+                processed,
+                extensions=settings.MARKDOWN_EXTENSIONS,
+                output_format=settings.MARKDOWN_OUTPUT_FORMAT,
+            )
+        )
 
     @property
     def get_image_url(self):
@@ -115,4 +123,4 @@ class Project(BaseEntry):
         return None
 
     def get_absolute_url(self):
-        return reverse('projects:detail', kwargs={'slug': self.slug})
+        return reverse("projects:detail", kwargs={"slug": self.slug})

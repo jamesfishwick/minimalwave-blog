@@ -13,6 +13,7 @@ Examples:
     python manage.py load_content content/entry-my-post-body.md --dry-run
     python manage.py load_content content/entry-my-post-body.md
 """
+
 import difflib
 
 import yaml
@@ -29,7 +30,7 @@ def parse_file(path):
         raise CommandError(f"{path}: missing YAML front-matter")
     # Front-matter is the first block delimited by a leading '---\n' and a
     # following '\n---\n'. Split only once so '---' inside the body is safe.
-    head, sep, body = text[len("---\n"):].partition("\n---\n")
+    head, sep, body = text[len("---\n") :].partition("\n---\n")
     if not sep:
         raise CommandError(f"{path}: malformed front-matter (no closing '---')")
     meta = yaml.safe_load(head) or {}
@@ -63,7 +64,9 @@ class Command(BaseCommand):
                 continue
             if field not in spec["fields"]:
                 self.stderr.write(
-                    self.style.ERROR(f"{path}: field '{field}' is not editable for '{tname}'")
+                    self.style.ERROR(
+                        f"{path}: field '{field}' is not editable for '{tname}'"
+                    )
                 )
                 skipped += 1
                 continue
@@ -71,7 +74,9 @@ class Command(BaseCommand):
                 obj = spec["model"].objects.get(pk=pk)
             except spec["model"].DoesNotExist:
                 self.stderr.write(
-                    self.style.ERROR(f"{path}: {tname} pk={pk} not found (wrong database?)")
+                    self.style.ERROR(
+                        f"{path}: {tname} pk={pk} not found (wrong database?)"
+                    )
                 )
                 skipped += 1
                 continue
@@ -105,7 +110,9 @@ class Command(BaseCommand):
 
             if dry:
                 self.stdout.write(
-                    self.style.WARNING(f"[dry-run] would update {tname} '{obj.slug}' [{field}]")
+                    self.style.WARNING(
+                        f"[dry-run] would update {tname} '{obj.slug}' [{field}]"
+                    )
                 )
             else:
                 setattr(obj, field, new)
@@ -117,5 +124,7 @@ class Command(BaseCommand):
 
         verb = "would change" if dry else "changed"
         self.stdout.write(
-            self.style.SUCCESS(f"{verb} {changed}, unchanged {unchanged}, skipped {skipped}")
+            self.style.SUCCESS(
+                f"{verb} {changed}, unchanged {unchanged}, skipped {skipped}"
+            )
         )

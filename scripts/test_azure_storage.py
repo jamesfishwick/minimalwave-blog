@@ -3,18 +3,21 @@
 Test Azure Blob Storage connection and upload capability.
 Run this to verify Azure storage is properly configured.
 """
+
 import os
 import sys
+
 import django
 
 # Setup Django environment
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'minimalwave-blog.settings.production')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "minimalwave-blog.settings.production")
 django.setup()
 
+import logging
+
+from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
-from django.conf import settings
-import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -33,11 +36,15 @@ print(f"   Storage module: {default_storage.__class__.__module__}")
 print()
 
 # Step 2: Check Azure credentials
-if hasattr(settings, 'AZURE_STORAGE_ACCOUNT_NAME'):
+if hasattr(settings, "AZURE_STORAGE_ACCOUNT_NAME"):
     print("2. Azure Credentials:")
     print(f"   ✅ AZURE_STORAGE_ACCOUNT_NAME: {settings.AZURE_STORAGE_ACCOUNT_NAME}")
-    print(f"   ✅ AZURE_STORAGE_KEY: {'SET' if hasattr(settings, 'AZURE_STORAGE_KEY') else 'NOT SET'}")
-    print(f"   ✅ AZURE_STORAGE_CONTAINER_NAME: {settings.AZURE_STORAGE_CONTAINER_NAME}")
+    print(
+        f"   ✅ AZURE_STORAGE_KEY: {'SET' if hasattr(settings, 'AZURE_STORAGE_KEY') else 'NOT SET'}"
+    )
+    print(
+        f"   ✅ AZURE_STORAGE_CONTAINER_NAME: {settings.AZURE_STORAGE_CONTAINER_NAME}"
+    )
     print()
 else:
     print("2. Azure Credentials:")
@@ -48,8 +55,8 @@ else:
 
 # Step 3: Test file upload
 print("3. Testing file upload...")
-test_filename = 'test_uploads/azure_test.txt'
-test_content = b'Azure Blob Storage test file created by test script'
+test_filename = "test_uploads/azure_test.txt"
+test_content = b"Azure Blob Storage test file created by test script"
 
 try:
     # Upload test file
@@ -66,7 +73,7 @@ try:
     print(f"   File URL: {url}")
 
     # Read file back
-    with default_storage.open(path, 'rb') as f:
+    with default_storage.open(path, "rb") as f:
         content = f.read()
         print(f"   Content length: {len(content)} bytes")
         print(f"   Content matches: {content == test_content}")
@@ -75,7 +82,7 @@ try:
     print()
     print("4. Cleaning up test file...")
     default_storage.delete(path)
-    print(f"   ✅ Test file deleted")
+    print("   ✅ Test file deleted")
 
     print()
     print("=" * 70)
@@ -93,6 +100,7 @@ except Exception as e:
     print()
     print(f"Error: {e}")
     import traceback
+
     traceback.print_exc()
     print()
     print("Troubleshooting steps:")
