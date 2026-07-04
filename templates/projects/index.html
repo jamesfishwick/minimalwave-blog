@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Projects | {{ site_name }}
+{% endblock %}
+
+{% block meta_description %}
+  Software projects I've built and want to highlight.
+{% endblock %}
+
+{% block content %}
+
+  <section class="projects-index" aria-labelledby="projects-heading">
+  <h1 id="projects-heading">Projects</h1>
+
+  {% if featured_projects %}
+  <div class="projects-featured" aria-labelledby="featured-heading">
+  <h2 id="featured-heading">Featured</h2>
+  <div class="projects-grid">
+  {% for project in featured_projects %}
+    {% include "projects/_card.html" with project=project %}
+  {% endfor %}
+  </div>
+  </div>
+  {% endif %}
+
+  <h2 id="all-projects-heading">{% if featured_projects %}More projects{% else %}All projects{% endif %}</h2>
+  <div class="projects-grid">
+  {% for project in projects %}
+    {% include "projects/_card.html" with project=project %}
+  {% empty %}
+    {% if not featured_projects %}
+    <div class="empty-state">
+      <h3>No projects yet</h3>
+      <p>This is where I highlight software I've built.</p>
+      <p>Browse the <a href="{% url 'blog:index' %}">blog</a> in the meantime.</p>
+    </div>
+    {% endif %}
+  {% endfor %}
+  </div>
+  </section>
+
+{% endblock %}

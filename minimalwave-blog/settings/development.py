@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'core',  # Core models (taxonomy, etc.)
     'blog',
     'til',
+    'projects',
 ]
 
 MIDDLEWARE = [

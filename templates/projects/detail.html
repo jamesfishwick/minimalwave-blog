@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+  {{ project.title }} | Projects | {{ site_name }}
+{% endblock %}
+
+{% block meta_description %}
+  {{ project.summary_text|truncatewords:50 }}
+{% endblock %}
+
+{% block og_title %}
+  {{ project.title }}
+{% endblock %}
+
+{% block og_description %}
+  {{ project.summary_text|truncatewords:50 }}
+{% endblock %}
+
+{% block og_type %}
+  article
+{% endblock %}
+
+{% block og_url %}
+  {{ request.build_absolute_uri }}
+{% endblock %}
+
+{% block og_image %}
+{% if project.get_image_url %}
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ project.get_image_url }}" />
+{% else %}
+{{ block.super }}
+{% endif %}
+{% endblock %}
+
+{% block twitter_title %}
+  {{ project.title }}
+{% endblock %}
+
+{% block twitter_description %}
+  {{ project.summary_text|truncatewords:50 }}
+{% endblock %}
+
+{% block twitter_image %}
+  {% if project.get_image_url %}
+    <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ project.get_image_url }}" />
+  {% else %}
+    {{ block.super }}
+  {% endif %}
+{% endblock %}
+
+{% block extra_head %}
+<!-- Structured Data (JSON-LD) for SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "{{ project.title|escapejs }}",
+  "description": "{{ project.summary_text|truncatewords:50|escapejs }}",
+  "dateCreated": "{{ project.start_date|date:'c' }}",
+  {% if project.repo_url %}"codeRepository": "{{ project.repo_url|escapejs }}",{% endif %}
+  {% if project.tech_stack_list %}"programmingLanguage": "{% for tech in project.tech_stack_list %}{{ tech|escapejs }}{% if not forloop.last %}, {% endif %}{% endfor %}",{% endif %}
+  {% if project.get_image_url %}"image": "{{ request.scheme }}://{{ request.get_host }}{{ project.get_image_url }}",{% endif %}
+  "author": {
+    "@type": "Person",
+    "name": "{{ site_name }}"
+  },
+  "url": "{{ request.build_absolute_uri }}",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ request.build_absolute_uri }}"
+  }
+}
+</script>
+{% endblock %}
+
+{% block content %}
+
+  <article class="project-detail">
+  <header>
+  <h1>{{ project.title }}</h1>
+  <div class="post-meta">
+    <span class="project-status project-status-{{ project.project_status }}">{{ project.get_project_status_display }}</span>
+    <time datetime="{{ project.start_date|date:'Y-m-d' }}">{{ project.start_date|date:"F Y" }}</time>
+    {% if project.end_date %}&ndash; <time datetime="{{ project.end_date|date:'Y-m-d' }}">{{ project.end_date|date:"F Y" }}</time>{% else %}&ndash; ongoing{% endif %}
+  </div>
+  <div class="project-links">
+    {% if project.repo_url %}<a href="{{ project.repo_url }}" rel="noopener" class="button">View code</a>{% endif %}
+    {% if project.live_url %}<a href="{{ project.live_url }}" rel="noopener" class="button">Visit live site</a>{% endif %}
+  </div>
+  </header>
+
+  {% if project.get_image_url %}
+  <figure class="post-image">
+    <img src="{{ project.get_image_url }}" alt="{{ project.title }}" />
+  </figure>
+  {% endif %}
+
+  {% if project.tech_stack_list %}
+  <ul class="tech-stack">
+    {% for tech in project.tech_stack_list %}
+    <li class="tech-chip">{{ tech }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  <div class="project-content">
+  {{ project.body_rendered }}
+  </div>
+
+  {% if project.tags.exists %}
+  <div class="project-tags">
+    {% for tag in project.tags.all %}
+    <a href="{% url 'projects:tag' tag.slug %}" class="tag">{{ tag.name }}</a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  </article>
+
+{% endblock %}

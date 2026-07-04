@@ -1,0 +1,22 @@
+{# A single project card for the grid. Expects `project` in context. #}
+<article class="project-card">
+  <a href="{{ project.get_absolute_url }}" class="project-card-link">
+    {% if project.get_image_url %}
+    <img class="project-card-image" src="{{ project.get_image_url }}" alt="{{ project.title }}" loading="lazy" />
+    {% endif %}
+    <h3 class="project-card-title">{{ project.title }}</h3>
+  </a>
+  <span class="project-status project-status-{{ project.project_status }}">{{ project.get_project_status_display }}</span>
+  <p class="project-card-summary">{{ project.summary_text|truncatewords:25 }}</p>
+  {% if project.tech_stack_list %}
+  <ul class="tech-stack">
+    {% for tech in project.tech_stack_list %}
+    <li class="tech-chip">{{ tech }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  <div class="project-card-links">
+    {% if project.repo_url %}<a href="{{ project.repo_url }}" rel="noopener">Code</a>{% endif %}
+    {% if project.live_url %}<a href="{{ project.live_url }}" rel="noopener">Live</a>{% endif %}
+  </div>
+</article>
