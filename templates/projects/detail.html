@@ -97,15 +97,7 @@
 
 
   {% if project.tech_stack_list %}
-    "programmingLanguage": "
-    {% for tech in project.tech_stack_list %}
-      {{ tech|escapejs }}
-      {% if not forloop.last %}
-        ,
-      {% endif %}
-
-    {% endfor %}
-    ",
+    "programmingLanguage": "{{ project.tech_stack_list|join:", "|escapejs }}",
   {% endif %}
 
 
