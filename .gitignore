@@ -39,7 +39,8 @@ ENV/
 .azure-resources
 
 # IDE & AI Tools
-.claude/
+.claude/*
+!.claude/skills/
 .vscode/
 .idea/
 *.swp
@@ -104,3 +105,6 @@ deploy/docker/Pictures/
 
 # Database backups (contain production data)
 data/backups/*.sql
+
+# Content dumps from dump_content (may contain unpublished drafts / prod content)
+content/
