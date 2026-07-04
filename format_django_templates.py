@@ -10,9 +10,29 @@ from pathlib import Path
 
 def format_template(content):
     """Format Django template content for better readability."""
-    # Fix spacing around template tags
-    content = re.sub(r"({%\s*)", r"\n\1", content)  # Add newline before {%
-    content = re.sub(r"(\s*%})", r"\1\n", content)  # Add newline after %}
+    # Protect <script type="application/ld+json"> blocks: the newline-injection
+    # below would break template logic embedded inside JSON string values
+    # (producing literal newlines inside quotes -> invalid JSON-LD). Stash each
+    # block behind a placeholder, format, then restore it verbatim.
+    protected = []
+
+    def _stash(match):
+        protected.append(match.group(0))
+        return f"@@LDJSON_{len(protected) - 1}@@"
+
+    content = re.sub(
+        r'<script type="application/ld\+json">.*?</script>',
+        _stash,
+        content,
+        flags=re.DOTALL,
+    )
+
+    # Put each block tag on its own line, idempotently. The \S guards only
+    # insert a newline next to a tag when it is NOT already at a line boundary,
+    # so re-running the formatter is a no-op instead of accreting a blank line
+    # before every tag on each pass.
+    content = re.sub(r"(?<=\S)[ \t]*(\{%)", r"\n\1", content)  # newline before {%
+    content = re.sub(r"(%\})[ \t]*(?=\S)", r"\1\n", content)  # newline after %}
 
     # Fix spacing around variable tags
     content = re.sub(r"({{\s*)", r"\1", content)  # Clean space after {{
@@ -43,7 +63,13 @@ def format_template(content):
         else:
             formatted_lines.append(" " * indentation + stripped if stripped else "")
 
-    return "\n".join(formatted_lines)
+    content = "\n".join(formatted_lines)
+
+    # Restore protected JSON-LD blocks verbatim.
+    for i, block in enumerate(protected):
+        content = content.replace(f"@@LDJSON_{i}@@", block)
+
+    return content
 
 
 def process_django_templates(root_dir):
