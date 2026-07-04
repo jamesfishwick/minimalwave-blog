@@ -7,6 +7,7 @@ from django.views.generic import TemplateView
 from blog.views_admin import run_auto_tag
 from blog.sitemaps import EntrySitemap, BlogmarkSitemap
 from til.sitemaps import TILSitemap
+from projects.sitemaps import ProjectSitemap
 from core.views import test_anthropic_detection
 
 # Sitemap configuration
@@ -14,6 +15,7 @@ sitemaps = {
     'entries': EntrySitemap,
     'blogmarks': BlogmarkSitemap,
     'til': TILSitemap,
+    'projects': ProjectSitemap,
 }
 
 urlpatterns = [
@@ -23,6 +25,7 @@ urlpatterns = [
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('robots.txt', TemplateView.as_view(template_name='robots.txt', content_type='text/plain'), name='robots_txt'),
     path('til/', include('til.urls')),
+    path('projects/', include('projects.urls')),
     path('', include('blog.urls')),  # Move blog URLs to end to avoid conflicts
 ]
 

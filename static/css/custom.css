@@ -532,6 +532,172 @@ details.post-summary > p:last-child {
 }
 
 /* ============================================================
+   PROJECTS — curated portfolio grid + detail
+   ============================================================ */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.project-card {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--drac-ui-bg-dark);
+  border: 1px solid var(--drac-ui-bg-light);
+  border-radius: 0;
+  padding: 1rem;
+  /* Override the global `article` list-divider rule for grid cards. */
+  margin-bottom: 0;
+}
+
+.project-card:hover,
+.project-card:focus-within {
+  border-color: var(--drac-purple);
+}
+
+.projects-featured .project-card {
+  border-left: 3px solid var(--drac-purple);
+}
+
+.project-card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.project-card-image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  margin-bottom: 0.75rem;
+}
+
+.project-card-title {
+  color: var(--drac-heading-color);
+  font-size: 1.1rem;
+  margin: 0 0 0.5rem;
+}
+
+.project-card-link:hover .project-card-title {
+  color: var(--drac-pink);
+}
+
+.project-card-summary {
+  flex-grow: 1;
+  color: var(--drac-comment);
+  font-size: 0.9rem;
+  margin: 0 0 0.5rem;
+}
+
+/* Status badge — base shape; modifiers set the semantic color only. */
+.project-status {
+  display: inline-block;
+  align-self: flex-start; /* hug text; don't stretch to the flex-column card width */
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.1rem 0.4rem;
+  border: 1px solid;
+  margin-bottom: 0.5rem;
+}
+
+.project-status-active {
+  color: var(--drac-green);
+  border-color: var(--drac-green);
+}
+
+.project-status-wip {
+  color: var(--drac-orange);
+  border-color: var(--drac-orange);
+}
+
+.project-status-shipped {
+  color: var(--drac-cyan);
+  border-color: var(--drac-cyan);
+}
+
+.project-status-archived {
+  color: var(--drac-comment);
+  border-color: var(--drac-comment);
+}
+
+/* Tech chips — plain bordered, deliberately distinct from [bracket] tags. */
+.tech-stack {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  padding: 0;
+  margin: 0.5rem 0;
+}
+
+.tech-chip {
+  font-size: 0.75rem;
+  color: var(--drac-cyan);
+  border: 1px solid var(--drac-ui-bg-light);
+  padding: 0.05rem 0.4rem;
+}
+
+.project-card-links {
+  display: flex;
+  gap: 1rem;
+  margin-top: auto;
+}
+
+.project-card-links a {
+  color: var(--drac-cyan);
+}
+
+.project-card-links a:hover {
+  color: var(--drac-pink);
+}
+
+/* Empty state — spans the full grid width. */
+.empty-state {
+  grid-column: 1 / -1;
+  color: var(--drac-comment);
+  padding: 2rem 0;
+}
+
+/* Detail page */
+.project-links {
+  display: flex;
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+
+.button {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--drac-cyan);
+  color: var(--drac-cyan);
+  text-decoration: none;
+}
+
+.button:hover {
+  background-color: var(--drac-cyan);
+  color: var(--drac-ui-bg-darker);
+}
+
+.project-content {
+  margin-top: 1.5rem;
+}
+
+.project-tags {
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .project-links,
+  .project-card-links {
+    flex-wrap: wrap;
+  }
+}
+
+/* ============================================================
    HOMEPAGE (bio layout — judesue.com-style narrow column)
    ============================================================ */
 body.page--home .page__aside {
