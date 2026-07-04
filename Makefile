@@ -63,10 +63,14 @@ prod: ## Start production environment with Docker Compose
 	@echo "$(YELLOW)Press Ctrl+C to stop following logs (containers will keep running)$(NC)"
 	@cd deploy/docker && docker-compose -f docker-compose.prod.yml logs -f
 
-format: ## Format Django templates and Python code
+format: ## Format Django templates and Python code (ruff)
 	python format_django_templates.py
-	black blog til minimalwave-blog
-	isort blog til minimalwave-blog
+	ruff check --fix .
+	ruff format .
+
+lint: ## Lint and check formatting without modifying files (ruff)
+	ruff check .
+	ruff format --check .
 
 static: ## Collect static files
 	python manage.py collectstatic --noinput
