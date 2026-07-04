@@ -90,7 +90,7 @@ class Project(BaseEntry):
         constraints = [
             # end_date is nullable ("ongoing"); when set it must not precede start.
             models.CheckConstraint(
-                check=models.Q(end_date__isnull=True)
+                condition=models.Q(end_date__isnull=True)
                 | models.Q(end_date__gte=models.F("start_date")),
                 name="project_end_date_after_start_date",
             ),
