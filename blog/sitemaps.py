@@ -6,7 +6,8 @@ discover and index content efficiently.
 """
 
 from django.contrib.sitemaps import Sitemap
-from blog.models import Entry, Blogmark
+
+from blog.models import Blogmark, Entry
 
 
 class EntrySitemap(Sitemap):
@@ -17,11 +18,11 @@ class EntrySitemap(Sitemap):
 
     def items(self):
         """Return only published entries."""
-        return Entry.objects.filter(status='published').order_by('-created')
+        return Entry.objects.filter(status="published").order_by("-created")
 
     def lastmod(self, obj):
         """Return the last modification date."""
-        return obj.updated if hasattr(obj, 'updated') else obj.created
+        return obj.updated if hasattr(obj, "updated") else obj.created
 
     def location(self, obj):
         """Return the URL for the entry."""
@@ -36,11 +37,11 @@ class BlogmarkSitemap(Sitemap):
 
     def items(self):
         """Return only published blogmarks."""
-        return Blogmark.objects.filter(status='published').order_by('-created')
+        return Blogmark.objects.filter(status="published").order_by("-created")
 
     def lastmod(self, obj):
         """Return the last modification date."""
-        return obj.updated if hasattr(obj, 'updated') else obj.created
+        return obj.updated if hasattr(obj, "updated") else obj.created
 
     def location(self, obj):
         """Return the URL for the blogmark."""

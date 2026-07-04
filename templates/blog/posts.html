@@ -1,91 +1,167 @@
 
+
 {% extends "base.html" %}
 
-{% block title %}Blog &mdash; {{ site_name }}{% endblock %}
+{% block title %}
+  Blog &mdash; {{ site_name }}
+{% endblock %}
 
 {% block content %}
-<section class="blog-index" aria-labelledby="latest-posts-heading">
+
+  <section class="blog-index" aria-labelledby="latest-posts-heading">
   <h1 id="latest-posts-heading">Latest Posts</h1>
 
+
   {% for entry in entries %}
-  <article>
+
+    <article>
     <h2><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h2>
     <div class="post-meta">
-      <time datetime="{{ entry.created|date:'Y-m-d' }}">{{ entry.created|date:"F j, Y" }}</time>
-      {% if entry.authors.exists %}
-        by
-        {% for authorship in entry.authorship_set.all %}
-          {{ authorship.user.get_full_name|default:authorship.user.username }}{% if not forloop.last %}, {% endif %}
-        {% endfor %}
-      {% endif %}
-      {% if entry.reading_time %}
-        <span class="reading-time">{{ entry.reading_time }} min read</span>
-      {% endif %}
+    <time datetime="{{ entry.created|date:'Y-m-d' }}">{{ entry.created|date:"F j, Y" }}</time>
+
+    {% if entry.authors.exists %}
+
+      by
+
+      {% for authorship in entry.authorship_set.all %}
+
+        {{ authorship.user.get_full_name|default:authorship.user.username }}
+        {% if not forloop.last %}
+          ,
+        {% endif %}
+
+
+      {% endfor %}
+
+
+    {% endif %}
+
+
+    {% if entry.reading_time %}
+
+      <span class="reading-time">{{ entry.reading_time }} min read</span>
+
+    {% endif %}
+
     </div>
     <div class="post-summary">{{ entry.summary_rendered }}</div>
+
     {% if entry.tags.exists %}
-    <div class="post-tags">
+
+      <div class="post-tags">
+
       {% for tag in entry.tags.all %}
-        <a href="{% url 'blog:tag' tag.slug %}" class="tag">{{ tag.name }}</a>
+
+        <a href="
+        {% url 'blog:tag' tag.slug %}
+        " class="tag">{{ tag.name }}</a>
+
       {% endfor %}
-    </div>
+
+      </div>
+
     {% endif %}
-  </article>
-  {% empty %}
-  <div class="empty-state">
+
+    </article>
+
+    {% empty %}
+
+    <div class="empty-state">
     <h3>No blog posts yet</h3>
     <p>Check back soon for thoughts on AI safety, software engineering, and technical verification.</p>
-    <p>In the meantime, explore <a href="{% url 'til:index' %}">Today I Learned</a> for bite-sized insights.</p>
-  </div>
+    <p>In the meantime, explore <a href="
+    {% url 'til:index' %}
+    ">Today I Learned</a> for bite-sized insights.</p>
+    </div>
+
   {% endfor %}
 
-  {% if has_more %}
-  <p>
-    <a href="{% url 'blog:archive' %}">View more posts in the archive &rarr;</a>
-  </p>
-  {% endif %}
-</section>
 
-<section class="blogmarks" aria-labelledby="recent-links-heading">
+  {% if has_more %}
+
+    <p>
+    <a href="
+    {% url 'blog:archive' %}
+    ">View more posts in the archive &rarr;</a>
+    </p>
+
+  {% endif %}
+
+  </section>
+
+  <section class="blogmarks" aria-labelledby="recent-links-heading">
   <h2 id="recent-links-heading">Recent Links</h2>
 
+
   {% for blogmark in blogmarks %}
-  <article>
+
+    <article>
     <h2><a href="{{ blogmark.get_absolute_url }}">{{ blogmark.title }}</a></h2>
     <div class="post-meta"><time datetime="{{ blogmark.created|date:'Y-m-d' }}">{{ blogmark.created|date:"F j, Y" }}</time></div>
     <a href="{{ blogmark.url }}" class="blogmark-url">{{ blogmark.url }}</a>
     <div class="blogmark-commentary">{{ blogmark.commentary_rendered }}</div>
+
     {% if blogmark.via %}
-    <div class="blogmark-via">
+
+      <div class="blogmark-via">
       Via: <a href="{{ blogmark.via }}">{{ blogmark.via_title|default:blogmark.via }}</a>
-    </div>
+      </div>
+
     {% endif %}
+
+
     {% if blogmark.tags.exists %}
-    <div class="post-tags">
+
+      <div class="post-tags">
+
       {% for tag in blogmark.tags.all %}
-        <a href="{% url 'blog:tag' tag.slug %}" class="tag">{{ tag.name }}</a>
+
+        <a href="
+        {% url 'blog:tag' tag.slug %}
+        " class="tag">{{ tag.name }}</a>
+
       {% endfor %}
-    </div>
+
+      </div>
+
     {% endif %}
-  </article>
-  {% empty %}
-  <div class="empty-state">
+
+    </article>
+
+    {% empty %}
+
+    <div class="empty-state">
     <h3>No links yet</h3>
     <p>I'll be sharing interesting reads from around the web here.</p>
-  </div>
+    </div>
+
   {% endfor %}
-</section>
+
+  </section>
+
 {% endblock %}
 
 {% block aside %}
+
+
   {% if tags %}
-  <section class="aside-tags" aria-labelledby="tags-heading">
+
+    <section class="aside-tags" aria-labelledby="tags-heading">
     <h2 id="tags-heading">Topics</h2>
     <div class="tag-cloud">
-      {% for tag, count in tags %}
-        <a href="{% url 'blog:tag' tag.slug %}" class="tag">{{ tag.name }} {{ count }}</a>
-      {% endfor %}
+
+    {% for tag, count in tags %}
+
+      <a href="
+      {% url 'blog:tag' tag.slug %}
+      " class="tag">{{ tag.name }} {{ count }}</a>
+
+    {% endfor %}
+
     </div>
-  </section>
+    </section>
+
   {% endif %}
+
 {% endblock %}
+

@@ -9,26 +9,28 @@ Tests cover:
 - File size reduction
 """
 
-from django.test import TestCase
-from blog.utils.image_processing import optimize_image, create_thumbnail
-from PIL import Image
 from io import BytesIO
+
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import TestCase
+from PIL import Image
+
+from blog.utils.image_processing import create_thumbnail, optimize_image
 
 
 class ImageOptimizationTests(TestCase):
     """Test image optimization functionality."""
 
-    def create_test_image(self, size=(2000, 1500), mode='RGB', format='JPEG'):
+    def create_test_image(self, size=(2000, 1500), mode="RGB", format="JPEG"):
         """Helper to create a test image."""
-        image = Image.new(mode, size, color='red')
+        image = Image.new(mode, size, color="red")
         img_io = BytesIO()
         image.save(img_io, format=format)
         img_io.seek(0)
         return SimpleUploadedFile(
-            name=f'test_image.{format.lower()}',
+            name=f"test_image.{format.lower()}",
             content=img_io.getvalue(),
-            content_type=f'image/{format.lower()}'
+            content_type=f"image/{format.lower()}",
         )
 
     def test_optimize_image_resizes_large_images(self):
@@ -88,57 +90,57 @@ class ImageOptimizationTests(TestCase):
 
     def test_optimize_image_preserves_png_format(self):
         """Test that PNG format is preserved (modern browsers support it)."""
-        png_image = self.create_test_image(size=(800, 600), format='PNG')
+        png_image = self.create_test_image(size=(800, 600), format="PNG")
 
         # Optimize without conversion
         optimized = optimize_image(png_image, convert_to_webp=False)
 
         # PNG should be preserved
-        self.assertTrue(optimized.name.endswith('.png'))
+        self.assertTrue(optimized.name.endswith(".png"))
 
         # Verify it's actually PNG
         img = Image.open(optimized)
-        self.assertEqual(img.format, 'PNG')
+        self.assertEqual(img.format, "PNG")
 
     def test_optimize_image_converts_to_webp(self):
         """Test conversion to WebP format."""
-        jpeg_image = self.create_test_image(size=(800, 600), format='JPEG')
+        jpeg_image = self.create_test_image(size=(800, 600), format="JPEG")
 
         # Optimize with WebP conversion
         optimized = optimize_image(jpeg_image, convert_to_webp=True)
 
         # Check format
-        self.assertTrue(optimized.name.endswith('.webp'))
+        self.assertTrue(optimized.name.endswith(".webp"))
 
         # Verify it's actually WebP
         img = Image.open(optimized)
-        self.assertEqual(img.format, 'WEBP')
+        self.assertEqual(img.format, "WEBP")
 
     def test_optimize_image_preserves_rgba_in_png(self):
         """Test that RGBA is preserved in PNG (supports transparency)."""
         # Create RGBA image (with transparency)
-        rgba_image = self.create_test_image(size=(800, 600), mode='RGBA', format='PNG')
+        rgba_image = self.create_test_image(size=(800, 600), mode="RGBA", format="PNG")
 
         # Optimize - should preserve PNG with RGBA
         optimized = optimize_image(rgba_image, convert_to_webp=False)
 
         # Should remain PNG
-        self.assertTrue(optimized.name.endswith('.png'))
+        self.assertTrue(optimized.name.endswith(".png"))
 
         # RGBA should be preserved (PNG supports transparency)
         img = Image.open(optimized)
-        self.assertEqual(img.mode, 'RGBA')
+        self.assertEqual(img.mode, "RGBA")
 
     def test_optimize_image_jpeg_uses_rgb_mode(self):
         """Test that JPEG format uses RGB mode (no transparency)."""
         # JPEG format always uses RGB
-        jpeg_image = self.create_test_image(size=(800, 600), mode='RGB', format='JPEG')
+        jpeg_image = self.create_test_image(size=(800, 600), mode="RGB", format="JPEG")
         optimized = optimize_image(jpeg_image, convert_to_webp=False)
 
         # Should remain JPEG with RGB mode
-        self.assertTrue(optimized.name.endswith('.jpg'))
+        self.assertTrue(optimized.name.endswith(".jpg"))
         img = Image.open(optimized)
-        self.assertEqual(img.mode, 'RGB')
+        self.assertEqual(img.mode, "RGB")
 
     def test_optimize_image_preserves_aspect_ratio(self):
         """Test that aspect ratio is preserved during resize."""
@@ -175,16 +177,14 @@ class ImageOptimizationTests(TestCase):
 class ThumbnailGenerationTests(TestCase):
     """Test thumbnail generation functionality."""
 
-    def create_test_image(self, size=(800, 600), mode='RGB'):
+    def create_test_image(self, size=(800, 600), mode="RGB"):
         """Helper to create a test image."""
-        image = Image.new(mode, size, color='blue')
+        image = Image.new(mode, size, color="blue")
         img_io = BytesIO()
-        image.save(img_io, format='JPEG')
+        image.save(img_io, format="JPEG")
         img_io.seek(0)
         return SimpleUploadedFile(
-            name='test_image.jpg',
-            content=img_io.getvalue(),
-            content_type='image/jpeg'
+            name="test_image.jpg", content=img_io.getvalue(), content_type="image/jpeg"
         )
 
     def test_create_thumbnail_default_size(self):
@@ -232,15 +232,13 @@ class ThumbnailGenerationTests(TestCase):
     def test_create_thumbnail_converts_rgba_to_rgb(self):
         """Test RGBA to RGB conversion for thumbnails."""
         # Create RGBA image
-        rgba_img = Image.new('RGBA', (800, 600), color='blue')
+        rgba_img = Image.new("RGBA", (800, 600), color="blue")
         img_io = BytesIO()
-        rgba_img.save(img_io, format='PNG')
+        rgba_img.save(img_io, format="PNG")
         img_io.seek(0)
 
         rgba_image = SimpleUploadedFile(
-            name='test_image.png',
-            content=img_io.getvalue(),
-            content_type='image/png'
+            name="test_image.png", content=img_io.getvalue(), content_type="image/png"
         )
 
         # Create thumbnail
@@ -249,7 +247,7 @@ class ThumbnailGenerationTests(TestCase):
         img = Image.open(thumbnail)
 
         # Should be RGB, not RGBA
-        self.assertEqual(img.mode, 'RGB')
+        self.assertEqual(img.mode, "RGB")
 
     def test_create_thumbnail_filename(self):
         """Test that thumbnail has correct filename suffix."""
@@ -258,7 +256,7 @@ class ThumbnailGenerationTests(TestCase):
         thumbnail = create_thumbnail(test_image)
 
         # Should have _thumb suffix
-        self.assertTrue(thumbnail.name.endswith('_thumb.jpg'))
+        self.assertTrue(thumbnail.name.endswith("_thumb.jpg"))
 
     def test_create_thumbnail_smaller_than_original(self):
         """Test that thumbnail file size is smaller than original."""
@@ -280,15 +278,13 @@ class ImageProcessingEdgeCasesTests(TestCase):
     def test_optimize_very_small_image(self):
         """Test optimizing a very small image."""
         # Create tiny 50x50 image
-        tiny_img = Image.new('RGB', (50, 50), color='green')
+        tiny_img = Image.new("RGB", (50, 50), color="green")
         img_io = BytesIO()
-        tiny_img.save(img_io, format='JPEG')
+        tiny_img.save(img_io, format="JPEG")
         img_io.seek(0)
 
         tiny_image = SimpleUploadedFile(
-            name='tiny.jpg',
-            content=img_io.getvalue(),
-            content_type='image/jpeg'
+            name="tiny.jpg", content=img_io.getvalue(), content_type="image/jpeg"
         )
 
         # Should not fail
@@ -301,15 +297,13 @@ class ImageProcessingEdgeCasesTests(TestCase):
 
     def test_optimize_square_image(self):
         """Test optimizing a square image."""
-        square_img = Image.new('RGB', (1000, 1000), color='yellow')
+        square_img = Image.new("RGB", (1000, 1000), color="yellow")
         img_io = BytesIO()
-        square_img.save(img_io, format='JPEG')
+        square_img.save(img_io, format="JPEG")
         img_io.seek(0)
 
         square_image = SimpleUploadedFile(
-            name='square.jpg',
-            content=img_io.getvalue(),
-            content_type='image/jpeg'
+            name="square.jpg", content=img_io.getvalue(), content_type="image/jpeg"
         )
 
         optimized = optimize_image(square_image, max_width=800)
@@ -321,15 +315,13 @@ class ImageProcessingEdgeCasesTests(TestCase):
 
     def test_create_thumbnail_portrait_image(self):
         """Test thumbnail of portrait-oriented image."""
-        portrait_img = Image.new('RGB', (600, 1200), color='purple')
+        portrait_img = Image.new("RGB", (600, 1200), color="purple")
         img_io = BytesIO()
-        portrait_img.save(img_io, format='JPEG')
+        portrait_img.save(img_io, format="JPEG")
         img_io.seek(0)
 
         portrait_image = SimpleUploadedFile(
-            name='portrait.jpg',
-            content=img_io.getvalue(),
-            content_type='image/jpeg'
+            name="portrait.jpg", content=img_io.getvalue(), content_type="image/jpeg"
         )
 
         thumbnail = create_thumbnail(portrait_image, size=(300, 300))

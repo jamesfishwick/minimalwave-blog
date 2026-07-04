@@ -17,14 +17,13 @@ Options:
 """
 
 import os
-from typing import List, Dict, Any
+from typing import List
 
 import anthropic
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
-from django.utils.text import slugify
 
-from blog.models import Entry, Blogmark
+from blog.models import Blogmark, Entry
 from til.models import TIL
 
 
@@ -80,6 +79,7 @@ class Command(BaseCommand):
         self.client = anthropic.Anthropic(api_key=api_key)
 
         from taggit.models import Tag
+
         self.existing_tags = sorted(Tag.objects.values_list("name", flat=True))
 
         if self.dry_run:
@@ -179,7 +179,9 @@ class Command(BaseCommand):
 
         try:
             # Generate tags using AI
-            tag_suggestions = self._generate_tags(title, body, content_type, content_obj)
+            tag_suggestions = self._generate_tags(
+                title, body, content_type, content_obj
+            )
 
             if not tag_suggestions:
                 self.stdout.write(
@@ -193,7 +195,9 @@ class Command(BaseCommand):
             # Display what will be done
             self.stdout.write(f"\n  {content_type}: {title}")
             if existing_tag_count > 0:
-                current_tags = ", ".join(content_obj.tags.values_list("name", flat=True))
+                current_tags = ", ".join(
+                    content_obj.tags.values_list("name", flat=True)
+                )
                 self.stdout.write(f"    Current tags: {current_tags}")
             self.stdout.write(
                 f"    {'Would apply' if self.dry_run else 'Applying'}: {', '.join(tag_suggestions)}"
@@ -214,7 +218,9 @@ class Command(BaseCommand):
             )
             stats["errors"] += 1
 
-    def _generate_tags(self, title: str, body: str, content_type: str, content_obj=None) -> List[str]:
+    def _generate_tags(
+        self, title: str, body: str, content_type: str, content_obj=None
+    ) -> List[str]:
         """
         Use Claude API to generate relevant tags for content.
 
@@ -234,7 +240,7 @@ class Command(BaseCommand):
         if self.existing_tags:
             existing_tags_hint = f"""
 Tags already used on this site (prefer these when they're a natural fit, but create new ones freely):
-{', '.join(self.existing_tags)}
+{", ".join(self.existing_tags)}
 """
 
         prompt = f"""Analyze this {content_type.lower()} post and generate {self.min_tags}-{self.max_tags} relevant tags.

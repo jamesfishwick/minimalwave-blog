@@ -11,6 +11,7 @@ Examples:
     python manage.py dump_content --type til
     python manage.py dump_content --all
 """
+
 import os
 
 import yaml
@@ -61,13 +62,17 @@ class Command(BaseCommand):
                     path = os.path.join(out, f"{tname}-{obj.slug}-{field}.md")
                     with open(path, "w", encoding="utf-8") as fh:
                         fh.write("---\n")
-                        fh.write(yaml.safe_dump(meta, sort_keys=False, allow_unicode=True))
+                        fh.write(
+                            yaml.safe_dump(meta, sort_keys=False, allow_unicode=True)
+                        )
                         fh.write("---\n")
                         fh.write(content.rstrip("\n") + "\n")
                     written += 1
                     self.stdout.write(f"wrote {path}")
 
         if written == 0:
-            self.stdout.write(self.style.WARNING("No content matched the given filters."))
+            self.stdout.write(
+                self.style.WARNING("No content matched the given filters.")
+            )
         else:
             self.stdout.write(self.style.SUCCESS(f"Dumped {written} file(s) to {out}/"))

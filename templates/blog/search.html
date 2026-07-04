@@ -1,12 +1,17 @@
 
+
 {% extends "base.html" %}
 
 {% block title %}
+
   Search Results | {{ site_name }}
+
 {% endblock %}
 
 {% block meta_description %}
+
   Search results for "{{ q }}"
+
 {% endblock %}
 
 {% block content %}
@@ -15,7 +20,9 @@
   <h1>Search Results</h1>
 
   <form action="
+
   {% url 'blog:search' %}
+
   " method="get" class="search-form search-form-spacing">
   <input type="text" name="q" value="{{ q }}" placeholder="Search..." aria-label="Search">
   <button type="submit">Search</button>
@@ -31,6 +38,7 @@
 
       <h2>Blog Posts</h2>
 
+
       {% for entry in entries %}
 
         <article>
@@ -40,23 +48,30 @@
         {{ entry.summary_rendered }}
         </div>
 
+
         {% if entry.tags.exists %}
 
           <div class="post-tags">
 
+
           {% for tag in entry.tags.all %}
 
             <a href="
+
             {% url 'blog:tag' tag.slug %}
+
             " class="tag">{{ tag.name }}</a>
+
 
           {% endfor %}
 
           </div>
 
+
         {% endif %}
 
         </article>
+
 
       {% endfor %}
 
@@ -64,10 +79,10 @@
     {% endif %}
 
 
-
     {% if blogmarks %}
 
       <h2>Links</h2>
+
 
       {% for blogmark in blogmarks %}
 
@@ -79,23 +94,30 @@
         {{ blogmark.commentary_rendered }}
         </div>
 
+
         {% if blogmark.tags.exists %}
 
           <div class="post-tags">
 
+
           {% for tag in blogmark.tags.all %}
 
             <a href="
+
             {% url 'blog:tag' tag.slug %}
+
             " class="tag">{{ tag.name }}</a>
+
 
           {% endfor %}
 
           </div>
 
+
         {% endif %}
 
         </article>
+
 
       {% endfor %}
 
@@ -103,10 +125,10 @@
     {% endif %}
 
 
-
     {% if not entries and not blogmarks %}
 
       <p>No results found for "{{ q }}".</p>
+
 
     {% endif %}
 
@@ -115,8 +137,10 @@
 
     <p>Enter a search term above to find content.</p>
 
+
   {% endif %}
 
   </section>
 
 {% endblock %}
+

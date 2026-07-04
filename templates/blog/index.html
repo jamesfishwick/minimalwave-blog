@@ -1,21 +1,27 @@
 
+
 {% extends "base.html" %}
 
-{% block body_class %}page--home{% endblock %}
+{% block body_class %}
+  page--home
+{% endblock %}
 
-{% block title %}{{ site_name }}{% endblock %}
+{% block title %}
+  {{ site_name }}
+{% endblock %}
 
 {% block content %}
-<h1 class="home-name">James Fishwick</h1>
-<section class="home-bio" aria-label="About">
+
+  <h1 class="home-name">James Fishwick</h1>
+  <section class="home-bio" aria-label="About">
 
   <p>I lead solutions architecture at Livefront, a boutique digital consultancy where I manage a growing team of Solutions Architects and AI Solutions Engineers. My focus: making AI adoption practical and sustainable for engineering organizations, and navigating the complexity of enterprise healthcare integrations.</p>
 
   <p><strong>What I'm working on now:</strong></p>
   <ul class="home-list">
-    <li>Building Livefront's AI engineering practice&mdash;strategy, implementation patterns, tooling, and team development</li>
-    <li>Leading complex B2B integrations in the Optum/RVO ecosystem (authentication, attribution, API orchestration)</li>
-    <li>Growing and mentoring a technical team that bridges architecture, AI, and client delivery</li>
+  <li>Building Livefront's AI engineering practice&mdash;strategy, implementation patterns, tooling, and team development</li>
+  <li>Leading complex B2B integrations in the Optum/RVO ecosystem (authentication, attribution, API orchestration)</li>
+  <li>Growing and mentoring a technical team that bridges architecture, AI, and client delivery</li>
   </ul>
 
   <p><strong>Background:</strong><br>
@@ -26,10 +32,16 @@
 
   <p>Always open to conversations about AI-native development, healthcare tech complexity, or building engineering culture that lasts.</p>
 
-</section>
+  </section>
 
-<nav class="home-nav" aria-label="Site sections">
-  <a href="{% url 'blog:posts' %}">Blog</a>
-  <a href="{% url 'til:index' %}">TIL</a>
-</nav>
+  <nav class="home-nav" aria-label="Site sections">
+  <a href="
+  {% url 'blog:posts' %}
+  ">Blog</a>
+  <a href="
+  {% url 'til:index' %}
+  ">TIL</a>
+  </nav>
+
 {% endblock %}
+

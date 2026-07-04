@@ -1,71 +1,112 @@
 
+
 {% extends "base.html" %}
 
 {% block title %}
+
   {{ blogmark.title }} | {{ site_name }}
+
 {% endblock %}
 
 {% block meta_description %}
+
   {{ blogmark.commentary_rendered|striptags }}
+
 {% endblock %}
 
 {% block og_title %}
+
   {{ blogmark.title }}
+
 {% endblock %}
 
 {% block og_description %}
+
   {{ blogmark.commentary_rendered|striptags }}
+
 {% endblock %}
 
 {% block og_type %}
+
   article
+
 {% endblock %}
 
 {% block og_url %}
+
   {{ request.build_absolute_uri }}
+
 {% endblock %}
 
 {% block og_image %}
-{% if blogmark.get_image_url %}
-<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ blogmark.get_image_url }}" />
-{% else %}
-{{ block.super }}
-{% endif %}
+
+  {% if blogmark.get_image_url %}
+
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ blogmark.get_image_url }}" />
+
+    {% else %}
+
+    {{ block.super }}
+
+  {% endif %}
+
 {% endblock %}
 
 {% block twitter_title %}
+
   {{ blogmark.title }}
+
 {% endblock %}
 
 {% block twitter_description %}
+
   {{ blogmark.commentary_rendered|striptags }}
+
 {% endblock %}
 
 {% block twitter_image %}
+
+
   {% if blogmark.get_image_url %}
+
     <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ blogmark.get_image_url }}" />
-  {% else %}
+
+    {% else %}
+
     {{ block.super }}
+
   {% endif %}
+
 {% endblock %}
 
 {% block extra_head %}
+
 {% endblock %}
 
 {% block content %}
+
+
   {% if preview %}
-  <div class="preview-banner">
+
+    <div class="preview-banner">
     <strong>PREVIEW MODE</strong> - This content is not publicly visible.
     <div class="preview-banner-actions">
-      <span>Status: <strong>{{ blogmark.get_status_display }}</strong></span>
-      {% if blogmark.publish_date %}
+    <span>Status: <strong>{{ blogmark.get_status_display }}</strong></span>
+
+    {% if blogmark.publish_date %}
+
       <span class="preview-banner-schedule">Scheduled to publish: <strong>{{ blogmark.publish_date|date:"F j, Y, g:i a" }}</strong></span>
-      {% endif %}
+
+    {% endif %}
+
     </div>
     <div class="preview-banner-edit">
-      <a href="{% url 'admin:blog_blogmark_change' blogmark.id %}">Edit in Admin</a>
+    <a href="
+    {% url 'admin:blog_blogmark_change' blogmark.id %}
+    ">Edit in Admin</a>
     </div>
-  </div>
+    </div>
+
   {% endif %}
 
   <article class="post-content">
@@ -76,13 +117,20 @@
 
   <a href="{{ blogmark.url }}" class="blogmark-url">{{ blogmark.url }}</a>
 
+
   {% if blogmark.get_image_url %}
-  <figure class="post-image">
+
+    <figure class="post-image">
     <img src="{{ blogmark.get_image_url }}" alt="{{ blogmark.image_alt_text }}" />
+
     {% if blogmark.image_caption_html %}
-    <figcaption>{{ blogmark.image_caption_html }}</figcaption>
+
+      <figcaption>{{ blogmark.image_caption_html }}</figcaption>
+
     {% endif %}
-  </figure>
+
+    </figure>
+
   {% endif %}
 
   <div class="blogmark-commentary">
@@ -96,8 +144,8 @@
     Via: <a href="{{ blogmark.via }}">{{ blogmark.via_title|default:blogmark.via }}</a>
     </div>
 
-  {% endif %}
 
+  {% endif %}
 
 
   {% if blogmark.tags.exists %}
@@ -105,18 +153,24 @@
     <div class="post-tags">
     <h3>Tags:</h3>
 
+
     {% for tag in blogmark.tags.all %}
 
       <a href="
+
       {% url 'blog:tag' tag.slug %}
+
       " class="tag">{{ tag.name }}</a>
+
 
     {% endfor %}
 
     </div>
+
 
   {% endif %}
 
   </article>
 
 {% endblock %}
+

@@ -1,6 +1,8 @@
 """Utility functions for blog app"""
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .image_processing import optimize_image, create_thumbnail
+
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+
+from .image_processing import create_thumbnail, optimize_image
 
 
 def paginate_queryset(request, queryset, per_page=10):
@@ -8,7 +10,7 @@ def paginate_queryset(request, queryset, per_page=10):
     Helper function to paginate a queryset
     """
     paginator = Paginator(queryset, per_page)
-    page = request.GET.get('page')
+    page = request.GET.get("page")
 
     try:
         items = paginator.page(page)
@@ -22,4 +24,4 @@ def paginate_queryset(request, queryset, per_page=10):
     return items
 
 
-__all__ = ['optimize_image', 'create_thumbnail', 'paginate_queryset']
+__all__ = ["optimize_image", "create_thumbnail", "paginate_queryset"]

@@ -1,34 +1,39 @@
-from django.db import models
-from django.contrib.auth.models import User
-from django.utils import timezone
-from django.utils.html import strip_tags, mark_safe
 import markdown
-from django.urls import reverse
 from django.conf import settings
-from blog.templatetags.markdown_extras import preprocess_image_shortcodes
+from django.contrib.auth.models import User
+from django.db import models
+from django.urls import reverse
+from django.utils import timezone
+from django.utils.html import mark_safe, strip_tags
 from taggit.managers import TaggableManager
+
+from blog.templatetags.markdown_extras import preprocess_image_shortcodes
+
 
 class TIL(models.Model):
     """Today I Learned model for short-form content organized by topic"""
+
     title = models.CharField(max_length=200)
     created = models.DateTimeField(default=timezone.now)
-    slug = models.SlugField(unique_for_date='created')
+    slug = models.SlugField(unique_for_date="created")
     body = models.TextField()
     card_image = models.URLField(
-        blank=True, null=True, help_text="URL to image for social media cards (deprecated: use image field)"
-    )
-    image = models.ImageField(
-        upload_to='til/images/%Y/%m/',
         blank=True,
         null=True,
-        help_text="Upload an image for this TIL"
+        help_text="URL to image for social media cards (deprecated: use image field)",
+    )
+    image = models.ImageField(
+        upload_to="til/images/%Y/%m/",
+        blank=True,
+        null=True,
+        help_text="Upload an image for this TIL",
     )
     image_caption = models.CharField(
         max_length=255,
         blank=True,
         null=True,
         verbose_name="Image Title",
-        help_text="Markdown-formatted caption for the image (used as caption and stripped for alt text)"
+        help_text="Markdown-formatted caption for the image (used as caption and stripped for alt text)",
     )
     tags = TaggableManager(blank=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
@@ -36,9 +41,9 @@ class TIL(models.Model):
         default=False,
         help_text="Draft TILs do not show in index pages but can be visited directly if you know the URL",
     )
-    
+
     class Meta:
-        ordering = ['-created']
+        ordering = ["-created"]
         verbose_name = "TIL"
         verbose_name_plural = "TILs"
 
@@ -49,30 +54,37 @@ class TIL(models.Model):
     def body_rendered(self):
         # Preprocess custom shortcodes before markdown rendering
         processed = preprocess_image_shortcodes(self.body)
-        return mark_safe(markdown.markdown(
-            processed,
-            extensions=settings.MARKDOWN_EXTENSIONS,
-            output_format=settings.MARKDOWN_OUTPUT_FORMAT
-        ))
+        return mark_safe(
+            markdown.markdown(
+                processed,
+                extensions=settings.MARKDOWN_EXTENSIONS,
+                output_format=settings.MARKDOWN_OUTPUT_FORMAT,
+            )
+        )
 
     @property
     def body_text(self):
         # Preprocess custom shortcodes before markdown rendering
         processed = preprocess_image_shortcodes(self.body)
-        return strip_tags(markdown.markdown(
-            processed,
-            extensions=settings.MARKDOWN_EXTENSIONS,
-            output_format=settings.MARKDOWN_OUTPUT_FORMAT
-        ))
+        return strip_tags(
+            markdown.markdown(
+                processed,
+                extensions=settings.MARKDOWN_EXTENSIONS,
+                output_format=settings.MARKDOWN_OUTPUT_FORMAT,
+            )
+        )
 
     def get_absolute_url(self):
-        return reverse('til:detail', kwargs={
-            'year': self.created.year,
-            'month': self.created.strftime('%b').lower(),
-            'day': self.created.day,
-            'slug': self.slug
-        })
-    
+        return reverse(
+            "til:detail",
+            kwargs={
+                "year": self.created.year,
+                "month": self.created.strftime("%b").lower(),
+                "day": self.created.day,
+                "slug": self.slug,
+            },
+        )
+
     @property
     def get_image_url(self):
         """Get the effective image URL (prioritize uploaded image over card_image URL)"""
@@ -84,11 +96,13 @@ class TIL(models.Model):
     def image_caption_html(self):
         """Render image caption markdown as HTML for figcaption"""
         if self.image_caption:
-            return mark_safe(markdown.markdown(
-                self.image_caption,
-                extensions=settings.MARKDOWN_EXTENSIONS,
-                output_format=settings.MARKDOWN_OUTPUT_FORMAT
-            ))
+            return mark_safe(
+                markdown.markdown(
+                    self.image_caption,
+                    extensions=settings.MARKDOWN_EXTENSIONS,
+                    output_format=settings.MARKDOWN_OUTPUT_FORMAT,
+                )
+            )
         return None
 
     @property
@@ -97,8 +111,7 @@ class TIL(models.Model):
         if self.image_caption:
             # Convert markdown to HTML then strip all HTML tags for plain text
             html = markdown.markdown(
-                self.image_caption,
-                extensions=settings.MARKDOWN_EXTENSIONS
+                self.image_caption, extensions=settings.MARKDOWN_EXTENSIONS
             )
             return strip_tags(html)
         return self.title  # Fallback to TIL title if no caption

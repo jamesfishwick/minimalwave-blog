@@ -28,10 +28,10 @@ logger = logging.getLogger(__name__)
 # These are mostly infrastructure/outbound/API addresses, may catch office/VPN traffic
 # Source: Public BGP data, likely San Francisco office (548 Market St / 156 2nd St)
 ANTHROPIC_IP_RANGES = [
-    ipaddress.ip_network('160.79.104.0/23'),  # 512 IPs, core Anthropic block
-    ipaddress.ip_network('209.249.57.0/24'),  # 256 IPs, possibly legacy/shared
-    ipaddress.ip_network('2607:6bc0::/48'),   # IPv6 primary
-    ipaddress.ip_network('2607:6bc0:11::/48'), # IPv6 secondary
+    ipaddress.ip_network("160.79.104.0/23"),  # 512 IPs, core Anthropic block
+    ipaddress.ip_network("209.249.57.0/24"),  # 256 IPs, possibly legacy/shared
+    ipaddress.ip_network("2607:6bc0::/48"),  # IPv6 primary
+    ipaddress.ip_network("2607:6bc0:11::/48"),  # IPv6 secondary
 ]
 
 # Anthropic-related referrer patterns
@@ -40,19 +40,19 @@ ANTHROPIC_IP_RANGES = [
 # - Internal tools/dashboards
 # - Public Anthropic websites
 ANTHROPIC_REFERRERS = [
-    'anthropic.com',
-    'claude.ai',
-    'console.anthropic.com',
-    'www.anthropic.com',
-    'mail.google.com',  # Gmail with @anthropic.com (less specific but possible)
+    "anthropic.com",
+    "claude.ai",
+    "console.anthropic.com",
+    "www.anthropic.com",
+    "mail.google.com",  # Gmail with @anthropic.com (less specific but possible)
 ]
 
 # User-Agent patterns (least reliable - mostly for API clients)
 # Note: Regular employee browsers won't have these, but API/tooling might
 ANTHROPIC_USER_AGENTS = [
-    'anthropic',
-    'claude',
-    'as399358',  # ASN identifier might appear in custom clients
+    "anthropic",
+    "claude",
+    "as399358",  # ASN identifier might appear in custom clients
 ]
 
 
@@ -68,16 +68,16 @@ def is_anthropic_visitor(request):
     }
     """
     result = {
-        'is_anthropic': False,
-        'detection_method': None,
-        'confidence': None,
+        "is_anthropic": False,
+        "detection_method": None,
+        "confidence": None,
     }
 
     # Check for manual override via query parameter (for testing)
-    if request.GET.get('anthropic') == 'true':
-        result['is_anthropic'] = True
-        result['detection_method'] = 'manual'
-        result['confidence'] = 'test'
+    if request.GET.get("anthropic") == "true":
+        result["is_anthropic"] = True
+        result["detection_method"] = "manual"
+        result["confidence"] = "test"
         logger.info("Anthropic visitor detected via manual override")
         return result
 
@@ -86,27 +86,27 @@ def is_anthropic_visitor(request):
 
     # Check IP ranges
     if client_ip and check_ip_in_ranges(client_ip, ANTHROPIC_IP_RANGES):
-        result['is_anthropic'] = True
-        result['detection_method'] = 'ip'
-        result['confidence'] = 'high'
+        result["is_anthropic"] = True
+        result["detection_method"] = "ip"
+        result["confidence"] = "high"
         logger.info(f"Anthropic visitor detected via IP: {client_ip}")
         return result
 
     # Check HTTP Referer
-    referer = request.META.get('HTTP_REFERER', '')
+    referer = request.META.get("HTTP_REFERER", "")
     if check_referrer(referer, ANTHROPIC_REFERRERS):
-        result['is_anthropic'] = True
-        result['detection_method'] = 'referrer'
-        result['confidence'] = 'high'
+        result["is_anthropic"] = True
+        result["detection_method"] = "referrer"
+        result["confidence"] = "high"
         logger.info(f"Anthropic visitor detected via referrer: {referer}")
         return result
 
     # Check User-Agent (least reliable)
-    user_agent = request.META.get('HTTP_USER_AGENT', '').lower()
+    user_agent = request.META.get("HTTP_USER_AGENT", "").lower()
     if check_user_agent(user_agent, ANTHROPIC_USER_AGENTS):
-        result['is_anthropic'] = True
-        result['detection_method'] = 'user_agent'
-        result['confidence'] = 'low'
+        result["is_anthropic"] = True
+        result["detection_method"] = "user_agent"
+        result["confidence"] = "low"
         logger.info(f"Anthropic visitor detected via user-agent: {user_agent}")
         return result
 
@@ -116,12 +116,12 @@ def is_anthropic_visitor(request):
 def get_client_ip(request):
     """Extract the client's IP address from the request."""
     # Check for X-Forwarded-For header (common with proxies/load balancers)
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
     if x_forwarded_for:
         # X-Forwarded-For can contain multiple IPs, first one is the client
-        ip = x_forwarded_for.split(',')[0].strip()
+        ip = x_forwarded_for.split(",")[0].strip()
     else:
-        ip = request.META.get('REMOTE_ADDR')
+        ip = request.META.get("REMOTE_ADDR")
 
     try:
         # Validate IP address

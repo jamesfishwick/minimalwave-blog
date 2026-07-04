@@ -1,12 +1,17 @@
 
+
 {% extends "base.html" %}
 
 {% block title %}
+
   Archive | {{ site_name }}
+
 {% endblock %}
 
 {% block meta_description %}
+
   Archive of all blog posts and links
+
 {% endblock %}
 
 {% block content %}
@@ -19,7 +24,6 @@
 
 
   {% regroup blogmarks by created.year as blogmarks_by_year %}
-
 
 
   {% for year, year_entries in entries_by_year %}
@@ -35,6 +39,7 @@
       <h3 class="archive-month">{{ month }}</h3>
       <ul class="archive-list">
 
+
       {% for entry in month_entries %}
 
         <li>
@@ -42,31 +47,50 @@
         <a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a>
         </li>
 
+
       {% endfor %}
 
 
-
       {% for by_year in blogmarks_by_year %}
+
+
         {% if by_year.grouper == year %}
+
+
           {% regroup by_year.list by created|date:"F" as blogmarks_by_month %}
 
+
           {% for by_month in blogmarks_by_month %}
+
+
             {% if by_month.grouper == month %}
+
+
               {% for blogmark in by_month.list %}
+
                 <li>
                 <span class="archive-date">{{ blogmark.created|date:"d" }}</span>
                 <a href="{{ blogmark.get_absolute_url }}" class="blogmark-link">{{ blogmark.title }}</a>
                 </li>
-              {% endfor %}
-            {% endif %}
-          {% endfor %}
-        {% endif %}
-      {% endfor %}
 
+              {% endfor %}
+
+
+            {% endif %}
+
+
+          {% endfor %}
+
+
+        {% endif %}
+
+
+      {% endfor %}
 
       <!-- All the closing tags are handled in the restructured code above -->
 
       </ul>
+
 
     {% endfor %}
 
@@ -76,3 +100,4 @@
   </section>
 
 {% endblock %}
+

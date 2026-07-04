@@ -1,69 +1,90 @@
+from django import forms
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
-from django import forms
-from .models import Entry, Authorship, Blogmark, SiteSettings
+
+from .models import Authorship, Blogmark, Entry, SiteSettings
+
 # Tags are now in the core app
+
 
 class AuthorshipInline(admin.TabularInline):
     model = Authorship
     extra = 1
 
+
 @admin.register(SiteSettings)
 class SiteSettingsAdmin(admin.ModelAdmin):
     """Admin interface for site settings"""
+
     fieldsets = (
-        (None, {
-            'fields': ('site_title', 'site_description'),
-        }),
-        ('Media', {
-            'fields': ('header_logo', 'favicon'),
-        }),
+        (
+            None,
+            {
+                "fields": ("site_title", "site_description"),
+            },
+        ),
+        (
+            "Media",
+            {
+                "fields": ("header_logo", "favicon"),
+            },
+        ),
     )
 
     def has_add_permission(self, request):
         """Prevent creating multiple instances"""
         return SiteSettings.objects.count() == 0
 
+
 # TagAdmin moved to core app
+
 
 class EntryAdminForm(forms.ModelForm):
     class Meta:
         model = Entry
-        fields = '__all__'
+        fields = "__all__"
         widgets = {
-            'summary': forms.Textarea(attrs={
-                'rows': 10,
-                'cols': 80,
-                'style': 'font-family: monospace;'
-            }),
-            'body': forms.Textarea(attrs={
-                'rows': 20,
-                'cols': 80,
-                'style': 'font-family: monospace;'
-            })
+            "summary": forms.Textarea(
+                attrs={"rows": 10, "cols": 80, "style": "font-family: monospace;"}
+            ),
+            "body": forms.Textarea(
+                attrs={"rows": 20, "cols": 80, "style": "font-family: monospace;"}
+            ),
         }
+
 
 @admin.register(Entry)
 class EntryAdmin(admin.ModelAdmin):
     form = EntryAdminForm
-    list_display = ('title', 'created', 'status', 'get_publish_date', 'preview_link')
-    list_filter = ('status', 'created')
-    search_fields = ('title', 'summary', 'body')
-    prepopulated_fields = {'slug': ('title',)}
-    date_hierarchy = 'created'
+    list_display = ("title", "created", "status", "get_publish_date", "preview_link")
+    list_filter = ("status", "created")
+    search_fields = ("title", "summary", "body")
+    prepopulated_fields = {"slug": ("title",)}
+    date_hierarchy = "created"
     inlines = [AuthorshipInline]
     fieldsets = (
-        (None, {
-            'fields': ('title', 'slug', 'summary', 'body', 'created')
-        }),
-        ('Image', {
-            'fields': ('image', 'image_caption'),
-            'description': 'Upload an image for this entry. Replaces card_image URL.'
-        }),
-        ('Publishing', {
-            'fields': ('status', 'publish_date', 'is_draft', 'tags', 'card_image', 'preview_link')
-        }),
+        (None, {"fields": ("title", "slug", "summary", "body", "created")}),
+        (
+            "Image",
+            {
+                "fields": ("image", "image_caption"),
+                "description": "Upload an image for this entry. Replaces card_image URL.",
+            },
+        ),
+        (
+            "Publishing",
+            {
+                "fields": (
+                    "status",
+                    "publish_date",
+                    "is_draft",
+                    "tags",
+                    "card_image",
+                    "preview_link",
+                )
+            },
+        ),
         # ('LinkedIn Integration', {
         #     'fields': ('linkedin_enabled', 'linkedin_custom_text', 'linkedin_posted'),
         #     'classes': ('collapse',)
@@ -74,53 +95,65 @@ class EntryAdmin(admin.ModelAdmin):
         if obj.publish_date:
             return obj.publish_date.strftime("%Y-%m-%d %H:%M")
         return "-"
+
     get_publish_date.short_description = "Publish Date"
 
     def preview_link(self, obj):
         if obj.slug:
-            return format_html('<a href="{}" target="_blank">Preview</a>',
-                              reverse('blog:entry_preview', args=[obj.slug]))
+            return format_html(
+                '<a href="{}" target="_blank">Preview</a>',
+                reverse("blog:entry_preview", args=[obj.slug]),
+            )
         return ""
+
     preview_link.short_description = "Preview"
-    readonly_fields = ['preview_link']
+    readonly_fields = ["preview_link"]
+
 
 @admin.register(Blogmark)
 class BlogmarkAdmin(admin.ModelAdmin):
-    list_display = ('title', 'url', 'created', 'status', 'get_publish_date', 'preview_link')
-    list_filter = ('status', 'created')
-    search_fields = ('title', 'commentary', 'url')
-    prepopulated_fields = {'slug': ('title',)}
-    date_hierarchy = 'created'
+    list_display = (
+        "title",
+        "url",
+        "created",
+        "status",
+        "get_publish_date",
+        "preview_link",
+    )
+    list_filter = ("status", "created")
+    search_fields = ("title", "commentary", "url")
+    prepopulated_fields = {"slug": ("title",)}
+    date_hierarchy = "created"
 
     def preview_link(self, obj):
         if obj.slug:
-            return format_html('<a href="{}" target="_blank">Preview</a>',
-                              reverse('blog:blogmark_preview', args=[obj.slug]))
+            return format_html(
+                '<a href="{}" target="_blank">Preview</a>',
+                reverse("blog:blogmark_preview", args=[obj.slug]),
+            )
         return ""
+
     preview_link.short_description = "Preview"
-    readonly_fields = ['preview_link']
+    readonly_fields = ["preview_link"]
 
     def get_publish_date(self, obj):
         if obj.publish_date:
             return obj.publish_date.strftime("%Y-%m-%d %H:%M")
         return "-"
+
     get_publish_date.short_description = "Publish Date"
 
     fieldsets = (
-        (None, {
-            'fields': ('title', 'slug', 'url', 'commentary', 'created')
-        }),
-        ('Image', {
-            'fields': ('image', 'image_caption'),
-            'description': 'Upload an image for this blogmark.'
-        }),
-        ('Publishing', {
-            'fields': ('status', 'publish_date', 'is_draft', 'tags')
-        }),
-        ('Via', {
-            'fields': ('via', 'via_title'),
-            'classes': ('collapse',)
-        }),
+        (None, {"fields": ("title", "slug", "url", "commentary", "created")}),
+        (
+            "Image",
+            {
+                "fields": ("image", "image_caption"),
+                "description": "Upload an image for this blogmark.",
+            },
+        ),
+        ("Publishing", {"fields": ("status", "publish_date", "is_draft", "tags")}),
+        ("Via", {"fields": ("via", "via_title"), "classes": ("collapse",)}),
     )
 
 

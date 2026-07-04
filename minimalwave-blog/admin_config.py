@@ -1,7 +1,7 @@
 """
 Custom admin site configuration for better organization
 """
-from django.contrib import admin
+
 from django.contrib.admin import AdminSite
 
 
@@ -18,32 +18,32 @@ class MinimalWaveAdminSite(AdminSite):
 
         # Custom ordering and grouping
         custom_order = [
-            'core',      # Taxonomy & Content Structure
-            'blog',      # Blog Content
-            'til',       # TIL Content
-            'linkedin',  # LinkedIn Integration
-            'auth',      # Authentication
-            'sites',     # Sites Framework
+            "core",  # Taxonomy & Content Structure
+            "blog",  # Blog Content
+            "til",  # TIL Content
+            "linkedin",  # LinkedIn Integration
+            "auth",  # Authentication
+            "sites",  # Sites Framework
         ]
 
         # Rename app labels for better UX
         app_name_mapping = {
-            'core': 'Taxonomy & Organization',
-            'blog': 'Blog Content',
-            'til': 'TIL Content',
-            'linkedin': 'LinkedIn Integration',
-            'auth': 'Users & Permissions',
-            'sites': 'Site Configuration',
+            "core": "Taxonomy & Organization",
+            "blog": "Blog Content",
+            "til": "TIL Content",
+            "linkedin": "LinkedIn Integration",
+            "auth": "Users & Permissions",
+            "sites": "Site Configuration",
         }
 
         # Sort according to custom order
         ordered_apps = []
         for app_name in custom_order:
             for app in app_list:
-                if app['app_label'] == app_name:
+                if app["app_label"] == app_name:
                     # Update the display name
                     if app_name in app_name_mapping:
-                        app['name'] = app_name_mapping[app_name]
+                        app["name"] = app_name_mapping[app_name]
                     ordered_apps.append(app)
                     break
 
@@ -56,4 +56,4 @@ class MinimalWaveAdminSite(AdminSite):
 
 
 # Create the custom admin site instance
-admin_site = MinimalWaveAdminSite(name='minimalwave_admin')
+admin_site = MinimalWaveAdminSite(name="minimalwave_admin")

@@ -3,21 +3,22 @@ Management command to validate migration consistency.
 This prevents deployment of migrations that would cause dependency issues.
 """
 
+import sys
+
+from django.apps import apps
 from django.core.management.base import BaseCommand
 from django.db import connection
 from django.db.migrations.loader import MigrationLoader
-from django.apps import apps
-import sys
 
 
 class Command(BaseCommand):
-    help = 'Validate migration consistency and dependencies'
+    help = "Validate migration consistency and dependencies"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--strict',
-            action='store_true',
-            help='Exit with error code if any issues found',
+            "--strict",
+            action="store_true",
+            help="Exit with error code if any issues found",
         )
 
     def handle(self, *args, **options):
@@ -34,7 +35,7 @@ class Command(BaseCommand):
         for (app_label, migration_name), migration in loader.disk_migrations.items():
             for dep_app, dep_migration in migration.dependencies:
                 # Skip special dependency markers
-                if dep_app == '__first__' or dep_migration == '__first__':
+                if dep_app == "__first__" or dep_migration == "__first__":
                     continue
 
                 dep_key = (dep_app, dep_migration)
@@ -60,11 +61,14 @@ class Command(BaseCommand):
         # Check 3: Validate that initial migrations don't depend on later ones
         self.stdout.write("\n3. Checking initial migration dependencies...")
         for (app_label, migration_name), migration in loader.disk_migrations.items():
-            if migration_name == '0001_initial':
+            if migration_name == "0001_initial":
                 for dep_app, dep_migration in migration.dependencies:
                     # Skip standard Django dependencies and __first__ markers
-                    if (dep_app in ['__first__', 'auth', 'contenttypes', 'sessions', 'sites'] or
-                        dep_migration == '__first__'):
+                    if (
+                        dep_app
+                        in ["__first__", "auth", "contenttypes", "sessions", "sites"]
+                        or dep_migration == "__first__"
+                    ):
                         continue
 
                     # Only warn about custom app dependencies
@@ -104,12 +108,14 @@ class Command(BaseCommand):
             self.stdout.write("   ✅ No regenerated initial migrations detected")
 
         # Summary
-        self.stdout.write(f"\n=== Summary ===")
+        self.stdout.write("\n=== Summary ===")
         self.stdout.write(f"Errors: {len(errors)}")
         self.stdout.write(f"Warnings: {len(warnings)}")
 
         if errors:
-            self.stdout.write(f"\n❌ Migration validation FAILED with {len(errors)} errors")
+            self.stdout.write(
+                f"\n❌ Migration validation FAILED with {len(errors)} errors"
+            )
             for error in errors:
                 self.stdout.write(f"   • {error}")
 
@@ -122,7 +128,7 @@ class Command(BaseCommand):
             self.stdout.write("\n✅ All migration validations passed")
 
         # Exit with error code if strict mode and issues found
-        if options['strict'] and (errors or warnings):
+        if options["strict"] and (errors or warnings):
             sys.exit(1)
         elif errors:
             sys.exit(1)
@@ -148,7 +154,7 @@ class Command(BaseCommand):
             if node in loader.disk_migrations:
                 migration = loader.disk_migrations[node]
                 for dep_app, dep_name in migration.dependencies:
-                    if dep_app != '__first__':
+                    if dep_app != "__first__":
                         dep_node = (dep_app, dep_name)
                         visit(dep_node)
 
@@ -165,16 +171,24 @@ class Command(BaseCommand):
         regenerated = []
 
         for (app_label, migration_name), migration in loader.disk_migrations.items():
-            if migration_name == '0001_initial':
+            if migration_name == "0001_initial":
                 # Check if it has dependencies on other apps' initial migrations
                 # This is a common sign of regeneration
                 non_standard_deps = []
                 for dep_app, dep_name in migration.dependencies:
-                    if dep_app not in ['__first__', 'auth', 'contenttypes', 'sessions', 'sites']:
-                        if dep_name == '0001_initial':
+                    if dep_app not in [
+                        "__first__",
+                        "auth",
+                        "contenttypes",
+                        "sessions",
+                        "sites",
+                    ]:
+                        if dep_name == "0001_initial":
                             non_standard_deps.append(f"{dep_app}.{dep_name}")
 
                 if non_standard_deps:
-                    regenerated.append(f"{app_label}.{migration_name} -> depends on {non_standard_deps}")
+                    regenerated.append(
+                        f"{app_label}.{migration_name} -> depends on {non_standard_deps}"
+                    )
 
         return regenerated

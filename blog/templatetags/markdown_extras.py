@@ -45,38 +45,38 @@ def preprocess_image_shortcodes(text):
     """
     # Regex pattern to match {{img:path|position|width|caption}}
     # Caption is optional (group 4)
-    pattern = r'\{\{img:([^|]+)\|([^|]+)\|(\d+)(?:\|([^}]*))?\}\}'
+    pattern = r"\{\{img:([^|]+)\|([^|]+)\|(\d+)(?:\|([^}]*))?\}\}"
 
     def replace_shortcode(match):
         path, position, width, caption = match.groups()
-        caption = caption.strip() if caption else ''
+        caption = caption.strip() if caption else ""
 
         # Escape caption for HTML safety
-        caption_escaped = escape(caption) if caption else ''
+        caption_escaped = escape(caption) if caption else ""
 
         # Smart path handling: absolute URLs pass through, relative prepend /media/
-        if not (path.startswith('http://') or path.startswith('https://')):
+        if not (path.startswith("http://") or path.startswith("https://")):
             # Remove leading slash if present, then prepend /media/
-            path = f'/media/{path.lstrip("/")}'
+            path = f"/media/{path.lstrip('/')}"
 
         # Escape path for HTML safety
         path_escaped = escape(path)
 
         # Map position to CSS class
         position_class_map = {
-            'left': 'float-left',
-            'right': 'float-right',
-            'center': 'center',
-            'full': 'full'
+            "left": "float-left",
+            "right": "float-right",
+            "center": "center",
+            "full": "full",
         }
-        position_class = position_class_map.get(position, 'center')
+        position_class = position_class_map.get(position, "center")
 
         # Build semantic HTML with <figure> and <figcaption>
         if caption_escaped:
-            html = f'''<figure class="markdown-image {position_class}" style="max-width: {width}px;">
+            html = f"""<figure class="markdown-image {position_class}" style="max-width: {width}px;">
     <img src="{path_escaped}" alt="{caption_escaped}" loading="lazy">
     <figcaption>{caption_escaped}</figcaption>
-</figure>'''
+</figure>"""
         else:
             # No caption: use empty alt (decorative image)
             html = f'<figure class="markdown-image {position_class}" style="max-width: {width}px;"><img src="{path_escaped}" alt="" loading="lazy"></figure>'

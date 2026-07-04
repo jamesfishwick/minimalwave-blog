@@ -6,6 +6,7 @@ short-form educational content.
 """
 
 from django.contrib.sitemaps import Sitemap
+
 from til.models import TIL
 
 
@@ -17,7 +18,7 @@ class TILSitemap(Sitemap):
 
     def items(self):
         """Return only non-draft TIL posts."""
-        return TIL.objects.filter(is_draft=False).order_by('-created')
+        return TIL.objects.filter(is_draft=False).order_by("-created")
 
     def lastmod(self, obj):
         """Return the creation date (TIL posts typically don't update)."""

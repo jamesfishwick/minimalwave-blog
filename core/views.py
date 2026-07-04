@@ -19,9 +19,9 @@ def test_anthropic_detection(request):
         <pre>
 Context: {context}
         </pre>
-        <p>is_anthropic: {context['anthropic_visitor']['is_anthropic']}</p>
-        <p>detection_method: {context['anthropic_visitor']['detection_method']}</p>
-        <p>confidence: {context['anthropic_visitor']['confidence']}</p>
+        <p>is_anthropic: {context["anthropic_visitor"]["is_anthropic"]}</p>
+        <p>detection_method: {context["anthropic_visitor"]["detection_method"]}</p>
+        <p>confidence: {context["anthropic_visitor"]["confidence"]}</p>
     </body>
     </html>
     """
