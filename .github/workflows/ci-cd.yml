@@ -62,6 +62,11 @@ jobs:
           poetry check || poetry lock
           poetry install --no-interaction --no-ansi --no-root
 
+      - name: Lint and format check (ruff)
+        run: |
+          poetry run ruff check .
+          poetry run ruff format --check .
+
       - name: Set environment variables
         run: |
           echo "DJANGO_SETTINGS_MODULE=minimalwave-blog.settings.development" >> $GITHUB_ENV
