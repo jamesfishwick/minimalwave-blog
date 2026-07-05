@@ -1,6 +1,7 @@
 ---
 name: edit-blog-content
-description: Run prose/markdown skills (de-slopper, zinsser, analyze-prose, etc.) against this blog's content and write accepted edits back to the database. Use when the user wants to clean up, rewrite, or improve the markdown body/summary of an Entry, Blogmark, TIL, or Project — e.g. "run the de-slopper on my latest post", "zinsser this entry", "tighten the prose on <slug> and save it". Content lives in Postgres, not files, so this skill exports it to files, edits there, shows a diff for acceptance, then writes back through the Django ORM.
+description: >-
+  Improve the writing in existing posts on James's Postgres-backed Django blog and save the result. Reach for this whenever a user points at content they've already published — an Entry, Blogmark, TIL, or Project, or one of its fields (body, summary, commentary, intro) — and asks to tighten, rewrite, clean up, de-slop, zinsser, or fix "AI-sounding" prose, then wants it persisted back (to the database, postgres, or the db, optionally after syncing prod down or showing a diff first). Any request that combines "make this post read better" with "and save/update/load it" belongs here, whether phrased about the latest post, a named slug, or several recent ones. The skill exports each row to a file, runs the prose skill, shows a diff you approve, and writes back through the Django ORM. Not for drafting new posts, changing dates or other metadata, repairing markdown syntax, or de-slopping repo files like READMEs.
 ---
 
 # Edit blog content
