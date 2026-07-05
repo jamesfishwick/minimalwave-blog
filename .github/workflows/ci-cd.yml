@@ -171,35 +171,44 @@ jobs:
           az webapp restart --name minimalwave-blog --resource-group minimalwave-blog-rg
           echo "✓ App Service restarted"
 
-      - name: Wait for deployment stabilization
+      - name: Wait for app to be ready
         run: |
-          echo "⏳ Waiting for deployment to stabilize..."
-          sleep 45
-          echo "✓ Deployment should be stable"
-
-      - name: Smoke test - Homepage
-        run: |
-          echo "🧪 Testing homepage..."
-          for i in {1..3}; do
-            if curl -f -s -o /dev/null --max-time 10 https://jamesfishwick.com/; then
-              echo "✓ Homepage OK"
-              break
+          # The App Service cold-boots after restart: the entrypoint runs
+          # collectstatic + migrate before gunicorn accepts traffic. Poll the
+          # homepage until it responds instead of guessing with a fixed sleep.
+          echo "⏳ Waiting for the app to become ready..."
+          for i in $(seq 1 30); do
+            if curl -f -s -o /dev/null --max-time 30 https://jamesfishwick.com/; then
+              echo "✓ App is ready (after ~$((i * 10))s)"
+              exit 0
             fi
-            echo "Attempt $i failed, retrying..."
+            echo "  not ready yet (attempt $i/30); waiting 10s..."
             sleep 10
           done
+          echo "❌ App did not become ready within ~5 minutes"
+          exit 1
 
-      - name: Smoke test - Blog post
+      - name: Smoke tests
         run: |
-          echo "🧪 Testing blog post..."
-          curl -f -s -o /dev/null --max-time 10 https://jamesfishwick.com/2025/jul/2/model-autophagy-disorder-ai-will-eat-itself/
-          echo "✓ Blog post OK"
-
-      - name: Smoke test - Admin
-        run: |
-          echo "🧪 Testing admin interface..."
-          curl -f -s -o /dev/null --max-time 10 https://jamesfishwick.com/admin/
-          echo "✓ Admin OK"
+          # Each check retries: a single cold request can still be slow right
+          # after the readiness gate, so don't fail on one timeout.
+          smoke() {
+            local name="$1" url="$2"
+            for i in $(seq 1 5); do
+              if curl -f -s -o /dev/null --max-time 30 "$url"; then
+                echo "✓ $name OK"
+                return 0
+              fi
+              echo "  $name attempt $i/5 failed; retrying in 10s..."
+              sleep 10
+            done
+            echo "❌ $name failed after 5 attempts: $url"
+            return 1
+          }
+          smoke "Homepage" "https://jamesfishwick.com/"
+          smoke "Blog post" "https://jamesfishwick.com/2025/jul/2/model-autophagy-disorder-ai-will-eat-itself/"
+          smoke "Admin" "https://jamesfishwick.com/admin/"
+          smoke "Projects" "https://jamesfishwick.com/projects/"
 
       - name: Deployment summary
         run: |
