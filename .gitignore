@@ -41,6 +41,7 @@ ENV/
 # IDE & AI Tools
 .claude/*
 !.claude/skills/
+!.claude/commands/
 .vscode/
 .idea/
 *.swp
