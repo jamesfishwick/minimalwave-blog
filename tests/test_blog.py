@@ -89,6 +89,28 @@ class BlogTestCase(TestCase):
         self.assertContains(response, "Test Blog Post")
         self.assertContains(response, "This is the full content of the test blog post.")
 
+    def test_draft_entry_404s_at_canonical_url(self):
+        """A draft entry must 404 at its public URL rather than leak. Reviewing
+        drafts happens through the login-gated entry_preview view."""
+        draft = Entry.objects.create(
+            title="Secret Draft",
+            slug="secret-draft",
+            summary="s",
+            body="hidden body",
+            status="draft",
+        )
+        c = draft.created
+        url = reverse(
+            "blog:entry",
+            kwargs={
+                "year": c.year,
+                "month": c.strftime("%b").lower(),
+                "day": c.day,
+                "slug": draft.slug,
+            },
+        )
+        self.assertEqual(self.client.get(url).status_code, 404)
+
     def test_blogmark(self):
         """Test the blogmark detail page loads correctly"""
         created = self.blogmark.created
