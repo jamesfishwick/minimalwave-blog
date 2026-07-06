@@ -120,9 +120,20 @@ def posts(request):
     )
 
 
+def _publicly_visible(qs):
+    """Restrict a BaseEntry queryset to what the public may see: published and
+    not future-scheduled. The canonical detail views use this so a draft 404s at
+    its real URL instead of leaking. Logged-in authors preview drafts through the
+    separate @login_required *_preview views.
+    """
+    return qs.filter(status="published").filter(
+        models.Q(publish_date__isnull=True) | models.Q(publish_date__lte=timezone.now())
+    )
+
+
 def entry(request, year, month, day, slug):
     entry = get_object_or_404(
-        Entry,
+        _publicly_visible(Entry.objects),
         created__year=year,
         created__month=get_month_number(month),
         created__day=day,
@@ -159,7 +170,7 @@ def entry_preview(request, slug):
 
 def blogmark(request, year, month, day, slug):
     blogmark = get_object_or_404(
-        Blogmark,
+        _publicly_visible(Blogmark.objects),
         created__year=year,
         created__month=get_month_number(month),
         created__day=day,
