@@ -299,6 +299,32 @@ figure.markdown-image figcaption {
   margin-top: 0.25rem;
 }
 
+/* ============================================================
+   VIDEO / RESPONSIVE EMBEDS
+   ============================================================ */
+/* Semantic wrapper for video. Holds a third-party iframe embed (Loom,
+   YouTube) or a self-hosted HTML5 <video>; both get the same 16:9 box and
+   spacing. Mirrors .post-image; aspect-ratio replaces the legacy
+   padding-bottom hack, so the embed keeps normal flow. */
+.video-embed {
+  margin: 1.5rem 0;
+}
+
+.video-embed iframe,
+.video-embed video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  border: 0;
+}
+
+.video-embed figcaption {
+  font-size: 0.85em;
+  color: var(--drac-comment);
+  margin-top: 0.25rem;
+}
+
 /* Markdown image placement */
 .align-right {
   float: right;
