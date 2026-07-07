@@ -27,6 +27,9 @@ services:
     command: supervisord -c /etc/supervisor/conf.d/supervisord.conf
 
   db:
+    # Bumped 14 -> 16 to match Azure prod. An existing postgres_prod_data
+    # volume created under 14 will NOT start under 16 (major-version data-dir
+    # mismatch); recreate the volume (dump/restore or remove it) on upgrade.
     image: postgres:16
     container_name: minimalwave-blog-prod-db
     volumes:

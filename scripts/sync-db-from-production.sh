@@ -88,9 +88,12 @@ preflight_checks() {
         PG_DUMP_BIN="$PG_DUMP"
     else
         for v in 18 17 16; do
-            candidate="$(brew --prefix "postgresql@$v" 2>/dev/null)/bin/pg_dump"
-            if [ -x "$candidate" ]; then
-                PG_DUMP_BIN="$candidate"
+            # Guard on a non-empty prefix: if brew is absent the substitution
+            # is empty and "$prefix/bin/pg_dump" would collapse to the bogus
+            # "/bin/pg_dump". Skip unless brew returned a real prefix.
+            prefix="$(brew --prefix "postgresql@$v" 2>/dev/null)"
+            if [ -n "$prefix" ] && [ -x "$prefix/bin/pg_dump" ]; then
+                PG_DUMP_BIN="$prefix/bin/pg_dump"
                 break
             fi
         done
