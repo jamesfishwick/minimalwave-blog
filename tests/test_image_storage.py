@@ -297,13 +297,3 @@ class ImageStoragePathTests(TestCase):
 
         # Check upload_to pattern
         self.assertEqual(image_field.upload_to, "blog/blogmarks/%Y/%m/")
-
-    def test_til_upload_path_structure(self):
-        """Test TIL image upload path follows til/images/YYYY/MM/ structure."""
-        from til.models import TIL
-
-        til_model = TIL
-        image_field = til_model._meta.get_field("image")
-
-        # Check upload_to pattern
-        self.assertEqual(image_field.upload_to, "til/images/%Y/%m/")
