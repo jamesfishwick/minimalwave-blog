@@ -292,16 +292,16 @@ def archive(request):
         .order_by("-created")
     )
 
-    # Paginate entries
-    paginated_entries = paginate_queryset(request, entries)
-
+    # The archive is a complete chronological index (title + link + date,
+    # grouped by year/month in the template), so list every entry rather than
+    # a single page. The template has no pagination controls, so paginating
+    # here would strand everything past the first page.
     return render(
         request,
         "blog/archive.html",
         {
-            "entries": paginated_entries,
+            "entries": entries,
             "blogmarks": blogmarks,
-            "page_obj": paginated_entries,
         },
     )
 
