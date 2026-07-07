@@ -27,7 +27,7 @@ services:
     command: supervisord -c /etc/supervisor/conf.d/supervisord.conf
 
   db:
-    image: postgres:14
+    image: postgres:16
     container_name: minimalwave-blog-prod-db
     volumes:
       - postgres_prod_data:/var/lib/postgresql/data/
