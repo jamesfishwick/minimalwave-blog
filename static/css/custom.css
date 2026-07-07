@@ -411,14 +411,24 @@ details.post-summary > p:last-child {
   margin: 0;
 }
 
+/* Two-column rows: fixed date column + title column. A title that overruns
+   wraps within its own column instead of flowing back under the date. */
 .archive-list li {
+  display: flex;
+  gap: 1rem;
   margin-bottom: 0.2rem;
 }
 
 .archive-date {
+  flex: 0 0 1.5rem;
+  text-align: right;
   color: var(--drac-comment);
-  margin-right: 1rem;
   font-variant-numeric: tabular-nums;
+}
+
+.archive-list li a {
+  flex: 1;
+  min-width: 0;
 }
 
 /* ============================================================
