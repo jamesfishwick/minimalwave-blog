@@ -13,13 +13,12 @@ from django.core.management.base import CommandError
 
 from blog.models import Blogmark, Entry
 from projects.models import Project
-from til.models import TIL
 
 # type-name -> {model, fields}. `fields` are the markdown columns to export.
+# TIL was folded into Entry; its content is now edited as entries.
 CONTENT_TYPES = {
     "entry": {"model": Entry, "fields": ["summary", "body"]},
     "blogmark": {"model": Blogmark, "fields": ["commentary"]},
-    "til": {"model": TIL, "fields": ["body"]},
     "project": {"model": Project, "fields": ["summary", "body"]},
 }
 

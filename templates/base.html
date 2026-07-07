@@ -72,9 +72,6 @@
 <link rel="alternate" type="application/atom+xml" title="Blog Feed" href="
 {% url 'blog:feed' %}
 " />
-<link rel="alternate" type="application/atom+xml" title="TIL Feed" href="
-{% url 'til:feed' %}
-" />
 
 <!-- Theme: apply saved preference before CSS paints to avoid flash -->
 <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.classList.add('dracula-'+t);}());</script>
@@ -118,9 +115,6 @@
 <li><a href="
 {% url 'blog:posts' %}
 ">blog</a></li>
-<li><a href="
-{% url 'til:index' %}
-">til</a></li>
 <li><a href="
 {% url 'projects:index' %}
 ">projects</a></li>

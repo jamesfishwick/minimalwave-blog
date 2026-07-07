@@ -9,13 +9,11 @@ from blog.sitemaps import BlogmarkSitemap, EntrySitemap
 from blog.views_admin import run_auto_tag
 from core.views import test_anthropic_detection
 from projects.sitemaps import ProjectSitemap
-from til.sitemaps import TILSitemap
 
 # Sitemap configuration
 sitemaps = {
     "entries": EntrySitemap,
     "blogmarks": BlogmarkSitemap,
-    "til": TILSitemap,
     "projects": ProjectSitemap,
 }
 
@@ -38,7 +36,7 @@ urlpatterns = [
         TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
         name="robots_txt",
     ),
-    path("til/", include("til.urls")),
+    path("til/", include("til.urls")),  # Retired section: 301-redirects into blog
     path("projects/", include("projects.urls")),
     path("", include("blog.urls")),  # Move blog URLs to end to avoid conflicts
 ]

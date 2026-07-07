@@ -1,7 +1,7 @@
 """
 Management command to automatically generate and apply tags to blog content using AI.
 
-This command analyzes blog entries and TIL posts, generates semantically relevant tags
+This command analyzes blog entries and blogmarks, generates semantically relevant tags
 optimized for SEO and discovery, and applies them automatically.
 
 Usage:
@@ -10,7 +10,7 @@ Usage:
 Options:
     --dry-run          Show what tags would be generated without applying them
     --force            Re-tag content that already has tags
-    --content-type     Only process specific content type: 'entry', 'blogmark', or 'til'
+    --content-type     Only process specific content type: 'entry' or 'blogmark'
     --limit N          Only process N items (useful for testing)
     --min-tags N       Minimum number of tags to generate (default: 2)
     --max-tags N       Maximum number of tags to generate (default: 5)
@@ -24,7 +24,6 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from blog.models import Blogmark, Entry
-from til.models import TIL
 
 
 class Command(BaseCommand):
@@ -44,7 +43,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--content-type",
             type=str,
-            choices=["entry", "blogmark", "til"],
+            choices=["entry", "blogmark"],
             help="Only process specific content type",
         )
         parser.add_argument(
@@ -99,9 +98,6 @@ class Command(BaseCommand):
         if content_type in [None, "blogmark"]:
             self._process_blogmarks(limit, stats)
 
-        if content_type in [None, "til"]:
-            self._process_tils(limit, stats)
-
         # Print summary
         self.stdout.write("\n" + "=" * 60)
         self.stdout.write(self.style.SUCCESS("SUMMARY"))
@@ -144,23 +140,6 @@ class Command(BaseCommand):
                     content_type="Blogmark",
                     title=blogmark.title,
                     body=content,
-                    stats=stats,
-                )
-
-    def _process_tils(self, limit, stats):
-        """Process TIL posts"""
-        queryset = TIL.objects.all().order_by("-created")
-        if limit:
-            queryset = queryset[:limit]
-
-        if queryset.count() > 0:
-            self.stdout.write(f"\nProcessing {queryset.count()} TIL posts...")
-            for til in queryset:
-                self._process_content(
-                    til,
-                    content_type="TIL",
-                    title=til.title,
-                    body=til.body,
                     stats=stats,
                 )
 
