@@ -79,15 +79,31 @@ preflight_checks() {
     echo -e "${BLUE}Running pre-flight checks...${NC}"
     echo ""
 
-    # Check pg_dump installed
-    if ! command -v pg_dump &> /dev/null; then
+    # Resolve a pg_dump new enough to dump the production server. pg_dump
+    # refuses to dump a server newer than itself, and prod is PostgreSQL 16,
+    # so a stock Homebrew postgresql@14 on PATH fails. Prefer an explicit
+    # $PG_DUMP override, then the newest Homebrew postgresql@NN, then PATH.
+    PG_DUMP_BIN=""
+    if [ -n "${PG_DUMP:-}" ] && command -v "$PG_DUMP" &> /dev/null; then
+        PG_DUMP_BIN="$PG_DUMP"
+    else
+        for v in 18 17 16; do
+            candidate="$(brew --prefix "postgresql@$v" 2>/dev/null)/bin/pg_dump"
+            if [ -x "$candidate" ]; then
+                PG_DUMP_BIN="$candidate"
+                break
+            fi
+        done
+        [ -z "$PG_DUMP_BIN" ] && command -v pg_dump &> /dev/null && PG_DUMP_BIN="pg_dump"
+    fi
+    if [ -z "$PG_DUMP_BIN" ]; then
         echo -e "${RED}❌ pg_dump not found${NC}"
-        echo "Install PostgreSQL client tools:"
-        echo "  macOS: brew install postgresql"
-        echo "  Ubuntu: sudo apt-get install postgresql-client"
+        echo "Install PostgreSQL client tools (v16+ to match production):"
+        echo "  macOS: brew install postgresql@16"
+        echo "  Ubuntu: sudo apt-get install postgresql-client-16"
         exit 1
     fi
-    echo -e "${GREEN}✓ pg_dump installed${NC}"
+    echo -e "${GREEN}✓ pg_dump: $("$PG_DUMP_BIN" --version)${NC}"
 
     # Check Docker running
     if ! docker ps &> /dev/null; then
@@ -197,7 +213,7 @@ export_production_database() {
 
     # Export from Azure PostgreSQL
     echo "Connecting to $PROD_HOST..."
-    PGSSLMODE=require PGPASSWORD="$PROD_PASSWORD" pg_dump \
+    PGSSLMODE=require PGPASSWORD="$PROD_PASSWORD" "$PG_DUMP_BIN" \
         --host="$PROD_HOST" \
         --port="$PROD_PORT" \
         --username="$PROD_USER" \
