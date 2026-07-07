@@ -51,7 +51,6 @@ test_scheduling() {
 
     python "$PROJECT_ROOT/manage.py" shell << EOF
 from blog.models import Entry
-from til.models import TIL
 from datetime import datetime, timedelta
 from django.utils import timezone
 
@@ -65,15 +64,6 @@ entry = Entry.objects.create(
     publish_date=future_time
 )
 print(f"Created Entry: {entry.title} scheduled for {future_time}")
-
-# Create scheduled TIL
-til = TIL.objects.create(
-    title="Test Scheduled TIL",
-    content="This TIL will publish in 1 hour",
-    status="draft",
-    publish_date=future_time
-)
-print(f"Created TIL: {til.title} scheduled for {future_time}")
 
 print("\nTo publish now, run:")
 print("  python manage.py publish_scheduled")

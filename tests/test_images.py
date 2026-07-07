@@ -21,7 +21,6 @@ from django.utils import timezone
 from PIL import Image
 
 from blog.models import Blogmark, Entry
-from til.models import TIL
 
 
 class ImageFieldTests(TestCase):
@@ -68,21 +67,6 @@ class ImageFieldTests(TestCase):
         # Check fields are initially None/blank
         self.assertFalse(blogmark.image)
         self.assertIsNone(blogmark.image_caption)
-
-    def test_til_has_image_fields(self):
-        """Test TIL model has image and image_caption fields."""
-        til = TIL.objects.create(
-            title="Test TIL", slug="test-til", body="Test body", author=self.user
-        )
-
-        # Check fields exist
-        self.assertTrue(hasattr(til, "image"))
-        self.assertTrue(hasattr(til, "image_caption"))
-        self.assertTrue(hasattr(til, "card_image"))  # Legacy field
-
-        # Check fields are initially None/blank
-        self.assertFalse(til.image)
-        self.assertIsNone(til.image_caption)
 
 
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
@@ -146,24 +130,6 @@ class ImageUploadTests(TestCase):
         self.assertTrue(blogmark.image)
         self.assertIn("blog/blogmarks/", blogmark.image.name)
         self.assertEqual(blogmark.image_caption, "Blogmark image description")
-
-    def test_til_image_upload(self):
-        """Test uploading an image to TIL model."""
-        test_image = self.create_test_image()
-
-        til = TIL.objects.create(
-            title="Test TIL with Image",
-            slug="test-til-image",
-            body="Test body",
-            author=self.user,
-            image=test_image,
-            image_caption="TIL image description",
-        )
-
-        # Check image was saved
-        self.assertTrue(til.image)
-        self.assertIn("til/images/", til.image.name)
-        self.assertEqual(til.image_caption, "TIL image description")
 
     def test_image_upload_creates_subdirectories(self):
         """Test that images are organized by date in subdirectories."""
@@ -264,19 +230,6 @@ class ImageURLTests(TestCase):
         # Should return image URL
         self.assertIsNotNone(blogmark.get_image_url)
         self.assertIn("test.jpg", blogmark.get_image_url)
-
-    def test_til_get_image_url_with_fallback(self):
-        """Test TIL get_image_url with card_image fallback."""
-        til = TIL.objects.create(
-            title="Test TIL",
-            slug="test-til",
-            body="Test",
-            author=self.user,
-            card_image="https://example.com/card.jpg",
-        )
-
-        # Should return card_image when no upload
-        self.assertEqual(til.get_image_url, "https://example.com/card.jpg")
 
 
 class ImageCaptionTests(TestCase):
