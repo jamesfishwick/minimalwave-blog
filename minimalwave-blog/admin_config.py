@@ -20,7 +20,6 @@ class MinimalWaveAdminSite(AdminSite):
         custom_order = [
             "core",  # Taxonomy & Content Structure
             "blog",  # Blog Content
-            "til",  # TIL Content
             "linkedin",  # LinkedIn Integration
             "auth",  # Authentication
             "sites",  # Sites Framework
@@ -30,7 +29,6 @@ class MinimalWaveAdminSite(AdminSite):
         app_name_mapping = {
             "core": "Taxonomy & Organization",
             "blog": "Blog Content",
-            "til": "TIL Content",
             "linkedin": "LinkedIn Integration",
             "auth": "Users & Permissions",
             "sites": "Site Configuration",

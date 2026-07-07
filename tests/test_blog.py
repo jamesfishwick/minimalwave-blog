@@ -10,7 +10,6 @@ from django.urls import reverse
 from django.utils import timezone
 
 from blog.models import Blogmark, Entry
-from til.models import TIL
 
 
 class BlogTestCase(TestCase):
@@ -43,17 +42,6 @@ class BlogTestCase(TestCase):
             publish_date=None,
         )
         self.blogmark.tags.add("django")
-
-        # Create test TIL
-        self.til = TIL.objects.create(
-            title="Test TIL",
-            slug="test-til",
-            body="This is a test TIL content.",
-            created=timezone.now(),
-            is_draft=False,
-            author=self.user,
-        )
-        self.til.tags.add("python")
 
         # Create a test client
         self.client = Client()
@@ -142,42 +130,6 @@ class BlogTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Test Blog Post")
         self.assertContains(response, "Test Link")
-
-    def test_til_index(self):
-        """Test the TIL index page loads correctly"""
-        response = self.client.get(reverse("til:index"))
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Test TIL")
-
-    def test_til_detail(self):
-        """Test the TIL detail page loads correctly"""
-        created = self.til.created
-        response = self.client.get(
-            reverse(
-                "til:detail",
-                kwargs={
-                    "year": created.year,
-                    "month": created.strftime("%b").lower(),
-                    "day": created.day,
-                    "slug": self.til.slug,
-                },
-            )
-        )
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Test TIL")
-        self.assertContains(response, "This is a test TIL content.")
-
-    def test_til_tag(self):
-        """Test the TIL tag page loads correctly"""
-        response = self.client.get(reverse("til:tag", kwargs={"slug": "python"}))
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Test TIL")
-
-    def test_til_search(self):
-        """Test the TIL search functionality"""
-        response = self.client.get(reverse("til:search"), {"q": "test"})
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Test TIL")
 
 
 class TemplateValidationTests(TestCase):

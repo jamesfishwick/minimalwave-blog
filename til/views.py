@@ -1,87 +1,48 @@
-from django.contrib.syndication.views import Feed
-from django.db import models
-from django.shortcuts import get_object_or_404, render
-from django.utils.feedgenerator import Atom1Feed
-from taggit.models import Tag
+"""Redirect shim for the retired TIL section.
 
+TIL content has been folded into blog Entries (see blog migration
+0006_migrate_til_to_entry). These views 301-redirect the old /til/ URLs to
+their new blog homes so inbound links and search results keep resolving.
+"""
+
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
+
+from blog.models import Entry
 from blog.views import get_month_number
-
-from .models import TIL
 
 
 def index(request):
-    tils = (
-        TIL.objects.filter(is_draft=False).order_by("-created").prefetch_related("tags")
-    )
-    tag_counts = {}
-    for til in tils:
-        for tag in til.tags.all():
-            tag_counts[tag] = tag_counts.get(tag, 0) + 1
-    tags = sorted(tag_counts.items(), key=lambda x: x[1], reverse=True)
-    return render(
-        request,
-        "til/index.html",
-        {"tils": tils, "tags": tags},
-    )
+    """/til/ -> the blog post stream."""
+    return redirect("blog:posts", permanent=True)
 
 
 def detail(request, year, month, day, slug):
-    til = get_object_or_404(
-        TIL,
+    """/til/<date>/<slug>/ -> the migrated Entry's canonical URL."""
+    entry = get_object_or_404(
+        Entry,
         created__year=year,
         created__month=get_month_number(month),
         created__day=day,
         slug=slug,
     )
-    return render(
-        request,
-        "til/detail.html",
-        {"til": til},
-    )
+    return redirect(entry.get_absolute_url(), permanent=True)
 
 
 def tag(request, slug):
-    tag = get_object_or_404(Tag, slug=slug)
-    tils = TIL.objects.filter(tags__slug=slug, is_draft=False).order_by("-created")
-    return render(
-        request,
-        "til/tag.html",
-        {"tag": tag, "tils": tils},
-    )
+    """/til/tag/<slug>/ -> the blog tag page for the same slug."""
+    return redirect(reverse("blog:tag", kwargs={"slug": slug}), permanent=True)
 
 
 def search(request):
+    """/til/search/ -> blog search, preserving the query string."""
     q = request.GET.get("q", "").strip()
+    url = reverse("blog:search")
     if q:
-        tils = (
-            TIL.objects.filter(is_draft=False)
-            .filter(models.Q(title__icontains=q) | models.Q(body__icontains=q))
-            .order_by("-created")
-        )
-    else:
-        tils = []
-
-    return render(
-        request,
-        "til/search.html",
-        {"q": q, "tils": tils},
-    )
+        url = f"{url}?q={q}"
+    return redirect(url, permanent=True)
 
 
-class TILAtomFeed(Feed):
-    title = "Minimal Wave TILs"
-    link = "/til/"
-    subtitle = "Today I Learned"
-    feed_type = Atom1Feed
-
-    def items(self):
-        return TIL.objects.filter(is_draft=False).order_by("-created")[:15]
-
-    def item_title(self, item):
-        return item.title
-
-    def item_description(self, item):
-        return item.body_rendered
-
-    def item_pubdate(self, item):
-        return item.created
+def feed(request):
+    """/til/feed/ -> the unified blog feed."""
+    return redirect(reverse("blog:feed"), permanent=True)
