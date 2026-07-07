@@ -131,6 +131,29 @@ class BlogTestCase(TestCase):
         self.assertContains(response, "Test Blog Post")
         self.assertContains(response, "Test Link")
 
+    def test_archive_lists_all_entries_unpaginated(self):
+        """The archive is a full chronological index: an old entry that would
+        fall past the first paginator page must still appear. Guards against
+        re-paginating the archive and stranding older posts (e.g. migrated
+        TILs) on an unreachable page."""
+        from datetime import timedelta
+
+        base = timezone.now()
+        for i in range(15):
+            Entry.objects.create(
+                title=f"Archive Entry {i}",
+                slug=f"archive-entry-{i}",
+                summary="s",
+                body="b",
+                status="published",
+                created=base - timedelta(days=i + 1),
+            )
+        response = self.client.get(reverse("blog:archive"))
+        self.assertEqual(response.status_code, 200)
+        # The oldest would sit on page 2 under a 10-per-page paginator.
+        self.assertContains(response, "Archive Entry 14")
+        self.assertContains(response, "Archive Entry 0")
+
 
 class TemplateValidationTests(TestCase):
     """Test that all templates can be compiled without syntax errors."""
