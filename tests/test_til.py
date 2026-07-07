@@ -73,9 +73,50 @@ class TILMigrationTests(TestCase):
     def test_original_tags_preserved_and_til_tag_added(self):
         self._run_migration()
         entry = Entry.objects.get(slug="first-test-til")
-        tag_slugs = set(entry.tags.values_list("slug", flat=True))
+        tag_slugs = list(entry.tags.values_list("slug", flat=True))
         self.assertIn("django", tag_slugs)
         self.assertIn("til", tag_slugs)
+        # Exactly the original tag plus the marker, with no duplicates.
+        self.assertEqual(sorted(tag_slugs), ["django", "til"])
+
+    def test_migration_is_idempotent(self):
+        self._run_migration()
+        count_after_first = Entry.objects.count()
+        # A second run must be a no-op, not a duplicating pass.
+        self._run_migration()
+        self.assertEqual(Entry.objects.count(), count_after_first)
+
+    def test_author_none_migrates_without_authorship(self):
+        TIL.objects.create(
+            title="Authorless TIL",
+            slug="authorless-til",
+            body="Body.",
+            created=timezone.now(),
+            is_draft=False,
+            author=None,
+        )
+        self._run_migration()
+        entry = Entry.objects.get(slug="authorless-til")
+        self.assertEqual(entry.authors.count(), 0)
+
+    def test_empty_body_summary_falls_back_to_title(self):
+        TIL.objects.create(
+            title="Empty Body TIL",
+            slug="empty-body-til",
+            body="",
+            created=timezone.now(),
+            is_draft=False,
+            author=self.user,
+        )
+        self._run_migration()
+        entry = Entry.objects.get(slug="empty-body-til")
+        self.assertEqual(entry.summary, "Empty Body TIL")
+
+    def test_migrated_published_til_appears_in_blog_posts(self):
+        self._run_migration()
+        response = self.client.get(reverse("blog:posts"))
+        self.assertContains(response, "First Test TIL")
+        self.assertNotContains(response, "Draft TIL")
 
     def test_til_tag_added_even_without_original_tags(self):
         self._run_migration()
@@ -99,9 +140,10 @@ class TILMigrationTests(TestCase):
         )
         self._run_migration()
         # The migrated TIL must not clobber the existing entry's slug+date.
+        self.assertTrue(Entry.objects.filter(slug="first-test-til").exists())
         migrated = Entry.objects.filter(title="First Test TIL")
         self.assertEqual(migrated.count(), 1)
-        self.assertNotEqual(migrated.first().slug, "first-test-til")
+        self.assertEqual(migrated.first().slug, "first-test-til-til")
 
 
 class TILRedirectTests(TestCase):
@@ -122,6 +164,14 @@ class TILRedirectTests(TestCase):
         response = self.client.get(reverse("til:search"), {"q": "django"})
         self.assertEqual(response.status_code, 301)
         self.assertEqual(response["Location"], reverse("blog:search") + "?q=django")
+
+    def test_search_redirect_encodes_special_characters(self):
+        response = self.client.get(reverse("til:search"), {"q": "foo & bar"})
+        self.assertEqual(response.status_code, 301)
+        # Spaces and ampersands must be percent-encoded, not passed raw.
+        self.assertEqual(
+            response["Location"], reverse("blog:search") + "?q=foo+%26+bar"
+        )
 
     def test_feed_redirects_to_blog_feed(self):
         response = self.client.get(reverse("til:feed"))
@@ -152,6 +202,44 @@ class TILRedirectTests(TestCase):
         self.assertRedirects(
             response, entry.get_absolute_url(), status_code=301, target_status_code=200
         )
+
+    def _til_detail_url(self, created, slug):
+        return reverse(
+            "til:detail",
+            kwargs={
+                "year": created.year,
+                "month": created.strftime("%b").lower(),
+                "day": created.day,
+                "slug": slug,
+            },
+        )
+
+    def test_detail_falls_back_to_suffixed_slug(self):
+        # A collided TIL is migrated as "<slug>-til"; the old URL uses "<slug>".
+        entry = Entry.objects.create(
+            title="Collided",
+            slug="collided-til",
+            summary="s",
+            body="b",
+            status="published",
+            created=timezone.now(),
+        )
+        response = self.client.get(self._til_detail_url(entry.created, "collided"))
+        self.assertRedirects(
+            response, entry.get_absolute_url(), status_code=301, target_status_code=200
+        )
+
+    def test_detail_404s_for_draft_entry(self):
+        draft = Entry.objects.create(
+            title="Draft",
+            slug="draft-entry",
+            summary="s",
+            body="b",
+            status="draft",
+            created=timezone.now(),
+        )
+        response = self.client.get(self._til_detail_url(draft.created, "draft-entry"))
+        self.assertEqual(response.status_code, 404)
 
     def test_detail_404s_when_no_matching_entry(self):
         response = self.client.get(

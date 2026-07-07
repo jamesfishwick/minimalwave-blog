@@ -65,9 +65,14 @@ def migrate_tils_to_entries(apps, schema_editor):
     til_ct = ContentType.objects.get_for_model(TIL)
     entry_ct = ContentType.objects.get_for_model(Entry)
 
-    til_tag, _ = Tag.objects.get_or_create(
-        slug="til", defaults={"name": "til"}
-    )
+    til_tag, _ = Tag.objects.get_or_create(slug="til", defaults={"name": "til"})
+
+    # Idempotency guard: the "til" tag on an Entry is the marker that this
+    # migration has already run. If any exists, bail rather than create a
+    # second copy of every post. RunPython runs in a transaction, so a failed
+    # run rolls back wholesale — the marker is never left half-set.
+    if TaggedItem.objects.filter(content_type=entry_ct, tag=til_tag).exists():
+        return
 
     for til in TIL.objects.all():
         slug = _unique_slug(til.slug, til.created, Entry, Blogmark)
@@ -80,6 +85,10 @@ def migrate_tils_to_entries(apps, schema_editor):
             body=til.body,
             summary=_summary_from_body(til.body) or til.title,
             card_image=til.card_image,
+            # image.name is copied verbatim, so it keeps pointing at the
+            # existing file under til/images/... (which resolves fine). The
+            # follow-up migration that drops the TIL app MUST NOT delete the
+            # til/images/ media tree, or these entries lose their images.
             image=til.image,
             image_caption=til.image_caption,
             is_draft=til.is_draft,
@@ -111,7 +120,9 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # One-way consolidation; the reverse is a no-op. The TIL rows are left
-        # untouched, so re-running forward after a manual cleanup is possible.
+        # One-way consolidation; the reverse is a no-op. The forward pass is
+        # guarded by the "til" marker tag, so a re-run is a safe no-op. To
+        # genuinely re-migrate, first delete the til-tagged entries this
+        # created, then run forward again.
         migrations.RunPython(migrate_tils_to_entries, migrations.RunPython.noop),
     ]
