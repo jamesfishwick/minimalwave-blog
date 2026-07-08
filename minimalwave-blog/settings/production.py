@@ -35,8 +35,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # WhiteNoise configuration
 WHITENOISE_USE_FINDERS = False  # Should be False in production
-# Strict: a {% static %} name missing from the manifest fails loudly at deploy
-# rather than silently serving an unhashed, 404-ing URL under manifest storage.
+# Strict: a {% static %} name missing from the manifest fails loudly at render
+# time (a per-request 500) rather than silently serving an unhashed, 404-ing URL.
+# Every {% static %} reference must therefore resolve; audit before enabling.
 WHITENOISE_MANIFEST_STRICT = True
 WHITENOISE_SKIP_COMPRESS_EXTENSIONS = [
     "jpg",
@@ -176,25 +177,33 @@ X_FRAME_OPTIONS = "DENY"
 from urllib.parse import urlparse
 
 from csp.constants import NONE, SELF
+from django.core.exceptions import ImproperlyConfigured
 
 # base.html:77 theme flash-prevention, and the theme-toggle script at the body end.
 _THEME_INIT_HASH = "'sha256-7vcU3qHxNjFgsBltLUeqjnsJNDqy4KVYXFL7hc5PIQU='"
 _THEME_TOGGLE_HASH = "'sha256-/5QwnhIk/hdiNnu3RLhGbdavjOnS4p7GstEPTYvxx70='"
 
-# Only trust the Plausible origin when the script URL is absolute; a self-hosted
-# proxy uses a same-origin path (already covered by SELF), and an empty/relative
-# value would otherwise emit the malformed CSP token "://".
+# Derive the Plausible origin so script-src/connect-src allow the analytics tag.
+# A host (absolute or protocol-relative //host) yields an origin; a same-origin
+# path (self-hosted proxy) or unset value is already covered by SELF. Anything
+# else — a bare host or garbage — would render a <script src> that CSP silently
+# blocks, so fail loud at boot rather than break analytics invisibly.
 _parsed_plausible = urlparse(PLAUSIBLE_SCRIPT_URL)
-if _parsed_plausible.scheme and _parsed_plausible.netloc:
-    _plausible_src = [f"{_parsed_plausible.scheme}://{_parsed_plausible.netloc}"]
-else:
+if _parsed_plausible.netloc:
+    _plausible_scheme = _parsed_plausible.scheme or "https"
+    _plausible_src = [f"{_plausible_scheme}://{_parsed_plausible.netloc}"]
+elif not PLAUSIBLE_SCRIPT_URL or PLAUSIBLE_SCRIPT_URL.startswith("/"):
     _plausible_src = []
+else:
+    raise ImproperlyConfigured(
+        f"PLAUSIBLE_SCRIPT_URL={PLAUSIBLE_SCRIPT_URL!r} has no host and is not a "
+        "same-origin path; it would render a <script src> that CSP then blocks."
+    )
 
-# self + data: + the Azure blob host + any https origin, because published posts
-# can embed externally hosted images via the {{img:https://...}} shortcode.
+# self + data: + any https origin. Published posts can embed externally hosted
+# images via the {{img:https://...}} shortcode, so image sources are intentionally
+# open over HTTPS (the Azure media host is already a subset of https:).
 _img_src = [SELF, "data:", "https:"]
-if AZURE_ACCOUNT_NAME:
-    _img_src.append(f"https://{AZURE_ACCOUNT_NAME}.blob.core.windows.net")
 
 CONTENT_SECURITY_POLICY = {
     "DIRECTIVES": {
