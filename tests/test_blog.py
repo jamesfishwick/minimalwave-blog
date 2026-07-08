@@ -154,6 +154,42 @@ class BlogTestCase(TestCase):
         self.assertContains(response, "Archive Entry 14")
         self.assertContains(response, "Archive Entry 0")
 
+    def test_year_archive_returns_200(self):
+        """Year archive renders. Regression guard: it previously 500'd
+        (TemplateDoesNotExist) because blog/year.html did not exist."""
+        response = self.client.get(
+            reverse("blog:year", kwargs={"year": self.entry.created.year})
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Test Blog Post")
+
+    def test_month_archive_returns_200(self):
+        """Month archive renders. Regression guard for the same 500, and for
+        the month-slug resolution (numeric months resolve to January)."""
+        created = self.entry.created
+        response = self.client.get(
+            reverse(
+                "blog:month",
+                kwargs={"year": created.year, "month": created.strftime("%b").lower()},
+            )
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Test Blog Post")
+
+    def test_site_name_renders_from_context_processor(self):
+        """site_name (common_context) reaches the page. Regression guard: the
+        processor's registration was dropped and re-added during development
+        with nothing to catch the resulting blank titles in production."""
+        from blog.models import SiteSettings
+
+        settings_row = SiteSettings.get_settings()
+        settings_row.site_title = "Distinctive Site Title QZX"
+        settings_row.save()
+        response = self.client.get(reverse("blog:posts"))
+        # Rendered site-wide via the <title> and the WebSite/Organization
+        # JSON-LD; absent entirely if the context processor is unregistered.
+        self.assertContains(response, "Distinctive Site Title QZX")
+
 
 class TemplateValidationTests(TestCase):
     """Test that all templates can be compiled without syntax errors."""
