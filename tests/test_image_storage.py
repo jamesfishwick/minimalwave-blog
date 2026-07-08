@@ -143,6 +143,59 @@ class AzureBlobStorageConfigTests(TestCase):
         except ImportError:
             self.skipTest("Production settings not available in test environment")
 
+    def test_production_csp_is_hash_based_not_nonce(self):
+        """CSP must match inline scripts by hash, and the pinned hashes must
+        equal base.html's actual inline-script bytes.
+
+        A per-request nonce baked into the whole-site-cached HTML can never
+        match the header nonce on a cache hit. And a pinned hash that drifts
+        from the template (a script edit, or the template formatter reflowing
+        base.html) silently blocks the script under CSP. Guard both.
+        """
+        import base64
+        import hashlib
+        import re
+        from importlib import import_module
+
+        # django-csp is the only legitimately-optional import here; skip only on
+        # that. A broken production.py must FAIL, not skip -> import outside.
+        try:
+            from csp.constants import NONCE, SELF
+        except ImportError:
+            self.skipTest("django-csp not available")
+        prod = import_module("minimalwave-blog.settings.production")
+
+        directives = prod.CONTENT_SECURITY_POLICY["DIRECTIVES"]
+        script_src = directives["script-src"]
+
+        # Cache-safe: hashes present, per-request nonce absent.
+        self.assertNotIn(NONCE, script_src)
+        self.assertIn(SELF, script_src)
+        self.assertIn("csp.middleware.CSPMiddleware", prod.MIDDLEWARE)
+        # Published posts can embed externally hosted images via shortcode.
+        self.assertIn("https:", directives["img-src"])
+        # Manifest storage must fail loudly on a missing entry.
+        self.assertTrue(prod.WHITENOISE_MANIFEST_STRICT)
+
+        # The pinned hashes must match the real inline scripts in base.html, or
+        # CSP silently blocks the theme scripts in production.
+        from django.template.loader import get_template
+
+        base_html = open(get_template("base.html").origin.name, encoding="utf-8").read()
+        computed = {
+            "'sha256-"
+            + base64.b64encode(hashlib.sha256(body.encode("utf-8")).digest()).decode()
+            + "'"
+            for body in re.findall(r"<script>(.*?)</script>", base_html, re.DOTALL)
+        }
+        pinned = {str(s) for s in script_src if str(s).startswith("'sha256-")}
+        self.assertTrue(pinned, "script-src must pin the inline-script hashes")
+        self.assertEqual(
+            pinned,
+            computed,
+            "pinned CSP hashes must equal the sha256 of base.html inline scripts",
+        )
+
 
 class StorageBackendTests(TestCase):
     """Test storage backend configuration and switching."""

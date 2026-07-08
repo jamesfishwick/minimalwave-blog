@@ -89,7 +89,7 @@
     "name": "{{ site_name }}",
     "logo": {
       "@type": "ImageObject",
-      "url": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/logo.png' %}"
+      "url": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/default-card.jpg' %}"
     }
   },
   {% if entry.get_image_url %}"image": "{{ request.scheme }}://{{ request.get_host }}{{ entry.get_image_url }}",{% endif %}

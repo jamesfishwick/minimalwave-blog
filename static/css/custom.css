@@ -185,7 +185,7 @@ body {
 
 
 .aside__description {
-  color: var(--drac-comment);
+  color: var(--drac-text-muted);
   margin: 0.5rem 0 0;
   font-size: 0.9em;
 }
@@ -250,14 +250,14 @@ body {
    POST META (date, author, reading time)
    ============================================================ */
 .post-meta {
-  color: var(--drac-comment);
+  color: var(--drac-text-muted);
   font-size: 0.9em;
   margin-bottom: 0.75rem;
   font-variant-numeric: tabular-nums;
 }
 
 .reading-time {
-  color: var(--drac-comment);
+  color: var(--drac-text-muted);
 }
 
 .reading-time::before {
