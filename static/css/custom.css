@@ -90,7 +90,7 @@ body {
   padding: 1rem 0;
   border-top: 1px solid var(--drac-comment);
   margin-top: 2rem;
-  color: var(--drac-comment);
+  color: var(--drac-text-muted);
   font-size: 0.9em;
 }
 
