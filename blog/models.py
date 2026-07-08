@@ -61,6 +61,10 @@ class BaseEntry(models.Model):
     )
     title = models.CharField(max_length=200)
     created = models.DateTimeField(default=timezone.now)
+    updated = models.DateTimeField(
+        auto_now=True,
+        help_text="Automatically set to the last time this content was saved",
+    )
     publish_date = models.DateTimeField(
         null=True,
         blank=True,
