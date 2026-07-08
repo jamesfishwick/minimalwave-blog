@@ -2,10 +2,16 @@
 
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block title %}
 
   {{ blogmark.title }} | {{ site_name }}
 
+{% endblock %}
+
+{% block canonical %}
+  <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ blogmark.get_absolute_url }}" />
 {% endblock %}
 
 {% block meta_description %}
@@ -81,6 +87,84 @@
 
 {% block extra_head %}
 
+  <!-- Article metadata -->
+  <meta property="article:published_time" content="{{ blogmark.created|date:'c' }}" />
+
+  {% if blogmark.updated %}
+    <meta property="article:modified_time" content="{{ blogmark.updated|date:'c' }}" />
+  {% endif %}
+
+
+  {% for tag in blogmark.tags.all %}
+    <meta property="article:tag" content="{{ tag.name }}" />
+  {% endfor %}
+
+  <!-- Structured Data (JSON-LD) for SEO -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "{{ blogmark.title|escapejs }}",
+  "description": "{{ blogmark.commentary_rendered|striptags|escapejs }}",
+  "datePublished": "{{ blogmark.created|date:'c' }}",
+  "dateModified": "{% if blogmark.updated %}{{ blogmark.updated|date:'c' }}{% else %}{{ blogmark.created|date:'c' }}{% endif %}",
+  "author": {
+    "@type": "Person",
+    "name": "{{ site_name|escapejs }}"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "{{ site_name|escapejs }}",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/logo.png' %}"
+    }
+  },
+  {% if blogmark.get_image_url %}"image": "{{ request.scheme }}://{{ request.get_host }}{{ blogmark.get_image_url }}",{% endif %}
+  "url": "{{ request.scheme }}://{{ request.get_host }}{{ blogmark.get_absolute_url }}",
+  "sameAs": "{{ blogmark.url|escapejs }}",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ request.scheme }}://{{ request.get_host }}{{ blogmark.get_absolute_url }}"
+  }{% if blogmark.tags.exists %},
+  "keywords": "{% for tag in blogmark.tags.all %}{{ tag.name|escapejs }}{% if not forloop.last %}, {% endif %}{% endfor %}"{% endif %}
+}
+</script>
+
+  <!-- Breadcrumb Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'blog:index' %}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "{{ blogmark.created|date:'Y' }}",
+      "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'blog:year' blogmark.created.year %}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "{{ blogmark.created|date:'F' }}",
+      "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'blog:month' blogmark.created.year blogmark.created|date:'M'|lower %}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "{{ blogmark.title|escapejs }}",
+      "item": "{{ request.scheme }}://{{ request.get_host }}{{ blogmark.get_absolute_url }}"
+    }
+  ]
+}
+</script>
+
 {% endblock %}
 
 {% block content %}
@@ -115,7 +199,7 @@
   <div class="post-meta">{{ blogmark.created|date:"F j, Y" }}</div>
   </header>
 
-  <a href="{{ blogmark.url }}" class="blogmark-url">{{ blogmark.url }}</a>
+  <a href="{{ blogmark.url }}" class="blogmark-url" target="_blank" rel="nofollow ugc noopener">{{ blogmark.url }}</a>
 
 
   {% if blogmark.get_image_url %}
@@ -141,7 +225,7 @@
   {% if blogmark.via %}
 
     <div class="blogmark-via">
-    Via: <a href="{{ blogmark.via }}">{{ blogmark.via_title|default:blogmark.via }}</a>
+    Via: <a href="{{ blogmark.via }}" target="_blank" rel="nofollow ugc noopener">{{ blogmark.via_title|default:blogmark.via }}</a>
     </div>
 
 

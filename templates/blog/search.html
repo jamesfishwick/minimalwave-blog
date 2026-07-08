@@ -14,6 +14,30 @@
 
 {% endblock %}
 
+{% block robots_meta %}
+{% if page_obj and page_obj.number > 1 %}
+  <meta name="robots" content="noindex,follow" />
+{% else %}
+  {{ block.super }}
+{% endif %}
+{% endblock %}
+
+{% block extra_head %}
+
+  {% if page_obj %}
+
+    {% if page_obj.has_previous %}
+      <link rel="prev" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}?q={{ q|urlencode }}&amp;page={{ page_obj.previous_page_number }}" />
+    {% endif %}
+
+    {% if page_obj.has_next %}
+      <link rel="next" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}?q={{ q|urlencode }}&amp;page={{ page_obj.next_page_number }}" />
+    {% endif %}
+
+  {% endif %}
+
+{% endblock %}
+
 {% block content %}
 
   <section class="search-results">
