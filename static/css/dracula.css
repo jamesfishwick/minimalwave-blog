@@ -3,6 +3,7 @@
   --drac-fg: #f8f8f2;
   --drac-selection: #44475a;
   --drac-comment: #6272a4;
+  --drac-text-muted: #8b95c5;
   --drac-red: #ff5555;
   --drac-orange: #ffb86c;
   --drac-yellow: #f1fa8c;
@@ -68,6 +69,7 @@
     --drac-fg: #282a36;
     --drac-selection: #e6e6e6;
     --drac-comment: #6272a4;
+    --drac-text-muted: #545f8a;
     --drac-red: #c33027;
     --drac-orange: #c47a1a;
     --drac-yellow: #9a8c04;
@@ -99,6 +101,7 @@
   --drac-fg: #282a36;
   --drac-selection: #e6e6e6;
   --drac-comment: #6272a4;
+  --drac-text-muted: #545f8a;
   --drac-red: #c33027;
   --drac-orange: #c47a1a;
   --drac-yellow: #9a8c04;
@@ -130,6 +133,7 @@
   --drac-fg: #f8f8f2;
   --drac-selection: #44475a;
   --drac-comment: #6272a4;
+  --drac-text-muted: #8b95c5;
   --drac-red: #ff5555;
   --drac-orange: #ffb86c;
   --drac-yellow: #f1fa8c;
