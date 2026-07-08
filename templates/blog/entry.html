@@ -151,25 +151,25 @@
       "@type": "ListItem",
       "position": 1,
       "name": "Home",
-      "item": "{{ request.scheme }}://{{ request.get_host }}/"
+      "item": "{{ site_url }}/"
     },
     {
       "@type": "ListItem",
       "position": 2,
       "name": "{{ entry.created|date:'Y' }}",
-      "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'blog:year' entry.created.year %}"
+      "item": "{{ site_url }}{% url 'blog:year' entry.created.year %}"
     },
     {
       "@type": "ListItem",
       "position": 3,
       "name": "{{ entry.created|date:'F' }}",
-      "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'blog:month' entry.created.year entry.created|date:'M'|lower %}"
+      "item": "{{ site_url }}{% url 'blog:month' entry.created.year entry.created|date:'M'|lower %}"
     },
     {
       "@type": "ListItem",
       "position": 4,
       "name": "{{ entry.title|escapejs }}",
-      "item": "{{ request.scheme }}://{{ request.get_host }}{{ entry.get_absolute_url }}"
+      "item": "{{ site_url }}{{ entry.get_absolute_url }}"
     }
   ]
 }
