@@ -3,7 +3,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 from django.urls import include, path
-from django.views.generic import TemplateView
+from django.views.generic import RedirectView, TemplateView
 
 from blog.sitemaps import BlogmarkSitemap, EntrySitemap
 from blog.views_admin import run_auto_tag
@@ -35,6 +35,14 @@ urlpatterns = [
         "robots.txt",
         TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
         name="robots_txt",
+    ),
+    path(
+        "favicon.ico",
+        RedirectView.as_view(
+            url="/" + settings.STATIC_URL.strip("/") + "/images/favicon.ico",
+            permanent=True,
+        ),
+        name="favicon",
     ),
     path("til/", include("til.urls")),  # Retired section: 301-redirects into blog
     path("projects/", include("projects.urls")),
