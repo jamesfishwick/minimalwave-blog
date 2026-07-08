@@ -178,6 +178,9 @@
 
 {% block scripts %}
 
+<!-- Console easter egg (WarGames). chess.js is lazy-loaded on demand. -->
+<script id="wopr" src="{% static 'js/wopr.js' %}" data-chess-src="{% static 'js/vendor/chess.js' %}" defer></script>
+
 {% endblock %}
 
 <!-- Site-wide structured data -->
