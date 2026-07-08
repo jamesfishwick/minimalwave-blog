@@ -159,9 +159,41 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
+# Additional security headers flagged by Lighthouse best-practices
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+X_FRAME_OPTIONS = "DENY"
+
+# Content Security Policy (django-csp 4.x)
+# Inline <script> in base.html run under a per-request nonce; styles allow
+# 'unsafe-inline' because markdown image shortcodes emit inline style="".
+from urllib.parse import urlparse
+
+from csp.constants import NONCE, NONE, SELF
+
+_plausible_origin = "{0.scheme}://{0.netloc}".format(urlparse(PLAUSIBLE_SCRIPT_URL))
+_img_src = [SELF, "data:"]
+if AZURE_ACCOUNT_NAME:
+    _img_src.append(f"https://{AZURE_ACCOUNT_NAME}.blob.core.windows.net")
+
+CONTENT_SECURITY_POLICY = {
+    "DIRECTIVES": {
+        "default-src": [SELF],
+        "script-src": [SELF, NONCE, _plausible_origin],
+        "style-src": [SELF, "'unsafe-inline'"],
+        "img-src": _img_src,
+        "connect-src": [SELF, _plausible_origin],
+        "font-src": [SELF],
+        "base-uri": [SELF],
+        "object-src": [NONE],
+        "frame-ancestors": [NONE],
+    }
+}
+
 # Middleware - Add cache and compression while preserving base middleware
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "csp.middleware.CSPMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.cache.UpdateCacheMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
