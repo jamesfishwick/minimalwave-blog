@@ -860,3 +860,39 @@ body.page--home .page__aside {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* --- 404 page: bill_the_bat cowsay + lolbat-style rainbow --- */
+.not-found {
+  text-align: center;
+  padding: 2rem 1rem 3rem;
+}
+/* Dark "terminal" panel so the rainbow always sits on dark, in both themes. */
+.terminal-frame {
+  display: inline-block;
+  max-width: 100%;
+  margin: 0 auto 1.5rem;
+  padding: 1.25rem 1.5rem;
+  background: #282a36;
+  border: 1px solid #44475a;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+.cowsay-rainbow {
+  display: block;
+  margin: 0;
+  text-align: left;
+  border: none;
+  font-family: "SF Mono", "Fira Code", Consolas, monospace;
+  line-height: 1.15;
+  font-size: clamp(0.5rem, 2.1vw, 0.9rem);
+  white-space: pre;
+  color: #bd93f9; /* fallback if background-clip:text is unsupported */
+}
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .cowsay-rainbow {
+    background: linear-gradient(135deg, #ff5555, #ffb86c, #f1fa8c, #50fa7b, #8be9fd, #bd93f9, #ff79c6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
