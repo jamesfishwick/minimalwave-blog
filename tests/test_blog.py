@@ -190,6 +190,19 @@ class BlogTestCase(TestCase):
         # JSON-LD; absent entirely if the context processor is unregistered.
         self.assertContains(response, "Distinctive Site Title QZX")
 
+    def test_entry_breadcrumb_uses_alphabetic_month_slug(self):
+        """The BreadcrumbList month item must use the alphabetic slug
+        (e.g. /jul/) that the blog:month view expects, not a numeric month
+        (which get_month_number silently resolves to January). Guards the
+        breadcrumb template directly, not just the view's resolver."""
+        created = self.entry.created
+        month_slug = created.strftime("%b").lower()
+        response = self.client.get(self.entry.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+        # The breadcrumb month item ends in /YYYY/<slug>/"; a numeric-month
+        # regression would render /YYYY/07/" instead.
+        self.assertContains(response, f'/{created.year}/{month_slug}/"')
+
 
 class TemplateValidationTests(TestCase):
     """Test that all templates can be compiled without syntax errors."""

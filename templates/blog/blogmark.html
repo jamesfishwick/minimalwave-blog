@@ -121,11 +121,11 @@
     }
   },
   {% if blogmark.get_image_url %}"image": "{{ request.scheme }}://{{ request.get_host }}{{ blogmark.get_image_url }}",{% endif %}
-  "url": "{{ request.scheme }}://{{ request.get_host }}{{ blogmark.get_absolute_url }}",
+  "url": "{{ site_url }}{{ blogmark.get_absolute_url }}",
   "sameAs": "{{ blogmark.url|escapejs }}",
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "{{ request.scheme }}://{{ request.get_host }}{{ blogmark.get_absolute_url }}"
+    "@id": "{{ site_url }}{{ blogmark.get_absolute_url }}"
   }{% if blogmark.tags.exists %},
   "keywords": "{% for tag in blogmark.tags.all %}{{ tag.name|escapejs }}{% if not forloop.last %}, {% endif %}{% endfor %}"{% endif %}
 }
@@ -141,25 +141,25 @@
       "@type": "ListItem",
       "position": 1,
       "name": "Home",
-      "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'blog:index' %}"
+      "item": "{{ site_url }}{% url 'blog:index' %}"
     },
     {
       "@type": "ListItem",
       "position": 2,
       "name": "{{ blogmark.created|date:'Y' }}",
-      "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'blog:year' blogmark.created.year %}"
+      "item": "{{ site_url }}{% url 'blog:year' blogmark.created.year %}"
     },
     {
       "@type": "ListItem",
       "position": 3,
       "name": "{{ blogmark.created|date:'F' }}",
-      "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'blog:month' blogmark.created.year blogmark.created|date:'M'|lower %}"
+      "item": "{{ site_url }}{% url 'blog:month' blogmark.created.year blogmark.created|date:'M'|lower %}"
     },
     {
       "@type": "ListItem",
       "position": 4,
       "name": "{{ blogmark.title|escapejs }}",
-      "item": "{{ request.scheme }}://{{ request.get_host }}{{ blogmark.get_absolute_url }}"
+      "item": "{{ site_url }}{{ blogmark.get_absolute_url }}"
     }
   ]
 }
