@@ -2,28 +2,36 @@
 
 A Django-based personal blog inspired by Simon Willison's website (simonwillison.net), featuring a dark mode minimal wave aesthetic.
 
+## Lighthouse Scores
+
+Desktop audit of the production site (`/posts/`):
+
+| Performance | Accessibility | Best Practices | SEO |
+| :---------: | :-----------: | :------------: | :-: |
+|     100     |      100      |       96       | 100 |
+
 ## Features
 
-* **Blog Posts:** Create and manage blog posts with title, summary, body, publication date, and draft/live status.
-* **Link Blog (Blogmarks):** Share and comment on external links, similar to Simon Willison's "blogmarks".
-* **TIL (Today I Learned):** A dedicated section for short-form content, organized by topic.
-* **Tagging:** Organize all content (posts, links, TILs) using tags.
-* **Markdown Support:** Write content using Markdown with syntax highlighting and enhanced image placement.
-* **Search:** Full-text search across blog posts, links, and TILs.
-* **Archives:** Browse content by year and month.
-* **Atom Feeds:** Separate Atom feeds for the main blog and the TIL section.
-* **Social Media Cards:** Automatic generation of social media card metadata (Open Graph and Twitter Cards) for enhanced link sharing.
-* **Dark Mode:** A visually appealing dark mode theme with minimal wave aesthetics (neon text, grid patterns).
-* **Responsive Design:** Adapts to different screen sizes (desktop, mobile).
-* **Reading Time:** Estimated reading time displayed for blog posts and TILs.
-* **Related Posts:** Suggests related blog posts based on shared tags.
-* **Pagination:** Paginated index and archive pages.
-* **Content Management:**
-  * **Draft/Review System:** Enhanced content workflow with draft, review, and published states.
-  * **Preview Functionality:** Preview draft and review content with visual indicators.
-  * **Scheduled Publishing:** Schedule content to be published automatically at a future date and time.
-* **Docker Support:** Production-ready Docker and Docker Compose configurations.
-* **Azure Deployment:** Ready-to-use GitHub Actions workflow for Azure deployment.
+- **Blog Posts:** Create and manage blog posts with title, summary, body, publication date, and draft/live status.
+- **Link Blog (Blogmarks):** Share and comment on external links, similar to Simon Willison's "blogmarks".
+- **TIL (Today I Learned):** A dedicated section for short-form content, organized by topic.
+- **Tagging:** Organize all content (posts, links, TILs) using tags.
+- **Markdown Support:** Write content using Markdown with syntax highlighting and enhanced image placement.
+- **Search:** Full-text search across blog posts, links, and TILs.
+- **Archives:** Browse content by year and month.
+- **Atom Feeds:** Separate Atom feeds for the main blog and the TIL section.
+- **Social Media Cards:** Automatic generation of social media card metadata (Open Graph and Twitter Cards) for enhanced link sharing.
+- **Dark Mode:** A visually appealing dark mode theme with minimal wave aesthetics (neon text, grid patterns).
+- **Responsive Design:** Adapts to different screen sizes (desktop, mobile).
+- **Reading Time:** Estimated reading time displayed for blog posts and TILs.
+- **Related Posts:** Suggests related blog posts based on shared tags.
+- **Pagination:** Paginated index and archive pages.
+- **Content Management:**
+  - **Draft/Review System:** Enhanced content workflow with draft, review, and published states.
+  - **Preview Functionality:** Preview draft and review content with visual indicators.
+  - **Scheduled Publishing:** Schedule content to be published automatically at a future date and time.
+- **Docker Support:** Production-ready Docker and Docker Compose configurations.
+- **Azure Deployment:** Ready-to-use GitHub Actions workflow for Azure deployment.
 
 ## Local Development Setup
 
@@ -33,46 +41,46 @@ There are two ways to run the blog locally: using a Python virtual environment o
 
 1. **Clone the repository:**
 
-    ```bash
-    git clone <repository-url>
-    cd minimalwave-blog
-    ```
+   ```bash
+   git clone <repository-url>
+   cd minimalwave-blog
+   ```
 
 2. **Create and activate a virtual environment:**
 
-    ```bash
-    python3 -m venv venv
-    source venv/bin/activate
-    ```
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
 
 3. **Install dependencies:**
 
-    ```bash
-    pip install -r requirements.txt
-    ```
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-    All subsequent commands assume you're in the root directory (where `manage.py` is located).
+   All subsequent commands assume you're in the root directory (where `manage.py` is located).
 
 4. **Apply database migrations:**
 
-    ```bash
-    python manage.py makemigrations
-    python manage.py migrate
-    ```
+   ```bash
+   python manage.py makemigrations
+   python manage.py migrate
+   ```
 
 5. **Create a superuser account:**
 
-    ```bash
-    python manage.py createsuperuser
-    ```
+   ```bash
+   python manage.py createsuperuser
+   ```
 
-    (Follow the prompts to set up your admin username and password)
+   (Follow the prompts to set up your admin username and password)
 
 6. **Run the development server:**
 
-    ```bash
-    python manage.py runserver
-    ```
+   ```bash
+   python manage.py runserver
+   ```
 
 7. **Access the blog:** Open your web browser and go to `http://127.0.0.1:8000/`
 8. **Access the admin interface:** Go to `http://127.0.0.1:8000/admin/` and log in with your superuser credentials to create content.
@@ -82,61 +90,61 @@ There are two ways to run the blog locally: using a Python virtual environment o
 1. **Ensure Docker and Docker Compose are installed and running.**
 2. **Clone the repository:**
 
-    ```bash
-    git clone <repository-url>
-    cd minimalwave-blog
-    ```
+   ```bash
+   git clone <repository-url>
+   cd minimalwave-blog
+   ```
 
 3. **Development Environment:**
 
-    ```bash
-    # Start the development environment
-    docker-compose up -d
+   ```bash
+   # Start the development environment
+   docker-compose up -d
 
-    # Or use the Makefile
-    make dev
-    ```
+   # Or use the Makefile
+   make dev
+   ```
 
 4. **Production Environment:**
 
-    ```bash
-    # Create a .env file with your production settings (see .env.sample)
-    cp .env.sample .env
-    # Edit .env with your production values
+   ```bash
+   # Create a .env file with your production settings (see .env.sample)
+   cp .env.sample .env
+   # Edit .env with your production values
 
-    # Start the production environment
-    docker-compose -f docker-compose.prod.yml up -d
+   # Start the production environment
+   docker-compose -f docker-compose.prod.yml up -d
 
-    # Or use the Makefile
-    make prod
-    ```
+   # Or use the Makefile
+   make prod
+   ```
 
 5. **Access the blog:** Open your web browser and go to `http://localhost:8000/`
 6. **Access the admin interface:** Go to `http://localhost:8000/admin/` and log in with your superuser credentials to create content.
 
-    *Note: This runs the container in the foreground. Use `-d` for detached mode.*
+   _Note: This runs the container in the foreground. Use `-d` for detached mode._
 
-    **Alternatively, run with Docker Compose (recommended):**
+   **Alternatively, run with Docker Compose (recommended):**
 
-    ```bash
-    docker-compose up web
-    ```
+   ```bash
+   docker-compose up web
+   ```
 
-    Open your browser at <http://localhost:8000/>
+   Open your browser at <http://localhost:8000/>
 
-    *Use `-d` flag to run in detached mode.*
+   _Use `-d` flag to run in detached mode._
 
 7. **Apply database migrations and create superuser (first time only):**
-    * Open another terminal window.
-    * Execute the following commands:
+   - Open another terminal window.
+   - Execute the following commands:
 
-        ```bash
-        docker-compose exec web python manage.py makemigrations
-        docker-compose exec web python manage.py migrate
-        docker-compose exec web python manage.py createsuperuser
-        ```
+     ```bash
+     docker-compose exec web python manage.py makemigrations
+     docker-compose exec web python manage.py migrate
+     docker-compose exec web python manage.py createsuperuser
+     ```
 
-        (Follow the prompts to set up your admin username and password)
+     (Follow the prompts to set up your admin username and password)
 
 8. **Access the blog:** Open your web browser and go to `http://localhost:8000/` or `http://127.0.0.1:8000/`
 9. **Access the admin interface:** Go to `http://localhost:8000/admin/` and log in with your superuser credentials.
@@ -167,16 +175,16 @@ This project is configured for deployment to Azure App Service. See the `azure_d
 
 ## Project Structure
 
-* `minimalwave-blog/`: Main Django project directory.
-  * `settings/`: Contains development and production settings.
-  * `static/`: Static files (CSS, images).
-  * `templates/`: Base HTML templates.
-* `blog/`: Django app for core blog posts and blogmarks.
-* `til/`: Django app for the "Today I Learned" section.
-* `manage.py`: Django management script.
-* `requirements.txt`: Python dependencies.
-* `Dockerfile`: For building the Docker image.
-* `azure_deployment_guide.md`: Instructions for Azure deployment.
+- `minimalwave-blog/`: Main Django project directory.
+  - `settings/`: Contains development and production settings.
+  - `static/`: Static files (CSS, images).
+  - `templates/`: Base HTML templates.
+- `blog/`: Django app for core blog posts and blogmarks.
+- `til/`: Django app for the "Today I Learned" section.
+- `manage.py`: Django management script.
+- `requirements.txt`: Python dependencies.
+- `Dockerfile`: For building the Docker image.
+- `azure_deployment_guide.md`: Instructions for Azure deployment.
 
 ## Advanced Features
 
@@ -243,14 +251,14 @@ make test-schedule
 
 This will:
 
-* Create a test blog entry scheduled to publish in 5 minutes
-* Create a test blogmark scheduled to publish in 5 minutes
-* Tag both with the "ScheduledTest" tag
+- Create a test blog entry scheduled to publish in 5 minutes
+- Create a test blogmark scheduled to publish in 5 minutes
+- Tag both with the "ScheduledTest" tag
 
 After running the test, you can:
 
-* Wait for the scheduled time to pass and verify the content is published automatically
-* Run `python manage.py publish_scheduled` to publish immediately
+- Wait for the scheduled time to pass and verify the content is published automatically
+- Run `python manage.py publish_scheduled` to publish immediately
 
 ### Enhanced Markdown Image Placement
 
@@ -261,11 +269,11 @@ The blog supports two methods for inserting and positioning images in markdown c
 Use the `attr_list` extension to add CSS classes directly to images:
 
 ```markdown
-![Photo](image.jpg){: .align-right .w-300}
-![Hero](hero.jpg){: .align-center .w-800}
+![Photo](image.jpg){: .align-right .w-300} ![Hero](hero.jpg){: .align-center .w-800}
 ```
 
 **Available classes:**
+
 - Alignment: `.align-left`, `.align-right`, `.align-center`
 - Widths: `.w-200`, `.w-300`, `.w-400`, `.w-500`, `.w-800`, `.full-width`
 
@@ -274,17 +282,18 @@ Use the `attr_list` extension to add CSS classes directly to images:
 Use simple shortcode syntax for common scenarios:
 
 ```markdown
-{{img:uploads/photo.jpg|right|300|Caption text}}
-{{img:https://example.com/image.jpg|center|800}}
+{{img:uploads/photo.jpg|right|300|Caption text}} {{img:https://example.com/image.jpg|center|800}}
 ```
 
 **Syntax:** `{{img:path|position|width|optional_caption}}`
+
 - `path`: Relative to `/media/` or absolute URL
 - `position`: left, right, center, full
 - `width`: 200, 300, 400, 500, 800 (pixels)
 - `caption`: Optional (becomes alt text and visible caption)
 
 **Features:**
+
 - Semantic HTML (`<figure>` and `<figcaption>`)
 - Mobile responsive (images stack on small screens)
 - WCAG 2.1 AA accessibility compliant
