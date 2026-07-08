@@ -20,7 +20,7 @@ class ProjectSitemap(Sitemap):
         return Project.objects.published()
 
     def lastmod(self, obj):
-        return obj.end_date or obj.start_date
+        return obj.updated or obj.created
 
     def location(self, obj):
         return obj.get_absolute_url()

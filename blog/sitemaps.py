@@ -22,7 +22,7 @@ class EntrySitemap(Sitemap):
 
     def lastmod(self, obj):
         """Return the last modification date."""
-        return obj.updated if hasattr(obj, "updated") else obj.created
+        return obj.updated or obj.created
 
     def location(self, obj):
         """Return the URL for the entry."""
@@ -41,7 +41,7 @@ class BlogmarkSitemap(Sitemap):
 
     def lastmod(self, obj):
         """Return the last modification date."""
-        return obj.updated if hasattr(obj, "updated") else obj.created
+        return obj.updated or obj.created
 
     def location(self, obj):
         """Return the URL for the blogmark."""
