@@ -1,4 +1,3 @@
-
 ---
 
 # CLAUDE.md
@@ -14,27 +13,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 > **Prefer Docker over local.** The commands below are for reference only. Run them in Docker unless you have a specific reason not to.
 
 ````bash`
+
 # Run development server (prefer Docker instead)
+
 python manage.py runserver 0.0.0.0:8000
 
 # Database operations
-python manage.py makemigrations
-python manage.py migrate
-python manage.py createsuperuser
+
+python manage.py makemigrations python manage.py migrate python manage.py createsuperuser
 
 # Testing
-python manage.py test
-pytest
+
+python manage.py test pytest
 
 # Code formatting
-black blog til minimalwave-blog
-isort blog til minimalwave-blog
-python format_django_templates.py
+
+black blog til minimalwave-blog isort blog til minimalwave-blog python format_django_templates.py
 
 # Scheduled publishing
-python manage.py publish_scheduled
-```
 
+python manage.py publish_scheduled
+
+````
 ### Docker Development
 
 ```bash
@@ -49,11 +49,12 @@ make prod
 # Execute commands in container (prefer Make commands)
 make migrate-safe  # Recommended over docker-compose exec web python manage.py migrate
 make superuser     # Or: docker-compose exec web python manage.py createsuperuser
-```
+````
 
 ### Development Admin Access
 
 **Pre-configured Admin Accounts:**
+
 - **Admin User**: `admin` / `adminpass123`
 - **Staff User**: `staff` / `staffpass123`
 - **Admin URL**: http://localhost:8000/admin/
@@ -63,6 +64,7 @@ These credentials are configured in the `.env` file for development convenience.
 ### Makefile Commands
 
 **Essential Development Commands:**
+
 - `make dev-safe` - Start development environment with migration validation (recommended)
 - `make dev` - Start development environment (basic)
 - `make dev-stop` - Stop development environment
@@ -70,6 +72,7 @@ These credentials are configured in the `.env` file for development convenience.
 - `make shell` - Start the Django shell
 
 **Migration Safety Commands:**
+
 - `make migration-pre-check` - Pre-flight checklist BEFORE making model changes
 - `make makemigrations` - Create new migrations with validation
 - `make migrate-safe` - Apply migrations with full safety checks
@@ -78,32 +81,38 @@ These credentials are configured in the `.env` file for development convenience.
 - `make check-pending-migrations` - Check for pending migrations
 
 **Database Operations:**
+
 - `make sync-db-from-prod` - Sync production database to local Docker
 - `make sync-db-dry-run` - Show what database sync would do (no changes)
 
 **Azure Operations Commands:**
+
 - `make azure-diagnose` - Diagnose production issues (download logs)
 - `make azure-fix-storage` - Fix Azure storage configuration
 - `make azure-fix-domain` - Fix Site domain configuration
 - `make azure-health-check` - Run comprehensive Azure health check
 
 **Scheduled Publishing Commands:**
+
 - `make scheduled-publish-setup` - Set up cron job for scheduled publishing
 - `make scheduled-publish-test` - Create test scheduled content
 - `make publish` - Publish scheduled content now
 
 **Developer Workflow Setup:**
+
 - `make setup-dev-workflow` - Complete dev environment setup (run once)
 - `make setup-pre-commit` - Set up pre-commit hooks
 - `make pre-commit-install` - Install pre-commit hooks
 
 **Testing & Quality:**
+
 - `make test` - Run tests in Docker
 - `make test-local` - Run tests locally (requires local Python environment)
 - `make test-in-docker` - Run tests in Docker (for pre-commit hooks)
 - `make format` - Format Django templates and Python code
 
 **Utility Commands:**
+
 - `make run` - Run the development server
 - `make migrate` - Apply database migrations (basic)
 - `make superuser` - Create a superuser
@@ -156,6 +165,7 @@ These credentials are configured in the `.env` file for development convenience.
 **Purpose**: Pull production Azure PostgreSQL data to local Docker environment for debugging, testing with real data, or validating migrations.
 
 **Prerequisites:**
+
 - PostgreSQL client tools installed (`pg_dump`, `psql`)
   - macOS: `brew install postgresql`
   - Ubuntu: `sudo apt-get install postgresql-client`
@@ -176,6 +186,7 @@ make sync-db-dry-run
 ```
 
 **What It Does:**
+
 1. **Pre-flight checks**: Verifies pg_dump, Docker, and containers are running
 2. **Loads credentials**: From `.env` DATABASE_URL or prompts user
 3. **Backs up local database**: Creates timestamped backup in `data/backups/` (unless `--no-backup`)
@@ -185,6 +196,7 @@ make sync-db-dry-run
 7. **Cleanup**: Keeps last 5 dumps, deletes older ones
 
 **Safety Features:**
+
 - Automatic local backup before overwriting (can skip with `--no-backup`)
 - Confirmation prompt before replacing local data
 - Dry-run mode to preview actions (`--dry-run`)
@@ -192,6 +204,7 @@ make sync-db-dry-run
 - Dumps saved to `data/backups/` (gitignored)
 
 **Restore from Backup:**
+
 ```bash
 # List available backups
 ls -lh data/backups/
@@ -201,6 +214,7 @@ docker-compose exec -T db psql -U postgres -d minimalwave < data/backups/local-b
 ```
 
 **Security Notes:**
+
 - Production password never stored in git (read from `.env` or prompt)
 - Database dumps contain production data (automatically gitignored)
 - May need to allowlist your IP in Azure PostgreSQL firewall rules
@@ -234,12 +248,11 @@ The blog supports two methods for inserting and positioning images in markdown c
 Add HTML attributes directly to markdown images for full control:
 
 ```markdown
-![Photo description](image.jpg){: .align-right .w-300}
-![Hero image](hero.jpg){: .align-center .w-800}
-![Banner](banner.jpg){: .full-width}
+![Photo description](image.jpg){: .align-right .w-300} ![Hero image](hero.jpg){: .align-center .w-800} ![Banner](banner.jpg){: .full-width}
 ```
 
 **Available CSS classes:**
+
 - **Alignment**: `.align-left`, `.align-right`, `.align-center`
 - **Widths**: `.w-200`, `.w-300`, `.w-400`, `.w-500`, `.w-800`, `.full-width`
 - **Combine classes**: `{: .align-right .w-500}`
@@ -250,19 +263,18 @@ Add HTML attributes directly to markdown images for full control:
 Ultra-simple syntax for common image placement scenarios:
 
 ```markdown
-{{img:uploads/photo.jpg|right|300}}
-{{img:uploads/sunset.jpg|left|400|A beautiful sunset}}
-{{img:https://example.com/image.jpg|center|800|Caption text}}
-{{img:blog/hero.jpg|full|1200}}
+{{img:uploads/photo.jpg|right|300}} {{img:uploads/sunset.jpg|left|400|A beautiful sunset}} {{img:https://example.com/image.jpg|center|800|Caption text}} {{img:blog/hero.jpg|full|1200}}
 ```
 
 **Syntax**: `{{img:path|position|width|optional_caption}}`
+
 - **path**: Relative to `/media/` (auto-prepended) or absolute URL (https://...)
 - **position**: `left`, `right`, `center`, `full`
 - **width**: Pixel width (200, 300, 400, 500, 800)
 - **caption**: Optional - becomes both alt text and visible `<figcaption>`
 
 **Technical Details:**
+
 - Shortcodes generate semantic `<figure>` and `<figcaption>` HTML
 - XSS protection via automatic HTML escaping
 - `loading="lazy"` attribute for performance
@@ -271,6 +283,7 @@ Ultra-simple syntax for common image placement scenarios:
 - Both syntaxes can coexist in the same content
 
 **Markdown Configuration** (`minimalwave-blog/settings/base.py`):
+
 ```python
 MARKDOWN_EXTENSIONS = [
     'markdown.extensions.extra',      # Tables, footnotes, etc.
@@ -278,6 +291,10 @@ MARKDOWN_EXTENSIONS = [
     'markdown.extensions.attr_list',   # HTML attributes in markdown
 ]
 ```
+
+#### Embedded Video (CSP allow-list)
+
+Video embeds in post content (Loom, YouTube) are gated by the production Content-Security-Policy `frame-src` directive. Only allow-listed providers render; a new provider embeds as a **blank rectangle in production** (console CSP violation only, no server error). To add one, append its origin to `_frame_src` in `minimalwave-blog/settings/production.py` and assert it in `tests/test_image_storage.py`. Currently allowed: Loom, YouTube (nocookie).
 
 ### Template System
 
@@ -326,17 +343,20 @@ MARKDOWN_EXTENSIONS = [
 ### Development Workflow (Safety First)
 
 **Recommended Development Setup:**
+
 1. `make setup-dev-workflow` - Set up complete safety workflow (run once)
 2. `make dev-safe` - Always use this over `make dev` for development
 3. Use migration safety commands: `make makemigrations`, `make migrate-safe`
 
 **Essential Practices:**
+
 - **Run code in Docker, not locally** - Ensures environment consistency and prevents port 8000 conflicts. A rogue local `manage.py runserver` process will shadow Docker on port 8000 and serve an empty database. Check with `lsof -i :8000` if pages return unexpected 404s.
 - **Use safety workflow** - Pre-commit hooks prevent migration issues
 - **Always validate migrations** - Use `make validate-migrations` before committing
 - **Test in clean environment** - Use `make test-migrations-clean` for CI/CD validation
 
 **Documentation Maintenance:**
+
 - Keep documentation updated with any changes in commands or architecture
 - Keep the .env updated with current credentials and settings
 - Keep Azure resources file current with latest resource names and configurations
@@ -344,6 +364,7 @@ MARKDOWN_EXTENSIONS = [
 - Follow the coding standards and commit guidelines outlined in this document
 
 **When in Doubt:**
+
 - Ask for help if unsure about any changes or commands
 - Ask for help if encountering the same error multiple times
 - Use the issue tracker to report bugs or request features
@@ -351,21 +372,25 @@ MARKDOWN_EXTENSIONS = [
 c### Database Migration Best Practices
 
 #### Manual Safety Checks
+
 - **ALWAYS check current state before running migrations**: Use `python manage.py showmigrations` to see what migrations exist and their status
 - **ONLY run migrations when needed**: Check if there are pending migrations before running `makemigrations` and `migrate`
 - **Don't blindly follow setup instructions**: Assess the current state of the project before executing database operations
 - **Verify migration necessity**: If git status shows migration files already exist, migrations have likely already been created
 
 #### Automated Safety Workflow (Recommended)
+
 The project now includes automated migration safety measures to prevent CI/CD failures:
 
 **Pre-commit Hooks**: Automatically validate migrations before every commit
+
 ```bash
 # Set up the complete safety workflow
 make setup-pre-commit
 ```
 
 **Safe Migration Commands**: Use these instead of raw Django commands
+
 ```bash
 # Create migrations with automatic validation
 make makemigrations
@@ -381,12 +406,14 @@ make test-migrations-clean
 ```
 
 **What the Safety System Prevents**:
+
 - Empty/fake migrations that don't create actual database columns
 - Migration dependency conflicts
 - Migrations that work locally but fail in CI/CD
 - Inconsistent database state between environments
 
 **How It Works**:
+
 1. Pre-commit hooks run migration validation before each commit
 2. Scripts check for empty operations, dependency conflicts, and clean environment compatibility
 3. Clean environment testing simulates CI/CD conditions locally
@@ -395,13 +422,16 @@ make test-migrations-clean
 # Important Troubleshooting Guidelines
 
 ## Claude Sandbox Directory
+
 When troubleshooting issues or downloading files for analysis:
+
 - **ALWAYS** use `.claude-sandbox/` directory for temporary files
 - This directory is gitignored and safe for debugging artifacts
 - Example: When downloading logs, save to `.claude-sandbox/logs.zip`
 - Clean up after troubleshooting by deleting downloaded files
 
 ## Clean Development Practices
+
 - Never leave zip files, log dumps, or temporary files in the project root
 - Use the sandbox directory for any downloaded troubleshooting files
 - If you create temporary files outside the sandbox, delete them after use
@@ -410,14 +440,13 @@ When troubleshooting issues or downloading files for analysis:
 # Important Troubleshooting Resources
 
 ## Azure Blob Storage Issues
+
 If images are not displaying on the production site (404 errors, empty Azure storage):
+
 - **Diagnosis & Fix:** See `docs/AZURE_STORAGE_TROUBLESHOOTING.md`
 - **Quick Fix:** Run `./scripts/fix-azure-storage.sh` then re-upload images
 - **Check Status:** `python manage.py sync_images_to_azure --dry-run`
 
 # important-instruction-reminders
 
-Do what has been asked; nothing more, nothing less.
-NEVER create files unless they're absolutely necessary for achieving your goal.
-ALWAYS prefer editing an existing file to creating a new one.
-NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
+Do what has been asked; nothing more, nothing less. NEVER create files unless they're absolutely necessary for achieving your goal. ALWAYS prefer editing an existing file to creating a new one. NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
