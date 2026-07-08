@@ -1,0 +1,143 @@
+
+
+{% extends "base.html" %}
+
+{% block title %}
+  {{ month_name }} {{ year }} &mdash; {{ site_name }}
+{% endblock %}
+
+{% block meta_description %}
+  Blog posts and links from {{ month_name }} {{ year }}
+{% endblock %}
+
+{% block extra_head %}
+
+  {% if page_obj.has_previous %}
+
+    <link rel="prev" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}?page={{ page_obj.previous_page_number }}" />
+
+  {% endif %}
+
+
+  {% if page_obj.has_next %}
+
+    <link rel="next" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}?page={{ page_obj.next_page_number }}" />
+
+  {% endif %}
+
+{% endblock %}
+
+{% block content %}
+
+  <section class="blog-index" aria-labelledby="month-heading">
+  <h1 id="month-heading">{{ month_name }} {{ year }}</h1>
+
+
+  {% for entry in entries %}
+
+    <article>
+    <h2><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h2>
+    <div class="post-meta">
+    <time datetime="{{ entry.created|date:'Y-m-d' }}">{{ entry.created|date:"F j, Y" }}</time>
+
+    {% if entry.reading_time %}
+
+      <span class="reading-time">{{ entry.reading_time }} min read</span>
+
+    {% endif %}
+
+    </div>
+    <div class="post-summary">{{ entry.summary_rendered }}</div>
+
+    {% if entry.tags.exists %}
+
+      <div class="post-tags">
+
+      {% for tag in entry.tags.all %}
+
+        <a href="
+        {% url 'blog:tag' tag.slug %}
+        " class="tag">{{ tag.name }}</a>
+
+      {% endfor %}
+
+      </div>
+
+    {% endif %}
+
+    </article>
+
+    {% empty %}
+
+    <div class="empty-state">
+    <h3>No blog posts from {{ month_name }} {{ year }}</h3>
+    </div>
+
+  {% endfor %}
+
+
+  {% if page_obj.paginator.num_pages > 1 %}
+
+    <nav class="pagination" aria-label="Pagination">
+
+    {% if page_obj.has_previous %}
+
+      <a href="?page={{ page_obj.previous_page_number }}" rel="prev">&larr; Newer</a>
+
+    {% endif %}
+
+    <span class="pagination-status">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+
+      <a href="?page={{ page_obj.next_page_number }}" rel="next">Older &rarr;</a>
+
+    {% endif %}
+
+    </nav>
+
+  {% endif %}
+
+  </section>
+
+  <section class="blogmarks" aria-labelledby="month-links-heading">
+  <h2 id="month-links-heading">Links from {{ month_name }} {{ year }}</h2>
+
+
+  {% for blogmark in blogmarks %}
+
+    <article>
+    <h2><a href="{{ blogmark.get_absolute_url }}">{{ blogmark.title }}</a></h2>
+    <div class="post-meta"><time datetime="{{ blogmark.created|date:'Y-m-d' }}">{{ blogmark.created|date:"F j, Y" }}</time></div>
+    <a href="{{ blogmark.url }}" class="blogmark-url">{{ blogmark.url }}</a>
+    <div class="blogmark-commentary">{{ blogmark.commentary_rendered }}</div>
+
+    {% if blogmark.tags.exists %}
+
+      <div class="post-tags">
+
+      {% for tag in blogmark.tags.all %}
+
+        <a href="
+        {% url 'blog:tag' tag.slug %}
+        " class="tag">{{ tag.name }}</a>
+
+      {% endfor %}
+
+      </div>
+
+    {% endif %}
+
+    </article>
+
+    {% empty %}
+
+    <div class="empty-state">
+    <h3>No links from {{ month_name }} {{ year }}</h3>
+    </div>
+
+  {% endfor %}
+
+  </section>
+
+{% endblock %}
