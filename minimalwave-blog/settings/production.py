@@ -205,6 +205,16 @@ else:
 # open over HTTPS (the Azure media host is already a subset of https:).
 _img_src = [SELF, "data:", "https:"]
 
+# Video providers embedded in post content. default-src 'self' would otherwise
+# block these iframes (frame-src has no fallback beyond default-src). Add a
+# provider here when a post embeds a new one.
+_frame_src = [
+    SELF,
+    "https://www.loom.com",
+    "https://www.youtube-nocookie.com",
+    "https://www.youtube.com",
+]
+
 CONTENT_SECURITY_POLICY = {
     "DIRECTIVES": {
         "default-src": [SELF],
@@ -213,6 +223,7 @@ CONTENT_SECURITY_POLICY = {
         "img-src": _img_src,
         "connect-src": [SELF, *_plausible_src],
         "font-src": [SELF],
+        "frame-src": _frame_src,
         "base-uri": [SELF],
         "object-src": [NONE],
         "frame-ancestors": [NONE],
