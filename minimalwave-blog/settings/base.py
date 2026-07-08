@@ -51,6 +51,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "minimalwave-blog.context_processors.common_context",
                 "core.context_processors.anthropic_detection",
             ],
         },
