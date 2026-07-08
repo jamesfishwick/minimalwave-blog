@@ -176,6 +176,10 @@ class AzureBlobStorageConfigTests(TestCase):
         self.assertIn("https:", directives["img-src"])
         # Manifest storage must fail loudly on a missing entry.
         self.assertTrue(prod.WHITENOISE_MANIFEST_STRICT)
+        # Embedded video providers must be allowed, or default-src blocks them.
+        frame_src = directives["frame-src"]
+        self.assertIn("https://www.loom.com", frame_src)
+        self.assertIn("https://www.youtube-nocookie.com", frame_src)
 
         # The pinned hashes must match the real inline scripts in base.html, or
         # CSP silently blocks the theme scripts in production.
