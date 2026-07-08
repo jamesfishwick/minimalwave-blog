@@ -167,24 +167,42 @@ SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 X_FRAME_OPTIONS = "DENY"
 
 # Content Security Policy (django-csp 4.x)
-# Inline <script> in base.html run under a per-request nonce; styles allow
-# 'unsafe-inline' because markdown image shortcodes emit inline style="".
+# The two inline <script> blocks in base.html are matched by sha256 hash, not a
+# nonce: this site whole-site-caches rendered HTML, and a per-request nonce baked
+# into a cached body can never match the header nonce on a cache hit. Hashes are
+# stable across cached copies. If either inline script changes, recompute its
+# hash (base64 sha256 of the exact bytes between <script> and </script>).
+# style-src keeps 'unsafe-inline' because markdown image shortcodes emit style="".
 from urllib.parse import urlparse
 
-from csp.constants import NONCE, NONE, SELF
+from csp.constants import NONE, SELF
 
-_plausible_origin = "{0.scheme}://{0.netloc}".format(urlparse(PLAUSIBLE_SCRIPT_URL))
-_img_src = [SELF, "data:"]
+# base.html:77 theme flash-prevention, and the theme-toggle script at the body end.
+_THEME_INIT_HASH = "'sha256-7vcU3qHxNjFgsBltLUeqjnsJNDqy4KVYXFL7hc5PIQU='"
+_THEME_TOGGLE_HASH = "'sha256-/5QwnhIk/hdiNnu3RLhGbdavjOnS4p7GstEPTYvxx70='"
+
+# Only trust the Plausible origin when the script URL is absolute; a self-hosted
+# proxy uses a same-origin path (already covered by SELF), and an empty/relative
+# value would otherwise emit the malformed CSP token "://".
+_parsed_plausible = urlparse(PLAUSIBLE_SCRIPT_URL)
+if _parsed_plausible.scheme and _parsed_plausible.netloc:
+    _plausible_src = [f"{_parsed_plausible.scheme}://{_parsed_plausible.netloc}"]
+else:
+    _plausible_src = []
+
+# self + data: + the Azure blob host + any https origin, because published posts
+# can embed externally hosted images via the {{img:https://...}} shortcode.
+_img_src = [SELF, "data:", "https:"]
 if AZURE_ACCOUNT_NAME:
     _img_src.append(f"https://{AZURE_ACCOUNT_NAME}.blob.core.windows.net")
 
 CONTENT_SECURITY_POLICY = {
     "DIRECTIVES": {
         "default-src": [SELF],
-        "script-src": [SELF, NONCE, _plausible_origin],
+        "script-src": [SELF, _THEME_INIT_HASH, _THEME_TOGGLE_HASH, *_plausible_src],
         "style-src": [SELF, "'unsafe-inline'"],
         "img-src": _img_src,
-        "connect-src": [SELF, _plausible_origin],
+        "connect-src": [SELF, *_plausible_src],
         "font-src": [SELF],
         "base-uri": [SELF],
         "object-src": [NONE],

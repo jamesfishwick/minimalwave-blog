@@ -143,6 +143,37 @@ class AzureBlobStorageConfigTests(TestCase):
         except ImportError:
             self.skipTest("Production settings not available in test environment")
 
+    def test_production_csp_is_hash_based_not_nonce(self):
+        """CSP must match inline scripts by hash, never a nonce.
+
+        A per-request nonce baked into the whole-site-cached HTML can never
+        match the header nonce on a cache hit, which would block the theme
+        scripts. Guard the directives that keep the site working under CSP.
+        """
+        from importlib import import_module
+
+        try:
+            prod = import_module("minimalwave-blog.settings.production")
+            from csp.constants import NONCE, SELF
+        except ImportError:
+            self.skipTest("Production settings / django-csp not available")
+
+        directives = prod.CONTENT_SECURITY_POLICY["DIRECTIVES"]
+        script_src = directives["script-src"]
+
+        # Cache-safe: hashes present, per-request nonce absent.
+        self.assertNotIn(NONCE, script_src)
+        self.assertTrue(
+            any(str(s).startswith("'sha256-") for s in script_src),
+            "script-src must carry the inline-script sha256 hashes",
+        )
+        self.assertIn(SELF, script_src)
+        self.assertIn("csp.middleware.CSPMiddleware", prod.MIDDLEWARE)
+        # Published posts can embed externally hosted images via shortcode.
+        self.assertIn("https:", directives["img-src"])
+        # Manifest storage must fail loudly on a missing entry.
+        self.assertTrue(prod.WHITENOISE_MANIFEST_STRICT)
+
 
 class StorageBackendTests(TestCase):
     """Test storage backend configuration and switching."""

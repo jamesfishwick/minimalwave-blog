@@ -74,7 +74,7 @@
 " />
 
 <!-- Theme: apply saved preference before CSS paints to avoid flash -->
-<script nonce="{{ request.csp_nonce }}">(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.classList.add('dracula-'+t);}());</script>
+<script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.classList.add('dracula-'+t);}());</script>
 
 <!-- CSS -->
 <link rel="stylesheet" href="
@@ -169,7 +169,7 @@
 
 {% endblock %}
 
-<script nonce="{{ request.csp_nonce }}">
+<script>
 (function () {
 var btn = document.getElementById('theme-toggle');
 btn.addEventListener('click', function () {
