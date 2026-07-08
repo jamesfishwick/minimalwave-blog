@@ -35,7 +35,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # WhiteNoise configuration
 WHITENOISE_USE_FINDERS = False  # Should be False in production
-WHITENOISE_MANIFEST_STRICT = False
+# Strict: a {% static %} name missing from the manifest fails loudly at deploy
+# rather than silently serving an unhashed, 404-ing URL under manifest storage.
+WHITENOISE_MANIFEST_STRICT = True
 WHITENOISE_SKIP_COMPRESS_EXTENSIONS = [
     "jpg",
     "jpeg",
