@@ -8,6 +8,12 @@ DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
 
+# Canonical absolute site URL (e.g. https://example.com), no trailing slash.
+# Used for <link rel="canonical"> and JSON-LD so those are not derived from the
+# request Host header. Pin this in production (and pin ALLOWED_HOSTS) to prevent
+# Host-header reflection into cached canonical tags. Empty = fall back to host.
+SITE_URL = os.getenv("SITE_URL", "").rstrip("/")
+
 # Sites framework
 SITE_ID = 1
 

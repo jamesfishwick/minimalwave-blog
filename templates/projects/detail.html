@@ -5,7 +5,7 @@
 
 {% block canonical %}
 
-  <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ project.get_absolute_url }}" />
+  <link rel="canonical" href="{{ site_url }}{{ project.get_absolute_url }}" />
 
 {% endblock %}
 

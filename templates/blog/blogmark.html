@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block canonical %}
-  <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ blogmark.get_absolute_url }}" />
+  <link rel="canonical" href="{{ site_url }}{{ blogmark.get_absolute_url }}" />
 {% endblock %}
 
 {% block meta_description %}
