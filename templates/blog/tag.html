@@ -43,11 +43,9 @@
   <section class="tag-page">
   <h1>Tag: {{ tag.name }}</h1>
 
-
   {% if entries %}
 
     <h2>Blog Posts</h2>
-
 
     {% for entry in entries %}
 
@@ -59,17 +57,13 @@
       </div>
       </article>
 
-
     {% endfor %}
 
-
   {% endif %}
-
 
   {% if blogmarks %}
 
     <h2>Links</h2>
-
 
     {% for blogmark in blogmarks %}
 
@@ -82,17 +76,13 @@
       </div>
       </article>
 
-
     {% endfor %}
 
-
   {% endif %}
-
 
   {% if not entries and not blogmarks %}
 
     <p>No content with this tag yet.</p>
-
 
   {% endif %}
 

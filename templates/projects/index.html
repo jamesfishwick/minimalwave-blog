@@ -18,7 +18,6 @@
   <section class="projects-index" aria-labelledby="projects-heading">
   <h1 id="projects-heading">Projects</h1>
 
-
   {% if featured_projects %}
 
     <div class="projects-featured" aria-labelledby="featured-heading">
@@ -27,9 +26,7 @@
 
     {% for project in featured_projects %}
 
-
       {% include "projects/_card.html" with project=project %}
-
 
     {% endfor %}
 
@@ -49,12 +46,9 @@
 
   {% for project in projects %}
 
-
     {% include "projects/_card.html" with project=project %}
 
-
     {% empty %}
-
 
     {% if not featured_projects %}
 
@@ -67,7 +61,6 @@
       </div>
 
     {% endif %}
-
 
   {% endfor %}
 

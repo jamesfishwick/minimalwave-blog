@@ -52,16 +52,13 @@
   <button type="submit">Search</button>
   </form>
 
-
   {% if q %}
 
     <p>Results for "{{ q }}":</p>
 
-
     {% if entries %}
 
       <h2>Blog Posts</h2>
-
 
       {% for entry in entries %}
 
@@ -72,11 +69,9 @@
         {{ entry.summary_rendered }}
         </div>
 
-
         {% if entry.tags.exists %}
 
           <div class="post-tags">
-
 
           {% for tag in entry.tags.all %}
 
@@ -86,27 +81,21 @@
 
             " class="tag">{{ tag.name }}</a>
 
-
           {% endfor %}
 
           </div>
-
 
         {% endif %}
 
         </article>
 
-
       {% endfor %}
 
-
     {% endif %}
-
 
     {% if blogmarks %}
 
       <h2>Links</h2>
-
 
       {% for blogmark in blogmarks %}
 
@@ -118,11 +107,9 @@
         {{ blogmark.commentary_rendered }}
         </div>
 
-
         {% if blogmark.tags.exists %}
 
           <div class="post-tags">
-
 
           {% for tag in blogmark.tags.all %}
 
@@ -132,35 +119,27 @@
 
             " class="tag">{{ tag.name }}</a>
 
-
           {% endfor %}
 
           </div>
-
 
         {% endif %}
 
         </article>
 
-
       {% endfor %}
 
-
     {% endif %}
-
 
     {% if not entries and not blogmarks %}
 
       <p>No results found for "{{ q }}".</p>
 
-
     {% endif %}
-
 
     {% else %}
 
     <p>Enter a search term above to find content.</p>
-
 
   {% endif %}
 
