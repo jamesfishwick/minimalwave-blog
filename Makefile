@@ -143,6 +143,12 @@ sync-db-from-prod: ## Sync production database to local Docker
 sync-db-dry-run: ## Show what database sync would do
 	./scripts/sync-db-from-production.sh --dry-run
 
+load-content-prod: ## Promote locally-edited content to PROD (snapshot + confirm). Use ALL=1 or FILES="content/a.md ..."
+	./scripts/load-content-to-production.sh $(if $(ALL),--all,$(FILES))
+
+load-content-prod-dry: ## Preview what promoting content to PROD would change (no writes). Use ALL=1 or FILES="..."
+	./scripts/load-content-to-production.sh --dry-run $(if $(ALL),--all,$(FILES))
+
 # Developer Setup Commands
 setup-dev-workflow: ## Complete dev environment setup (run once)
 	./scripts/setup-dev-environment.sh

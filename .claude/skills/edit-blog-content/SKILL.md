@@ -42,18 +42,37 @@ Always work **local-first**. Promoting to production is a separate, deliberate, 
 
 6. **Verify rendering** at `http://localhost:8000/...` — markdown, image shortcodes, and formatting intact.
 
-7. **Promote to production** (only when the user asks). Run the same `load_content` against the production database. This is a **live production write** and will hit Claude Code's approval gate — that's expected and correct; get explicit user approval first. See "Promoting to prod" below.
+7. **Promote to production** (only when the user asks). Use `make load-content-prod` (see "Promoting to prod" below). This is a **live production write** and will hit Claude Code's approval gate — that's expected and correct; get explicit user approval first.
 
 ## Commands
 
 - `dump_content --type <t> [--slug <s>] [--all] [--output-dir content]` — DB → files.
 - `load_content <files...> [--dry-run]` — files → DB via ORM. `--dry-run` is the accept gate (diff only, no write).
+- `scripts/load-content-to-production.sh` (a.k.a. `make load-content-prod`) — the prod-promotion wrapper. See "Promoting to prod".
 
 Safety built in: `load_content` verifies the file's `slug` still matches the pk's current slug (guards against stale files / wrong DB) and reports `unchanged` when a file matches the DB (idempotent round-trips).
 
 ## Promoting to prod
 
-`load_content` uses whatever database the Django settings point at. To write accepted edits to production, run it with the production `DATABASE_URL` in the environment (the `.env` `DATABASE_URL` is the Azure Postgres connection; append `?sslmode=require`). Prefer running it **inside the app container on Azure** (`az webapp ssh` → `cd /home/site/wwwroot && python manage.py load_content ...`) so it uses the same env and hashers as the running app. Treat every prod write as deliberate and get user sign-off; the harness will also require approval.
+Use the wrapper, not a hand-rolled command: **`scripts/load-content-to-production.sh`**, exposed as two Make targets. It reads `DATABASE_URL` + `SECRET_KEY` from `.env`, appends `sslmode=require`, snapshots current prod content to `data/content-backups/prod-content-<ts>/` (a restore point), runs a mandatory dry-run, prompts for confirmation, then writes via the ORM with production settings. Secrets are passed to the container by env-var **name** only, so they never appear in a printed command.
+
+```
+# Preview only (no writes, no snapshot):
+make load-content-prod-dry FILES="content/entry-40-reranking-summary.md"
+make load-content-prod-dry ALL=1
+
+# Promote (snapshot -> dry-run -> confirm -> write):
+make load-content-prod FILES="content/entry-40-reranking-summary.md"
+make load-content-prod ALL=1
+```
+
+Get explicit user sign-off first; the harness will also require approval on the write. **Roll back** by pointing the script at a snapshot: `./scripts/load-content-to-production.sh data/content-backups/prod-content-<ts>/<file>.md`.
+
+The script targets the local `minimalwave-blog-container` (override with `CONTENT_CONTAINER=<name>`); it uses the same code + files you edited, just pointed at the prod DB. Running `load_content` by hand inside the Azure app container (`az webapp ssh` → `cd /home/site/wwwroot`) also works but requires getting the edited files onto that container first, so the wrapper is the default path.
+
+### Batch de-slopping many posts
+
+For a whole-blog pass (run de-slopper / house-style / etc. across every post): `dump_content --all`, then edit the files (fan out to parallel subagents by size-balanced batches for speed), diff each against a pre-edit copy to catch any over-editing, `load_content` the changed files to local, verify, then `make load-content-prod ALL=1`. Keep automated passes **sentence-level** (don't delete paragraphs) and never bake `[AUTHOR NEEDED]` tags into files that auto-publish.
 
 ## Do not
 
