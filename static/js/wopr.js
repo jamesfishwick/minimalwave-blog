@@ -48,6 +48,7 @@
         say("HOW ABOUT A NICE GAME OF CHESS?  (type chess())", AMBER);
       }, 900);
     }
+    return "your call.";
   };
 
   // --- Chess ---
@@ -105,22 +106,26 @@
       render();
       instructions();
     });
+    return "your move, professor.";
   };
 
   window.board = function () {
-    if (!game) return say("Type chess() to start a game.", AMBER);
+    if (!game) return "no game yet. type chess().";
     render();
+    return "your move.";
   };
 
   window.moves = function () {
-    if (!game) return say("Type chess() to start a game.", AMBER);
+    if (!game) return "no game yet. type chess().";
     console.log("%c" + game.moves().join("  "), "color:#8be9fd");
+    return "pick one and play it.";
   };
 
   window.resign = function () {
-    if (!game) return say("Type chess() to start a game.", AMBER);
+    if (!game) return "no game yet. type chess().";
     say("A STRANGE GAME. THE ONLY WINNING MOVE IS NOT TO PLAY.");
     game = null;
+    return "game over.";
   };
 
   // Light opponent: checkmate if available, else best capture, else random.
@@ -173,21 +178,19 @@
   }
 
   window.move = function (m) {
-    if (!game) return say("Type chess() to start a game.", AMBER);
+    if (!game) return "no game yet. type chess().";
     var mv;
     if (typeof m === "string" && /^[a-h][1-8][a-h][1-8][qrbn]?$/.test(m)) {
       mv = game.move({ from: m.slice(0, 2), to: m.slice(2, 4), promotion: m[4] || "q" });
     } else {
       mv = game.move(m); // SAN, e.g. "e4", "Nf3", "O-O"
     }
-    if (!mv) {
-      say("ILLEGAL MOVE. (try moves() to see what's legal)", AMBER);
-      return;
-    }
+    if (!mv) return "illegal move. try moves().";
     render();
-    if (endCheck()) return;
+    if (endCheck()) return "game over.";
     joshuaReply();
     render();
-    endCheck();
+    if (endCheck()) return "game over.";
+    return "your move.";
   };
 })();
