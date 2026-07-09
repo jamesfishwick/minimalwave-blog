@@ -10,22 +10,25 @@ from pathlib import Path
 
 def format_template(content):
     """Format Django template content for better readability."""
-    # Protect <script type="application/ld+json"> blocks: the newline-injection
-    # below would break template logic embedded inside JSON string values
-    # (producing literal newlines inside quotes -> invalid JSON-LD). Stash each
-    # block behind a placeholder, format, then restore it verbatim.
     protected = []
 
     def _stash(match):
         protected.append(match.group(0))
-        return f"@@LDJSON_{len(protected) - 1}@@"
+        return f"@@PROTECTED_{len(protected) - 1}@@"
 
-    content = re.sub(
-        r'<script type="application/ld\+json">.*?</script>',
-        _stash,
-        content,
-        flags=re.DOTALL,
+    # Stash whitespace-significant / verbatim regions before the reflow and
+    # re-indentation below, which strips and re-indents every line and would
+    # otherwise mangle ASCII art, preformatted text, and JSON embedded in a
+    # <script> tag. Order matters: stash the outermost containers (comments,
+    # <pre>) before inner ones so a nested region is captured as a whole.
+    protect_patterns = (
+        r"<!--.*?-->",  # HTML comments (e.g. the view-source .nfo art)
+        r"<pre\b.*?</pre>",  # preformatted blocks (e.g. the 404 cowsay art)
+        r"{%\s*verbatim\s*%}.*?{%\s*endverbatim\s*%}",  # verbatim blocks
+        r'<script type="application/ld\+json">.*?</script>',  # JSON-LD
     )
+    for pattern in protect_patterns:
+        content = re.sub(pattern, _stash, content, flags=re.DOTALL)
 
     # Put each block tag on its own line, idempotently. The \S guards only
     # insert a newline next to a tag when it is NOT already at a line boundary,
@@ -65,9 +68,9 @@ def format_template(content):
 
     content = "\n".join(formatted_lines)
 
-    # Restore protected JSON-LD blocks verbatim.
+    # Restore the protected regions verbatim.
     for i, block in enumerate(protected):
-        content = content.replace(f"@@LDJSON_{i}@@", block)
+        content = content.replace(f"@@PROTECTED_{i}@@", block)
 
     return content
 
