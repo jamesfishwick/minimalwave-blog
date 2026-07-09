@@ -77,7 +77,6 @@
 
 {% block twitter_image %}
 
-
   {% if entry.get_image_url %}
 
     <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ entry.get_image_url }}" />
@@ -210,12 +209,9 @@
         ,
       {% endif %}
 
-
     {% endfor %}
 
-
   {% endif %}
-
 
   {% if reading_time %}
 
@@ -225,7 +221,6 @@
 
   </div>
   </header>
-
 
   {% if entry.get_image_url %}
 
@@ -249,7 +244,6 @@
 
   <div class="post-body">{{ entry.body_rendered }}</div>
 
-
   {% if entry.tags.exists %}
 
     <div class="post-tags">
@@ -262,21 +256,17 @@
 
       " class="tag">{{ tag.name }}</a>
 
-
     {% endfor %}
 
     </div>
 
-
   {% endif %}
-
 
   {% if related_entries %}
 
     <div class="related-posts">
     <h3>Related Posts</h3>
     <div class="related-posts-grid">
-
 
     {% for related in related_entries %}
 
@@ -287,12 +277,10 @@
       <div class="post-meta"><time datetime="{{ related.created|date:'Y-m-d' }}">{{ related.created|date:"F j, Y" }}</time></div>
       </div>
 
-
     {% endfor %}
 
     </div>
     </div>
-
 
   {% endif %}
 

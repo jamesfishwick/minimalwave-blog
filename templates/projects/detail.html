@@ -73,7 +73,6 @@
 
 {% block twitter_image %}
 
-
   {% if project.get_image_url %}
 
     <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ project.get_image_url }}" />
@@ -175,14 +174,12 @@
   <a href="{{ project.repo_url }}" rel="noopener" class="button">View code</a>
 {% endif %}
 
-
 {% if project.live_url %}
   <a href="{{ project.live_url }}" rel="noopener" class="button">Visit live site</a>
 {% endif %}
 
 </div>
 </header>
-
 
 {% if project.get_image_url %}
 
@@ -191,7 +188,6 @@
   </figure>
 
 {% endif %}
-
 
 {% if project.tech_stack_list %}
 
@@ -210,7 +206,6 @@
 <div class="project-content">
 {{ project.body_rendered }}
 </div>
-
 
 {% if project.tags.exists %}
 

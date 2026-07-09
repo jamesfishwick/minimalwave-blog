@@ -72,7 +72,6 @@
 
 {% block twitter_image %}
 
-
   {% if blogmark.get_image_url %}
 
     <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ blogmark.get_image_url }}" />
@@ -169,7 +168,6 @@
 
 {% block content %}
 
-
   {% if preview %}
 
     <div class="preview-banner">
@@ -201,7 +199,6 @@
 
   <a href="{{ blogmark.url }}" class="blogmark-url" target="_blank" rel="nofollow ugc noopener">{{ blogmark.url }}</a>
 
-
   {% if blogmark.get_image_url %}
 
     <figure class="post-image">
@@ -221,22 +218,18 @@
   {{ blogmark.commentary_rendered }}
   </div>
 
-
   {% if blogmark.via %}
 
     <div class="blogmark-via">
     Via: <a href="{{ blogmark.via }}" target="_blank" rel="nofollow ugc noopener">{{ blogmark.via_title|default:blogmark.via }}</a>
     </div>
 
-
   {% endif %}
-
 
   {% if blogmark.tags.exists %}
 
     <div class="post-tags">
     <h3>Tags:</h3>
-
 
     {% for tag in blogmark.tags.all %}
 
@@ -246,11 +239,9 @@
 
       " class="tag">{{ tag.name }}</a>
 
-
     {% endfor %}
 
     </div>
-
 
   {% endif %}
 
